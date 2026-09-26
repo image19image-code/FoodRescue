@@ -2900,3 +2900,588 @@ if (locateUserButton) {
     }
 
 })();
+/* =========================================================
+   FOODRESCUE — FINAL LANGUAGE SYSTEM
+========================================================= */
+
+(function () {
+
+    "use strict";
+
+    const selector =
+        document.querySelector(".language-selector");
+
+    const button =
+        document.querySelector(".language-button");
+
+    if (!selector || !button) {
+        console.warn(
+            "FoodRescue language selector not found."
+        );
+        return;
+    }
+
+    const translations = {
+
+        en: {
+            code: "EN",
+
+            how: "How it works",
+            impact: "Impact",
+            network: "Network",
+            command: "Command Center",
+
+            badge:
+                "Building the world's food rescue intelligence network",
+
+            hero1: "Save food",
+            hero2: "before it becomes waste.",
+
+            description:
+                "FoodRescue connects surplus food with the right people and organizations before valuable food is lost.",
+
+            rescueFood:
+                "Rescue Food",
+
+            explore:
+                "Explore the Network",
+
+            globalImpact:
+                "GLOBAL IMPACT",
+
+            impactTitle:
+                "Every rescued meal counts.",
+
+            howTitle:
+                "From surplus to rescue.",
+
+            networkLabel:
+                "ONE NETWORK",
+
+            rescueStart:
+                "START A RESCUE",
+
+            rescueTitle:
+                "Tell us about the surplus.",
+
+            analyze:
+                "Analyze Surplus"
+        },
+
+        ar: {
+            code: "AR",
+
+            how: "كيف تعمل المنصة",
+            impact: "الأثر",
+            network: "الشبكة",
+            command: "مركز القيادة",
+
+            badge:
+                "نبني شبكة عالمية ذكية لإنقاذ الغذاء",
+
+            hero1:
+                "أنقذ الطعام",
+
+            hero2:
+                "قبل أن يتحول إلى نفايات.",
+
+            description:
+                "تربط FoodRescue فائض الطعام بالأشخاص والمنظمات المناسبة قبل ضياع الطعام.",
+
+            rescueFood:
+                "إنقاذ الطعام",
+
+            explore:
+                "استكشف الشبكة",
+
+            globalImpact:
+                "الأثر العالمي",
+
+            impactTitle:
+                "كل وجبة يتم إنقاذها مهمة.",
+
+            howTitle:
+                "من الفائض إلى الإنقاذ.",
+
+            networkLabel:
+                "شبكة واحدة",
+
+            rescueStart:
+                "ابدأ عملية إنقاذ",
+
+            rescueTitle:
+                "أخبرنا عن فائض الطعام.",
+
+            analyze:
+                "تحليل الفائض"
+        },
+
+        fr: {
+            code: "FR",
+
+            how: "Comment ça marche",
+            impact: "Impact",
+            network: "Réseau",
+            command: "Centre de contrôle",
+
+            badge:
+                "Construire le réseau mondial intelligent de sauvetage alimentaire",
+
+            hero1:
+                "Sauvez la nourriture",
+
+            hero2:
+                "avant qu'elle ne devienne un déchet.",
+
+            description:
+                "FoodRescue connecte les surplus alimentaires aux bonnes personnes et organisations avant leur perte.",
+
+            rescueFood:
+                "Sauver la nourriture",
+
+            explore:
+                "Explorer le réseau",
+
+            globalImpact:
+                "IMPACT MONDIAL",
+
+            impactTitle:
+                "Chaque repas sauvé compte.",
+
+            howTitle:
+                "Du surplus au sauvetage.",
+
+            networkLabel:
+                "UN SEUL RÉSEAU",
+
+            rescueStart:
+                "DÉMARRER UN SAUVETAGE",
+
+            rescueTitle:
+                "Parlez-nous du surplus.",
+
+            analyze:
+                "Analyser le surplus"
+        },
+
+        zh: {
+            code: "ZH",
+
+            how: "工作原理",
+            impact: "影响",
+            network: "网络",
+            command: "指挥中心",
+
+            badge:
+                "构建全球智能食物救援网络",
+
+            hero1:
+                "拯救食物",
+
+            hero2:
+                "在它变成废弃物之前。",
+
+            description:
+                "FoodRescue 将剩余食物与合适的人和组织连接起来，减少食物浪费。",
+
+            rescueFood:
+                "拯救食物",
+
+            explore:
+                "探索网络",
+
+            globalImpact:
+                "全球影响",
+
+            impactTitle:
+                "每一份被拯救的食物都很重要。",
+
+            howTitle:
+                "从剩余食物到救援。",
+
+            networkLabel:
+                "一个网络",
+
+            rescueStart:
+                "开始救援",
+
+            rescueTitle:
+                "告诉我们剩余食物的信息。",
+
+            analyze:
+                "分析剩余食物"
+        },
+
+        de: {
+            code: "DE",
+
+            how: "So funktioniert es",
+            impact: "Wirkung",
+            network: "Netzwerk",
+            command: "Kontrollzentrum",
+
+            badge:
+                "Wir bauen ein intelligentes globales Lebensmittelrettungsnetzwerk",
+
+            hero1:
+                "Lebensmittel retten",
+
+            hero2:
+                "bevor sie zu Abfall werden.",
+
+            description:
+                "FoodRescue verbindet überschüssige Lebensmittel mit den richtigen Menschen und Organisationen.",
+
+            rescueFood:
+                "Lebensmittel retten",
+
+            explore:
+                "Netzwerk erkunden",
+
+            globalImpact:
+                "GLOBALE WIRKUNG",
+
+            impactTitle:
+                "Jede gerettete Mahlzeit zählt.",
+
+            howTitle:
+                "Vom Überschuss zur Rettung.",
+
+            networkLabel:
+                "EIN NETZWERK",
+
+            rescueStart:
+                "RETTUNG STARTEN",
+
+            rescueTitle:
+                "Erzählen Sie uns vom Überschuss.",
+
+            analyze:
+                "Überschuss analysieren"
+        }
+
+    };
+
+
+    const menu =
+        document.createElement("div");
+
+    menu.className =
+        "foodrescue-language-menu";
+
+    menu.innerHTML = `
+        <button type="button" data-language="en">
+            English
+        </button>
+
+        <button type="button" data-language="ar">
+            العربية
+        </button>
+
+        <button type="button" data-language="fr">
+            Français
+        </button>
+
+        <button type="button" data-language="zh">
+            中文
+        </button>
+
+        <button type="button" data-language="de">
+            Deutsch
+        </button>
+    `;
+
+
+    const style =
+        document.createElement("style");
+
+    style.textContent = `
+        .language-selector {
+            position: relative;
+        }
+
+        .foodrescue-language-menu {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            min-width: 170px;
+            padding: 6px;
+            border-radius: 14px;
+            background: rgba(7,16,13,0.98);
+            border: 1px solid rgba(255,255,255,0.12);
+            box-shadow: 0 18px 45px rgba(0,0,0,0.35);
+            backdrop-filter: blur(16px);
+            display: none;
+            z-index: 99999;
+        }
+
+        .foodrescue-language-menu.open {
+            display: grid;
+            gap: 4px;
+        }
+
+        .foodrescue-language-menu button {
+            width: 100%;
+            padding: 10px 12px;
+            border: 0;
+            border-radius: 9px;
+            background: transparent;
+            color: #e6eee9;
+            text-align: left;
+            cursor: pointer;
+            font: inherit;
+        }
+
+        .foodrescue-language-menu button:hover {
+            background: rgba(74,222,128,0.12);
+            color: #4ade80;
+        }
+
+        html[dir="rtl"]
+        .foodrescue-language-menu {
+            right: auto;
+            left: 0;
+        }
+
+        html[dir="rtl"]
+        .foodrescue-language-menu button {
+            text-align: right;
+        }
+    `;
+
+    document.head.appendChild(style);
+
+    selector.appendChild(menu);
+
+
+    function set(selectorText, value) {
+
+        const element =
+            document.querySelector(selectorText);
+
+        if (element) {
+            element.textContent = value;
+        }
+
+    }
+
+
+    function applyLanguage(language) {
+
+        const t =
+            translations[language] ||
+            translations.en;
+
+        document.documentElement.lang =
+            language;
+
+        document.documentElement.dir =
+            language === "ar"
+                ? "rtl"
+                : "ltr";
+
+
+        button.textContent =
+            `${t.code} ▾`;
+
+
+        set(
+            '.nav-links a[href="#how-it-works"]',
+            t.how
+        );
+
+        set(
+            '.nav-links a[href="#impact"]',
+            t.impact
+        );
+
+        set(
+            '.nav-links a[href="#network"]',
+            t.network
+        );
+
+        set(
+            '.nav-links a[href="#command-center"]',
+            t.command
+        );
+
+        set(
+            ".status-badge",
+            t.badge
+        );
+
+        const hero =
+            document.querySelector(".hero h1");
+
+        if (hero) {
+
+            const span =
+                hero.querySelector("span");
+
+            if (span) {
+                span.textContent =
+                    t.hero2;
+            }
+
+            const textNodes =
+                Array.from(hero.childNodes)
+                    .filter(
+                        node =>
+                            node.nodeType ===
+                            Node.TEXT_NODE
+                    );
+
+            textNodes.forEach(
+                node => {
+
+                    if (
+                        node.textContent.trim()
+                    ) {
+
+                        node.textContent =
+                            `${t.hero1} `;
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        set(
+            ".hero-description",
+            t.description
+        );
+
+        set(
+            "#rescueFoodButton",
+            t.rescueFood
+        );
+
+        set(
+            "#exploreButton",
+            t.explore
+        );
+
+        set(
+            ".impact-section .section-heading h2",
+            t.impactTitle
+        );
+
+        set(
+            ".how-section .section-heading h2",
+            t.howTitle
+        );
+
+        set(
+            ".network-section .eyebrow",
+            t.networkLabel
+        );
+
+        set(
+            ".submission-section .eyebrow",
+            t.rescueStart
+        );
+
+        set(
+            ".submission-section .section-heading h2",
+            t.rescueTitle
+        );
+
+        set(
+            "#analyzeSurplusButton",
+            t.analyze
+        );
+
+
+        try {
+            localStorage.setItem(
+                "foodrescue_language",
+                language
+            );
+        }
+        catch {}
+
+
+        menu.classList.remove(
+            "open"
+        );
+
+    }
+
+
+    button.addEventListener(
+        "click",
+        event => {
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            menu.classList.toggle(
+                "open"
+            );
+
+        }
+    );
+
+
+    menu.addEventListener(
+        "click",
+        event => {
+
+            const target =
+                event.target.closest(
+                    "[data-language]"
+                );
+
+            if (!target) {
+                return;
+            }
+
+            applyLanguage(
+                target.dataset.language
+            );
+
+        }
+    );
+
+
+    document.addEventListener(
+        "click",
+        event => {
+
+            if (
+                !selector.contains(
+                    event.target
+                )
+            ) {
+
+                menu.classList.remove(
+                    "open"
+                );
+
+            }
+
+        }
+    );
+
+
+    let savedLanguage = "en";
+
+    try {
+        savedLanguage =
+            localStorage.getItem(
+                "foodrescue_language"
+            ) || "en";
+    }
+    catch {}
+
+
+    applyLanguage(
+        translations[savedLanguage]
+            ? savedLanguage
+            : "en"
+    );
+
+})();
