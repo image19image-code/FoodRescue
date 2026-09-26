@@ -28,12 +28,14 @@
         rel="stylesheet"
         href="style.css"
     >
+
     <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-    crossorigin=""
->
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin=""
+    >
+
 </head>
 
 
@@ -85,6 +87,9 @@
             <button
                 class="language-button"
                 type="button"
+                aria-haspopup="true"
+                aria-expanded="false"
+                aria-label="Select language"
             >
                 EN ▾
             </button>
@@ -92,7 +97,6 @@
         </div>
 
     </header>
-
 
 
     <!-- ========================================
@@ -108,8 +112,6 @@
 
         <section class="hero">
 
-
-            <!-- HERO CONTENT -->
 
             <div class="hero-content">
 
@@ -190,7 +192,7 @@
                     <div>
 
                         <strong id="heroKgSaved">
-                            0
+                            42.8
                         </strong>
 
                         <span>
@@ -216,7 +218,6 @@
 
 
             </div>
-
 
 
             <!-- ========================================
@@ -249,7 +250,6 @@
                         </span>
 
                     </div>
-
 
 
                     <div class="rescue-alert">
@@ -294,7 +294,6 @@
                     </div>
 
 
-
                     <div class="matching-section">
 
 
@@ -328,9 +327,7 @@
                                 97%
                             </div>
 
-
                         </div>
-
 
 
                         <div class="match">
@@ -358,12 +355,10 @@
                                 91%
                             </div>
 
-
                         </div>
 
 
                     </div>
-
 
 
                     <div class="rescue-progress">
@@ -401,7 +396,6 @@
         </section>
 
 
-
         <!-- ========================================
              IMPACT
         ========================================= -->
@@ -414,25 +408,20 @@
 
             <div class="section-heading">
 
-
                 <span class="eyebrow">
                     GLOBAL IMPACT
                 </span>
 
-
                 <h2>
                     Every rescued meal counts.
                 </h2>
-
 
                 <p>
                     FoodRescue transforms individual rescue actions
                     into measurable environmental and social impact.
                 </p>
 
-
             </div>
-
 
 
             <div class="impact-grid">
@@ -455,7 +444,6 @@
                 </div>
 
 
-
                 <div class="impact-card">
 
                     <span class="impact-icon">
@@ -473,7 +461,6 @@
                 </div>
 
 
-
                 <div class="impact-card">
 
                     <span class="impact-icon">
@@ -489,7 +476,6 @@
                     </span>
 
                 </div>
-
 
 
                 <div class="impact-card">
@@ -515,7 +501,6 @@
         </section>
 
 
-
         <!-- ========================================
              HOW IT WORKS
         ========================================= -->
@@ -528,25 +513,20 @@
 
             <div class="section-heading">
 
-
                 <span class="eyebrow">
                     THE RESCUE ENGINE
                 </span>
 
-
                 <h2>
                     From surplus to rescue.
                 </h2>
-
 
                 <p>
                     Three intelligent steps turn potential waste
                     into measurable impact.
                 </p>
 
-
             </div>
-
 
 
             <div class="steps">
@@ -574,7 +554,6 @@
                 </article>
 
 
-
                 <article class="step-card">
 
                     <div class="step-number">
@@ -595,7 +574,6 @@
                     </p>
 
                 </article>
-
 
 
                 <article class="step-card">
@@ -626,7 +604,6 @@
         </section>
 
 
-
         <!-- ========================================
              NETWORK
         ========================================= -->
@@ -639,11 +616,9 @@
 
             <div class="network-content">
 
-
                 <span class="eyebrow">
                     ONE NETWORK
                 </span>
-
 
                 <h2>
                     Businesses.
@@ -651,12 +626,10 @@
                     Communities.
                 </h2>
 
-
                 <p>
                     A connected infrastructure where every participant
                     can contribute to reducing food waste.
                 </p>
-
 
                 <button
                     class="primary-button"
@@ -672,51 +645,41 @@
 
                 </button>
 
-
             </div>
 
 
-
             <div class="network-visual">
-
 
                 <div class="network-node node-center">
                     FOOD<br>
                     RESCUE
                 </div>
 
-
                 <div class="network-node node-one">
                     🏪
                 </div>
-
 
                 <div class="network-node node-two">
                     🏨
                 </div>
 
-
                 <div class="network-node node-three">
                     🤝
                 </div>
 
-
                 <div class="network-node node-four">
                     👨‍👩‍👧
                 </div>
-
 
                 <div class="network-line line-one"></div>
                 <div class="network-line line-two"></div>
                 <div class="network-line line-three"></div>
                 <div class="network-line line-four"></div>
 
-
             </div>
 
 
         </section>
-
 
 
         <!-- ========================================
@@ -731,25 +694,20 @@
 
             <div class="section-heading">
 
-
                 <span class="eyebrow">
                     START A RESCUE
                 </span>
 
-
                 <h2>
                     Tell us about the surplus.
                 </h2>
-
 
                 <p>
                     Provide a few details and FoodRescue will determine
                     how urgently the food should be rescued.
                 </p>
 
-
             </div>
-
 
 
             <div class="submission-layout">
@@ -770,7 +728,6 @@
                             Food type
                         </label>
 
-
                         <select
                             id="foodType"
                             required
@@ -788,7 +745,7 @@
                                 Prepared meals
                             </option>
 
-                            <option value="fruit">
+                            <option value="fruits">
                                 Fruits
                             </option>
 
@@ -809,7 +766,6 @@
                     </div>
 
 
-
                     <div class="form-row">
 
 
@@ -819,11 +775,12 @@
                                 Quantity
                             </label>
 
-
                             <input
                                 id="quantity"
                                 type="number"
                                 min="1"
+                                step="1"
+                                inputmode="numeric"
                                 placeholder="e.g. 40"
                                 required
                             >
@@ -831,13 +788,11 @@
                         </div>
 
 
-
                         <div class="form-group">
 
                             <label for="unit">
                                 Unit
                             </label>
-
 
                             <select id="unit">
 
@@ -865,7 +820,6 @@
                     </div>
 
 
-
                     <div class="form-row">
 
 
@@ -874,7 +828,6 @@
                             <label for="availableFrom">
                                 Available from
                             </label>
-
 
                             <input
                                 id="availableFrom"
@@ -885,13 +838,11 @@
                         </div>
 
 
-
                         <div class="form-group">
 
                             <label for="expiryTime">
                                 Estimated expiry
                             </label>
-
 
                             <input
                                 id="expiryTime"
@@ -905,23 +856,22 @@
                     </div>
 
 
-
                     <div class="form-group">
 
                         <label for="location">
                             Location
                         </label>
 
-
                         <input
                             id="location"
                             type="text"
                             placeholder="City or neighborhood"
+                            maxlength="120"
+                            autocomplete="address-level2"
                             required
                         >
 
                     </div>
-
 
 
                     <div class="form-group">
@@ -930,15 +880,14 @@
                             Additional information
                         </label>
 
-
                         <textarea
                             id="notes"
                             rows="4"
+                            maxlength="1000"
                             placeholder="Describe the food, packaging, storage conditions..."
                         ></textarea>
 
                     </div>
-
 
 
                     <button
@@ -957,7 +906,6 @@
 
 
                 </form>
-
 
 
                 <!-- ========================================
@@ -990,7 +938,6 @@
 
 
                     </div>
-
 
 
                     <div
@@ -1028,7 +975,6 @@
                         <div class="result-divider"></div>
 
 
-
                         <div class="result-factors">
 
 
@@ -1045,7 +991,6 @@
                             </div>
 
 
-
                             <div>
 
                                 <span>
@@ -1059,7 +1004,6 @@
                             </div>
 
 
-
                             <div>
 
                                 <span>
@@ -1071,7 +1015,6 @@
                                 </strong>
 
                             </div>
-
 
 
                             <div>
@@ -1090,7 +1033,6 @@
                         </div>
 
 
-
                         <!-- RECOMMENDATION -->
 
                         <div class="recommendation">
@@ -1107,7 +1049,6 @@
 
 
                         </div>
-
 
 
                         <!-- ========================================
@@ -1130,7 +1071,6 @@
                             </div>
 
 
-
                             <div
                                 id="matchingResults"
                                 class="matching-results"
@@ -1146,7 +1086,6 @@
                             </div>
 
 
-
                             <!-- ========================================
                                  RESCUE OPERATION
                             ========================================= -->
@@ -1159,11 +1098,9 @@
 
                                 <div class="operation-header">
 
-
                                     <span>
                                         RESCUE OPERATION
                                     </span>
-
 
                                     <strong
                                         id="selectedOrganization"
@@ -1171,9 +1108,7 @@
                                         —
                                     </strong>
 
-
                                 </div>
-
 
 
                                 <div class="operation-status">
@@ -1194,12 +1129,15 @@
                                     </div>
 
 
+                                    <span
+                                        class="status-line"
+                                        aria-hidden="true"
+                                    ></span>
 
-                                    <div class="status-line"></div>
 
-
-
-                                    <div class="status-step">
+                                    <div
+                                        class="status-step"
+                                    >
 
                                         <span>
                                             2
@@ -1212,12 +1150,15 @@
                                     </div>
 
 
+                                    <span
+                                        class="status-line"
+                                        aria-hidden="true"
+                                    ></span>
 
-                                    <div class="status-line"></div>
 
-
-
-                                    <div class="status-step">
+                                    <div
+                                        class="status-step"
+                                    >
 
                                         <span>
                                             3
@@ -1231,7 +1172,6 @@
 
 
                                 </div>
-
 
 
                                 <button
@@ -1268,64 +1208,70 @@
 
 
         <!-- ========================================
-     LIVE RESCUE MAP
-========================================= -->
+             LIVE RESCUE MAP
+        ========================================= -->
 
-<section
-    class="map-section"
-    id="live-map"
->
-
-    <div class="section-heading">
-
-        <span class="eyebrow">
-            LIVE RESCUE NETWORK
-        </span>
-
-        <h2>
-            See the rescue network in motion.
-        </h2>
-
-        <p>
-            Monitor participating organizations,
-            surplus locations and active rescue routes.
-        </p>
-
-    </div>
+        <section
+            class="map-section"
+            id="live-map"
+        >
 
 
-    <div class="map-shell">
+            <div class="section-heading">
 
-        <div
-            id="rescueMap"
-            class="rescue-map"
-        ></div>
+                <span class="eyebrow">
+                    LIVE RESCUE NETWORK
+                </span>
 
+                <h2>
+                    See the rescue network in motion.
+                </h2>
 
-        <div class="map-overlay">
-
-            <div class="map-status">
-
-                <span class="status-dot"></span>
-
-                NETWORK ONLINE
+                <p>
+                    Monitor participating organizations,
+                    surplus locations and active rescue routes.
+                </p>
 
             </div>
 
 
-            <button
-                id="locateUserButton"
-                class="map-control-button"
-                type="button"
-            >
-                Locate me
-            </button>
+            <div class="map-shell">
 
-        </div>
 
-    </div>
+                <div
+                    id="rescueMap"
+                    class="rescue-map"
+                ></div>
 
-</section>
+
+                <div class="map-overlay">
+
+                    <div class="map-status">
+
+                        <span class="status-dot"></span>
+
+                        NETWORK ONLINE
+
+                    </div>
+
+
+                    <button
+                        id="locateUserButton"
+                        class="map-control-button"
+                        type="button"
+                    >
+                        Locate me
+                    </button>
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
         <!-- ========================================
              RESCUE COMMAND CENTER
         ========================================= -->
@@ -1338,25 +1284,20 @@
 
             <div class="section-heading">
 
-
                 <span class="eyebrow">
                     RESCUE COMMAND CENTER
                 </span>
 
-
                 <h2>
                     Every rescue. Tracked to completion.
                 </h2>
-
 
                 <p>
                     FoodRescue turns each rescue decision into
                     a traceable operational workflow.
                 </p>
 
-
             </div>
-
 
 
             <div class="command-center-grid">
@@ -1394,17 +1335,13 @@
                     </div>
 
 
-
                     <div
                         id="commandCurrentEmpty"
                         class="command-empty"
                     >
-
                         No active rescue operation.
                         Analyze a surplus to create one.
-
                     </div>
-
 
 
                     <div
@@ -1429,7 +1366,6 @@
                                     —
                                 </strong>
 
-
                                 <span
                                     id="commandLocation"
                                 >
@@ -1440,7 +1376,6 @@
 
 
                         </div>
-
 
 
                         <div class="command-facts">
@@ -1509,7 +1444,6 @@
                         </div>
 
 
-
                         <div class="command-timeline">
 
 
@@ -1521,7 +1455,6 @@
                                 <span>
                                     1
                                 </span>
-
 
                                 <div>
 
@@ -1538,9 +1471,7 @@
                             </div>
 
 
-
                             <div class="command-connector"></div>
-
 
 
                             <div
@@ -1551,7 +1482,6 @@
                                 <span>
                                     2
                                 </span>
-
 
                                 <div>
 
@@ -1568,9 +1498,7 @@
                             </div>
 
 
-
                             <div class="command-connector"></div>
-
 
 
                             <div
@@ -1581,7 +1509,6 @@
                                 <span>
                                     3
                                 </span>
-
 
                                 <div>
 
@@ -1605,7 +1532,6 @@
 
 
                 </div>
-
 
 
                 <!-- IMPACT SNAPSHOT -->
@@ -1632,7 +1558,6 @@
                     </div>
 
 
-
                     <div class="performance-grid">
 
 
@@ -1649,7 +1574,6 @@
                         </div>
 
 
-
                         <div class="performance-item">
 
                             <strong id="commandMeals">
@@ -1663,7 +1587,6 @@
                         </div>
 
 
-
                         <div class="performance-item">
 
                             <strong id="commandKg">
@@ -1675,7 +1598,6 @@
                             </span>
 
                         </div>
-
 
 
                         <div class="performance-item">
@@ -1700,15 +1622,20 @@
             </div>
 
 
+            <!-- ========================================
+                 WEATHER INTELLIGENCE
+            ========================================= -->
+
+            <div
+                id="weatherIntelligence"
+                class="weather-intelligence"
+            ></div>
+
 
             <!-- ========================================
                  HISTORY
             ========================================= -->
-            <div
-    id="weatherIntelligence"
-    class="weather-intelligence"
->
-</div>
+
             <div class="history-card">
 
 
@@ -1731,7 +1658,6 @@
                 </div>
 
 
-
                 <div
                     id="rescueHistory"
                     class="rescue-history"
@@ -1749,12 +1675,10 @@
             </div>
 
 
-
         </section>
 
 
     </main>
-
 
 
     <!-- ========================================
@@ -1782,30 +1706,37 @@
     </footer>
 
 
-
     <!-- ========================================
          JAVASCRIPT
     ========================================= -->
 
     <script src="data.js?v=4"></script>
+
     <script src="rescue-engine.js?v=6"></script>
+
     <script src="matching-engine.js?v=4"></script>
+
     <script src="ai-engine.js?v=4"></script>
+
     <script src="prediction-engine.js?v=4"></script>
+
     <script src="impact-engine.js?v=4"></script>
+
     <script src="api-client.js?v=1"></script>
 
+
     <script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-    crossorigin=""
->   </script>
+        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""
+    ></script>
 
-<script src="map-engine.js?v=1"></script>
 
-<script src="weather-engine.js?v=1"></script>
+    <script src="map-engine.js?v=1"></script>
 
-<script src="app.js?v=9"></script>
+    <script src="weather-engine.js?v=1"></script>
+
+    <script src="app.js?v=9"></script>
 
 
 </body>
