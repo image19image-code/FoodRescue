@@ -11,25 +11,81 @@
 
 function getMinutesFromTime(time) {
 
-    if (!time || !time.includes(":")) {
+    if (
+        typeof time !== "string" ||
+        !/^\d{2}:\d{2}$/.test(time)
+    ) {
         return 0;
     }
 
-    const [hours, minutes] =
-        time.split(":").map(Number);
+    const [
+        hours,
+        minutes
+    ] = time
+        .split(":")
+        .map(Number);
 
-    return (hours * 60) + minutes;
+
+    if (
+        !Number.isInteger(hours) ||
+        !Number.isInteger(minutes) ||
+        hours < 0 ||
+        hours > 23 ||
+        minutes < 0 ||
+        minutes > 59
+    ) {
+        return 0;
+    }
+
+
+    return (
+        hours * 60 +
+        minutes
+    );
+}
+
+
+function isValidTime(time) {
+
+    if (
+        typeof time !== "string" ||
+        !/^\d{2}:\d{2}$/.test(time)
+    ) {
+        return false;
+    }
+
+
+    const [
+        hours,
+        minutes
+    ] = time
+        .split(":")
+        .map(Number);
+
+
+    return (
+        Number.isInteger(hours) &&
+        Number.isInteger(minutes) &&
+        hours >= 0 &&
+        hours <= 23 &&
+        minutes >= 0 &&
+        minutes <= 59
+    );
+
 }
 
 
 function getCurrentMinutes() {
 
-    const now = new Date();
+    const now =
+        new Date();
+
 
     return (
         now.getHours() * 60 +
         now.getMinutes()
     );
+
 }
 
 
@@ -42,112 +98,397 @@ function analyzeRescueTime(
     expiryTime
 ) {
 
+    const validAvailability =
+        isValidTime(
+            availableFrom
+        );
+
+
+    const validExpiry =
+        isValidTime(
+            expiryTime
+        );
+
+
+    if (
+        !validAvailability ||
+        !validExpiry
+    ) {
+
+        return {
+
+            currentMinutes:
+                getCurrentMinutes(),
+
+            availableMinutes:
+                validAvailability
+                    ? getMinutesFromTime(
+                        availableFrom
+                    )
+                    : 0,
+
+            expiryMinutes:
+                validExpiry
+                    ? getMinutesFromTime(
+                        expiryTime
+                    )
+                    : 0,
+
+            availableRelative:
+                0,
+
+            expiryRelative:
+                0,
+
+            rescueWindow:
+                0,
+
+            remainingMinutes:
+                0,
+
+            untilAvailable:
+                0,
+
+            notYetAvailable:
+                false,
+
+            expired:
+                false,
+
+            currentlyAvailable:
+                false,
+
+            valid:
+                false
+
+        };
+
+    }
+
+
     const currentMinutes =
         getCurrentMinutes();
 
-    let availableMinutes =
-        getMinutesFromTime(availableFrom);
 
-    let expiryMinutes =
-        getMinutesFromTime(expiryTime);
+    const availableMinutes =
+        getMinutesFromTime(
+            availableFrom
+        );
 
 
-    /*
-       If expiry is earlier than availability,
-       assume expiry is on the next day.
-    */
+    const expiryMinutes =
+        getMinutesFromTime(
+            expiryTime
+        );
 
-    if (expiryMinutes < availableMinutes) {
-        expiryMinutes += 24 * 60;
+
+    let availableOffset = 0;
+    let expiryOffset = 0;
+
+    let notYetAvailable = false;
+    let expired = false;
+    let currentlyAvailable = false;
+
+
+    /* ========================================
+       SAME-DAY WINDOW
+    ======================================== */
+
+    if (
+        expiryMinutes > availableMinutes
+    ) {
+
+        /*
+           Example:
+           Available 10:00
+           Expiry    18:00
+        */
+
+        if (
+            currentMinutes <
+            availableMinutes
+        ) {
+
+            /*
+               Food is not available yet.
+            */
+
+            notYetAvailable =
+                true;
+
+            currentlyAvailable =
+                false;
+
+            expired =
+                false;
+
+
+            availableOffset =
+                availableMinutes -
+                currentMinutes;
+
+
+            expiryOffset =
+                expiryMinutes -
+                currentMinutes;
+
+        }
+
+        else if (
+            currentMinutes <=
+            expiryMinutes
+        ) {
+
+            /*
+               Food is currently available.
+            */
+
+            notYetAvailable =
+                false;
+
+            currentlyAvailable =
+                true;
+
+            expired =
+                false;
+
+
+            availableOffset =
+                0;
+
+
+            expiryOffset =
+                expiryMinutes -
+                currentMinutes;
+
+        }
+
+        else {
+
+            /*
+               Expiry has passed.
+            */
+
+            notYetAvailable =
+                false;
+
+            currentlyAvailable =
+                false;
+
+            expired =
+                true;
+
+
+            availableOffset =
+                0;
+
+            expiryOffset =
+                0;
+
+        }
+
     }
 
 
-    /*
-       If availability has already passed,
-       it belongs to today.
-       Otherwise it is the upcoming occurrence.
-    */
+    /* ========================================
+       MIDNIGHT-CROSSING WINDOW
+    ======================================== */
 
-    let availableRelative =
-        availableMinutes;
+    else {
 
-    if (availableRelative < currentMinutes) {
-        availableRelative += 24 * 60;
+        /*
+           Example:
+           Available 22:00
+           Expiry    02:00
+
+           This means expiry is on the
+           following day.
+        */
+
+
+        if (
+            currentMinutes >=
+            availableMinutes
+        ) {
+
+            /*
+               Example:
+               Current 23:00
+               Available 22:00
+               Expiry 02:00
+
+               Food is currently available.
+            */
+
+            notYetAvailable =
+                false;
+
+            currentlyAvailable =
+                true;
+
+            expired =
+                false;
+
+
+            availableOffset =
+                0;
+
+
+            expiryOffset =
+                (
+                    24 * 60
+                ) -
+                currentMinutes +
+                expiryMinutes;
+
+        }
+
+        else if (
+            currentMinutes <
+            expiryMinutes
+        ) {
+
+            /*
+               Example:
+               Current 01:00
+               Available 22:00
+               Expiry 02:00
+
+               Food is still available
+               after midnight.
+            */
+
+            notYetAvailable =
+                false;
+
+            currentlyAvailable =
+                true;
+
+            expired =
+                false;
+
+
+            availableOffset =
+                0;
+
+
+            expiryOffset =
+                expiryMinutes -
+                currentMinutes;
+
+        }
+
+        else {
+
+            /*
+               Example:
+               Current 12:00
+               Available 22:00
+               Expiry 02:00
+
+               The next rescue window
+               starts later today.
+            */
+
+            notYetAvailable =
+                true;
+
+            currentlyAvailable =
+                false;
+
+            expired =
+                false;
+
+
+            availableOffset =
+                availableMinutes -
+                currentMinutes;
+
+
+            expiryOffset =
+                (
+                    24 * 60 -
+                    currentMinutes
+                ) +
+                expiryMinutes;
+
+        }
+
     }
 
-
-    /*
-       Calculate how much time remains until expiry.
-    */
-
-    let expiryRelative =
-        expiryMinutes;
-
-    if (expiryRelative < currentMinutes) {
-        expiryRelative += 24 * 60;
-    }
-
-
-    /*
-       If availability is still in the future,
-       food is not yet available.
-    */
-
-    const notYetAvailable =
-        availableRelative > currentMinutes &&
-        availableRelative < expiryRelative;
-
-
-    /*
-       Expired check.
-    */
-
-    const expired =
-        expiryRelative <= currentMinutes;
-
-
-    /*
-       Rescue window duration.
-    */
-
-    const rescueWindow =
-        expiryRelative - availableRelative;
-
-
-    /*
-       Time until expiry.
-    */
 
     const remainingMinutes =
+        currentlyAvailable
+            ? Math.max(
+                0,
+                expiryOffset
+            )
+            : 0;
+
+
+    const untilAvailable =
+        notYetAvailable
+            ? Math.max(
+                0,
+                availableOffset
+            )
+            : 0;
+
+
+    const rescueWindow =
         Math.max(
             0,
-            expiryRelative - currentMinutes
+            expiryOffset -
+            availableOffset
         );
 
 
     /*
-       Time until available.
+       Relative minute positions.
+
+       These are based on the current moment
+       so they remain useful even when a window
+       crosses midnight.
     */
 
-    const untilAvailable =
-        Math.max(
-            0,
-            availableRelative - currentMinutes
-        );
+    const availableRelative =
+        currentMinutes +
+        availableOffset;
+
+
+    const expiryRelative =
+        currentMinutes +
+        expiryOffset;
 
 
     return {
+
         currentMinutes,
+
         availableMinutes,
+
         expiryMinutes,
+
         availableRelative,
+
         expiryRelative,
+
         rescueWindow,
+
         remainingMinutes,
+
         untilAvailable,
+
         notYetAvailable,
-        expired
+
+        expired,
+
+        currentlyAvailable,
+
+        valid: true
+
     };
+
 }
 
 
@@ -155,19 +496,52 @@ function analyzeRescueTime(
    BACKWARD COMPATIBILITY
 ========================================= */
 
-function calculateRemainingMinutes(expiryTime) {
+function calculateRemainingMinutes(
+    expiryTime
+) {
+
+    if (
+        !isValidTime(
+            expiryTime
+        )
+    ) {
+        return 0;
+    }
+
 
     const currentMinutes =
         getCurrentMinutes();
 
-    let expiryMinutes =
-        getMinutesFromTime(expiryTime);
 
-    if (expiryMinutes <= currentMinutes) {
-        expiryMinutes += 24 * 60;
+    const expiryMinutes =
+        getMinutesFromTime(
+            expiryTime
+        );
+
+
+    let difference =
+        expiryMinutes -
+        currentMinutes;
+
+
+    /*
+       This compatibility helper has no
+       availableFrom value, so it treats
+       a past time as the next occurrence.
+    */
+
+    if (
+        difference <= 0
+    ) {
+
+        difference +=
+            24 * 60;
+
     }
 
-    return expiryMinutes - currentMinutes;
+
+    return difference;
+
 }
 
 
@@ -188,6 +562,16 @@ function calculatePriority(
             expiryTime
         );
 
+
+    if (
+        !time.valid
+    ) {
+
+        return 0;
+
+    }
+
+
     let score = 0;
 
 
@@ -195,11 +579,13 @@ function calculatePriority(
        NOT YET AVAILABLE
     ======================================== */
 
-    if (time.notYetAvailable) {
+    if (
+        time.notYetAvailable
+    ) {
 
         /*
-           The food is not currently rescuable,
-           so urgency is intentionally reduced.
+           Food is not currently rescuable.
+           Urgency is intentionally reduced.
         */
 
         score += 5;
@@ -211,9 +597,12 @@ function calculatePriority(
        EXPIRED
     ======================================== */
 
-    else if (time.expired) {
+    else if (
+        time.expired
+    ) {
 
-        score = 100;
+        score =
+            100;
 
     }
 
@@ -222,26 +611,55 @@ function calculatePriority(
        CURRENTLY AVAILABLE
     ======================================== */
 
-    else {
+    else if (
+        time.currentlyAvailable
+    ) {
 
-        if (time.remainingMinutes <= 60) {
-            score += 50;
+        if (
+            time.remainingMinutes <=
+            60
+        ) {
+
+            score +=
+                50;
+
         }
 
-        else if (time.remainingMinutes <= 120) {
-            score += 40;
+        else if (
+            time.remainingMinutes <=
+            120
+        ) {
+
+            score +=
+                40;
+
         }
 
-        else if (time.remainingMinutes <= 240) {
-            score += 30;
+        else if (
+            time.remainingMinutes <=
+            240
+        ) {
+
+            score +=
+                30;
+
         }
 
-        else if (time.remainingMinutes <= 480) {
-            score += 20;
+        else if (
+            time.remainingMinutes <=
+            480
+        ) {
+
+            score +=
+                20;
+
         }
 
         else {
-            score += 10;
+
+            score +=
+                10;
+
         }
 
     }
@@ -251,24 +669,57 @@ function calculatePriority(
        QUANTITY
     ======================================== */
 
-    if (quantity >= 100) {
-        score += 30;
+    const safeQuantity =
+        Number(
+            quantity
+        ) || 0;
+
+
+    if (
+        safeQuantity >=
+        100
+    ) {
+
+        score +=
+            30;
+
     }
 
-    else if (quantity >= 50) {
-        score += 25;
+    else if (
+        safeQuantity >=
+        50
+    ) {
+
+        score +=
+            25;
+
     }
 
-    else if (quantity >= 20) {
-        score += 18;
+    else if (
+        safeQuantity >=
+        20
+    ) {
+
+        score +=
+            18;
+
     }
 
-    else if (quantity >= 10) {
-        score += 12;
+    else if (
+        safeQuantity >=
+        10
+    ) {
+
+        score +=
+            12;
+
     }
 
     else {
-        score += 6;
+
+        score +=
+            6;
+
     }
 
 
@@ -280,17 +731,29 @@ function calculatePriority(
         foodType === "prepared" ||
         foodType === "dairy" ||
         foodType === "fruit" ||
+        foodType === "fruits" ||
         foodType === "vegetables"
     ) {
-        score += 15;
+
+        score +=
+            15;
+
     }
 
-    else if (foodType === "bakery") {
-        score += 10;
+    else if (
+        foodType === "bakery"
+    ) {
+
+        score +=
+            10;
+
     }
 
     else {
-        score += 5;
+
+        score +=
+            5;
+
     }
 
 
@@ -299,9 +762,12 @@ function calculatePriority(
     ======================================== */
 
     return Math.min(
-        Math.round(score),
+        Math.round(
+            score
+        ),
         100
     );
+
 }
 
 
@@ -309,21 +775,48 @@ function calculatePriority(
    PRIORITY LEVEL
 ========================================= */
 
-function getPriorityLabel(score) {
+function getPriorityLabel(
+    score
+) {
 
-    if (score >= 80) {
+    const safeScore =
+        Number(
+            score
+        ) || 0;
+
+
+    if (
+        safeScore >=
+        80
+    ) {
+
         return "CRITICAL";
+
     }
 
-    if (score >= 60) {
+
+    if (
+        safeScore >=
+        60
+    ) {
+
         return "HIGH PRIORITY";
+
     }
 
-    if (score >= 40) {
+
+    if (
+        safeScore >=
+        40
+    ) {
+
         return "MEDIUM PRIORITY";
+
     }
+
 
     return "LOW PRIORITY";
+
 }
 
 
@@ -331,21 +824,56 @@ function getPriorityLabel(score) {
    RESCUE RECOMMENDATION
 ========================================= */
 
-function getRecommendation(score) {
+function getRecommendation(
+    score
+) {
 
-    if (score >= 80) {
-        return "Critical rescue. Match this surplus with the nearest suitable organization immediately.";
+    const safeScore =
+        Number(
+            score
+        ) || 0;
+
+
+    if (
+        safeScore >=
+        80
+    ) {
+
+        return (
+            "Critical rescue. Match this surplus with the nearest suitable organization immediately."
+        );
+
     }
 
-    if (score >= 60) {
-        return "High-priority rescue. Start matching with nearby organizations immediately.";
+
+    if (
+        safeScore >=
+        60
+    ) {
+
+        return (
+            "High-priority rescue. Start matching with nearby organizations immediately."
+        );
+
     }
 
-    if (score >= 40) {
-        return "Plan a rescue soon and prioritize nearby organizations.";
+
+    if (
+        safeScore >=
+        40
+    ) {
+
+        return (
+            "Plan a rescue soon and prioritize nearby organizations."
+        );
+
     }
 
-    return "Early-stage surplus. Register it in the network and monitor its availability.";
+
+    return (
+        "Early-stage surplus. Register it in the network and monitor its availability."
+    );
+
 }
 
 
@@ -353,28 +881,68 @@ function getRecommendation(score) {
    TIME DISPLAY
 ========================================= */
 
-function formatRemainingTime(minutes) {
+function formatRemainingTime(
+    minutes
+) {
 
-    if (minutes <= 0) {
+    const safeMinutes =
+        Math.max(
+            0,
+            Number(
+                minutes
+            ) || 0
+        );
+
+
+    if (
+        safeMinutes <=
+        0
+    ) {
+
         return "Expired";
+
     }
+
 
     const hours =
-        Math.floor(minutes / 60);
+        Math.floor(
+            safeMinutes /
+            60
+        );
+
 
     const mins =
-        minutes % 60;
+        safeMinutes %
+        60;
 
 
-    if (hours > 0 && mins > 0) {
-        return `${hours}h ${mins}m`;
+    if (
+        hours > 0 &&
+        mins > 0
+    ) {
+
+        return (
+            `${hours}h ${mins}m`
+        );
+
     }
 
-    if (hours > 0) {
-        return `${hours}h`;
+
+    if (
+        hours > 0
+    ) {
+
+        return (
+            `${hours}h`
+        );
+
     }
 
-    return `${mins}m`;
+
+    return (
+        `${mins}m`
+    );
+
 }
 
 
@@ -394,28 +962,82 @@ function getTimeStatus(
         );
 
 
-    if (time.expired) {
+    if (
+        !time.valid
+    ) {
 
         return {
-            status: "EXPIRED",
-            minutes: 0
+
+            status:
+                "INVALID",
+
+            minutes:
+                0
+
         };
 
     }
 
 
-    if (time.notYetAvailable) {
+    if (
+        time.expired
+    ) {
 
         return {
-            status: "AVAILABLE IN",
-            minutes: time.untilAvailable
+
+            status:
+                "EXPIRED",
+
+            minutes:
+                0
+
+        };
+
+    }
+
+
+    if (
+        time.notYetAvailable
+    ) {
+
+        return {
+
+            status:
+                "AVAILABLE IN",
+
+            minutes:
+                time.untilAvailable
+
         };
 
     }
 
 
     return {
-        status: "TIME REMAINING",
-        minutes: time.remainingMinutes
+
+        status:
+            "TIME REMAINING",
+
+        minutes:
+            time.remainingMinutes
+
     };
+
+}
+
+
+/* =========================================
+   OPTIONAL DEBUG HELPER
+========================================= */
+
+function getRescueEngineDebug(
+    availableFrom,
+    expiryTime
+) {
+
+    return analyzeRescueTime(
+        availableFrom,
+        expiryTime
+    );
+
 }
