@@ -1959,7 +1959,9 @@ document.addEventListener("DOMContentLoaded", () => {
                                 weather.precipitation,
 
                             precipitationProbability:
-                                0,
+                                Number(
+                                    weather.precipitationProbability
+                                ) || 0,
 
                             wind:
                                 weather.wind
