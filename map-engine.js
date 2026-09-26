@@ -4,6 +4,217 @@
    FOODRESCUE — LIVE RESCUE MAP
 ========================================= */
 
+
+/* =========================================
+   HELPERS
+========================================= */
+
+function mapEscapeHTML(
+    value
+) {
+
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+}
+
+
+function mapNormalizeText(
+    value
+) {
+
+    return String(value ?? "")
+        .trim()
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(
+            /[\u0300-\u036f]/g,
+            ""
+        )
+        .replace(
+            /[’']/g,
+            ""
+        );
+
+}
+
+
+function mapGetLanguage() {
+
+    const language =
+        document.documentElement.lang;
+
+
+    return (
+        language === "ar" ||
+        language === "fr" ||
+        language === "zh" ||
+        language === "de"
+    )
+        ? language
+        : "en";
+
+}
+
+
+function mapText(
+    key
+) {
+
+    const language =
+        mapGetLanguage();
+
+
+    const labels = {
+
+        en: {
+
+            rescueDestination:
+                "Rescue destination",
+
+            surplusSource:
+                "Surplus source",
+
+            yourLocation:
+                "Your location",
+
+            sessionOnly:
+                "Used only for this map session.",
+
+            capacity:
+                "Capacity",
+
+            distance:
+                "Approx. network distance",
+
+            networkLocation:
+                "Network location"
+
+        },
+
+
+        ar: {
+
+            rescueDestination:
+                "وجهة الإنقاذ",
+
+            surplusSource:
+                "مصدر فائض الطعام",
+
+            yourLocation:
+                "موقعك",
+
+            sessionOnly:
+                "يُستخدم فقط خلال جلسة الخريطة هذه.",
+
+            capacity:
+                "السعة",
+
+            distance:
+                "المسافة التقريبية عبر الشبكة",
+
+            networkLocation:
+                "موقع الشبكة"
+
+        },
+
+
+        fr: {
+
+            rescueDestination:
+                "Destination du sauvetage",
+
+            surplusSource:
+                "Source du surplus",
+
+            yourLocation:
+                "Votre position",
+
+            sessionOnly:
+                "Utilisé uniquement pendant cette session cartographique.",
+
+            capacity:
+                "Capacité",
+
+            distance:
+                "Distance approximative du réseau",
+
+            networkLocation:
+                "Emplacement du réseau"
+
+        },
+
+
+        zh: {
+
+            rescueDestination:
+                "救援目的地",
+
+            surplusSource:
+                "剩余食物来源",
+
+            yourLocation:
+                "您的位置",
+
+            sessionOnly:
+                "仅用于本次地图会话。",
+
+            capacity:
+                "容量",
+
+            distance:
+                "网络近似距离",
+
+            networkLocation:
+                "网络位置"
+
+        },
+
+
+        de: {
+
+            rescueDestination:
+                "Rettungsziel",
+
+            surplusSource:
+                "Überschussquelle",
+
+            yourLocation:
+                "Ihr Standort",
+
+            sessionOnly:
+                "Wird nur für diese Kartensitzung verwendet.",
+
+            capacity:
+                "Kapazität",
+
+            distance:
+                "Ungefähre Netzwerkentfernung",
+
+            networkLocation:
+                "Netzwerkstandort"
+
+        }
+
+    };
+
+
+    return (
+        labels[language] ||
+        labels.en
+    )[key] || key;
+
+}
+
+
+/* =========================================
+   FOODRESCUE MAP
+========================================= */
+
 const FoodRescueMap = {
 
     map: null,
@@ -23,19 +234,82 @@ const FoodRescueMap = {
 
     cities: {
 
-        "relizane": [35.737, 0.555],
+        relizane: [35.737, 0.555],
 
-        "oran": [35.697, -0.633],
+        oran: [35.697, -0.633],
 
-        "tlemcen": [34.882, -1.316],
+        tlemcen: [34.882, -1.316],
 
-        "mostaganem": [35.931, 0.089],
+        mostaganem: [35.931, 0.089],
 
-        "algiers": [36.753, 3.058],
+        algiers: [36.753, 3.058],
 
-        "saida": [34.830, 0.151],
+        saida: [34.830, 0.151],
 
-        "ouargla": [31.949, 5.325]
+        ouargla: [31.949, 5.325]
+
+    },
+
+
+    /* =====================================
+       CITY ALIASES
+    ===================================== */
+
+    cityAliases: {
+
+        "relizane":
+            "relizane",
+
+        "reli zane":
+            "relizane",
+
+        "relizane, algeria":
+            "relizane",
+
+        "oran":
+            "oran",
+
+        "oran, algeria":
+            "oran",
+
+        "tlemcen":
+            "tlemcen",
+
+        "tlemcen, algeria":
+            "tlemcen",
+
+        "mostaganem":
+            "mostaganem",
+
+        "mostaganem, algeria":
+            "mostaganem",
+
+        "algiers":
+            "algiers",
+
+        "alger":
+            "algiers",
+
+        "alger, algeria":
+            "algiers",
+
+        "algiers, algeria":
+            "algiers",
+
+        "saida":
+            "saida",
+
+        "saida, algeria":
+            "saida",
+
+        "sai da":
+            "saida",
+
+        "ouargla":
+            "ouargla",
+
+        "ouargla, algeria":
+            "ouargla"
 
     },
 
@@ -47,10 +321,23 @@ const FoodRescueMap = {
     init() {
 
         if (
-            this.initialized ||
-            typeof L === "undefined"
+            this.initialized
         ) {
             return;
+        }
+
+
+        if (
+            typeof L ===
+            "undefined"
+        ) {
+
+            console.warn(
+                "Leaflet is unavailable."
+            );
+
+            return;
+
         }
 
 
@@ -61,7 +348,13 @@ const FoodRescueMap = {
 
 
         if (!mapElement) {
+
+            console.warn(
+                "Rescue map element not found."
+            );
+
             return;
+
         }
 
 
@@ -69,11 +362,20 @@ const FoodRescueMap = {
             L.map(
                 mapElement,
                 {
-                    zoomControl: true
+
+                    zoomControl:
+                        true,
+
+                    attributionControl:
+                        true
+
                 }
             )
             .setView(
-                [35.7, -0.6],
+                [
+                    35.7,
+                    -0.6
+                ],
                 6
             );
 
@@ -81,10 +383,16 @@ const FoodRescueMap = {
         L.tileLayer(
             "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
             {
-                maxZoom: 19,
+
+                maxZoom:
+                    19,
+
+                minZoom:
+                    3,
 
                 attribution:
-                    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors'
+
             }
         )
         .addTo(
@@ -106,10 +414,92 @@ const FoodRescueMap = {
                 );
 
 
-        this.initialized = true;
+        this.initialized =
+            true;
 
 
         this.renderOrganizations();
+
+
+        /*
+           Leaflet sometimes calculates dimensions
+           before a responsive container has settled.
+        */
+
+        requestAnimationFrame(
+            () => {
+
+                this.invalidateSize();
+
+            }
+        );
+
+
+        window.addEventListener(
+            "resize",
+            () => {
+
+                this.invalidateSize();
+
+            },
+            {
+                passive: true
+            }
+        );
+
+    },
+
+
+    /* =====================================
+       MAP SIZE
+    ===================================== */
+
+    invalidateSize() {
+
+        if (
+            !this.map
+        ) {
+            return;
+        }
+
+
+        setTimeout(
+            () => {
+
+                try {
+
+                    this.map.invalidateSize(
+                        true
+                    );
+
+                }
+                catch (error) {
+
+                    console.warn(
+                        "Map resize error:",
+                        error
+                    );
+
+                }
+
+            },
+            80
+        );
+
+    },
+
+
+    /* =====================================
+       ORGANIZATION DATA
+    ===================================== */
+
+    getOrganizations() {
+
+        return Array.isArray(
+            window.RESCUE_ORGANIZATIONS
+        )
+            ? window.RESCUE_ORGANIZATIONS
+            : [];
 
     },
 
@@ -122,82 +512,139 @@ const FoodRescueMap = {
 
         if (
             !this.map ||
-            !Array.isArray(
-                RESCUE_ORGANIZATIONS
-            )
+            !this.organizationLayer
         ) {
             return;
         }
 
 
-        this.organizationLayer.clearLayers();
+        this.organizationLayer
+            .clearLayers();
 
 
-        RESCUE_ORGANIZATIONS
-            .forEach(
-                organization => {
-
-                    const city =
-                        String(
-                            organization.city || ""
-                        )
-                        .toLowerCase()
-                        .trim();
+        const organizations =
+            this.getOrganizations();
 
 
-                    const coordinates =
-                        this.cities[city];
+        organizations.forEach(
+            organization => {
 
+                if (
+                    !organization ||
+                    typeof organization !==
+                    "object"
+                ) {
 
-                    if (!coordinates) {
-                        return;
-                    }
-
-
-                    const marker =
-                        L.circleMarker(
-                            coordinates,
-                            {
-                                radius: 9,
-
-                                weight: 2,
-
-                                fillOpacity: 0.85,
-
-                                color: "#4ade80",
-
-                                fillColor: "#0b2517"
-                            }
-                        );
-
-
-                    marker.bindPopup(`
-                        <div class="map-popup">
-
-                            <strong>
-                                ${organization.name}
-                            </strong>
-
-                            <span>
-                                ${organization.distance} km
-                                demo distance
-                            </span>
-
-                            <span>
-                                Capacity:
-                                ${organization.capacity}
-                            </span>
-
-                        </div>
-                    `);
-
-
-                    marker.addTo(
-                        this.organizationLayer
-                    );
+                    return;
 
                 }
-            );
+
+
+                const cityKey =
+                    this.resolveCityKey(
+                        organization.city
+                    );
+
+
+                const coordinates =
+                    cityKey
+                        ? this.cities[
+                            cityKey
+                        ]
+                        : null;
+
+
+                if (
+                    !coordinates
+                ) {
+
+                    return;
+
+                }
+
+
+                const marker =
+                    L.circleMarker(
+                        coordinates,
+                        {
+
+                            radius:
+                                9,
+
+                            weight:
+                                2,
+
+                            fillOpacity:
+                                0.85,
+
+                            color:
+                                "#4ade80",
+
+                            fillColor:
+                                "#0b2517"
+
+                        }
+                    );
+
+
+                const name =
+                    mapEscapeHTML(
+                        organization.name ||
+                        "Rescue organization"
+                    );
+
+
+                const distance =
+                    mapEscapeHTML(
+                        organization.distance ??
+                        "—"
+                    );
+
+
+                const capacity =
+                    mapEscapeHTML(
+                        organization.capacity ??
+                        "—"
+                    );
+
+
+                marker.bindPopup(`
+
+                    <div class="map-popup">
+
+                        <strong>
+                            ${name}
+                        </strong>
+
+                        <span>
+                            ${mapText("distance")}:
+                            ${distance} km
+                        </span>
+
+                        <span>
+                            ${mapText("capacity")}:
+                            ${capacity}
+                        </span>
+
+                        <span>
+                            ${mapText("networkLocation")}:
+                            ${mapEscapeHTML(
+                                organization.city ||
+                                "—"
+                            )}
+                        </span>
+
+                    </div>
+
+                `);
+
+
+                marker.addTo(
+                    this.organizationLayer
+                );
+
+            }
+        );
 
     },
 
@@ -206,31 +653,46 @@ const FoodRescueMap = {
        CITY LOOKUP
     ===================================== */
 
-    getCityCoordinates(
+    resolveCityKey(
         location
     ) {
 
-        if (!location) {
+        const normalized =
+            mapNormalizeText(
+                location
+            );
+
+
+        if (
+            !normalized
+        ) {
+
             return null;
+
         }
 
 
-        const normalized =
-            String(
-                location
-            )
-            .toLowerCase()
-            .trim();
+        if (
+            this.cityAliases[
+                normalized
+            ]
+        ) {
 
-
-        const exact =
-            this.cities[
+            return this.cityAliases[
                 normalized
             ];
 
+        }
 
-        if (exact) {
-            return exact;
+
+        if (
+            this.cities[
+                normalized
+            ]
+        ) {
+
+            return normalized;
+
         }
 
 
@@ -239,9 +701,40 @@ const FoodRescueMap = {
                 this.cities
             )
             .find(
-                city =>
-                    normalized.includes(city) ||
-                    city.includes(normalized)
+                city => {
+
+                    const cityNormalized =
+                        mapNormalizeText(
+                            city
+                        );
+
+
+                    return (
+                        normalized.includes(
+                            cityNormalized
+                        ) ||
+                        cityNormalized.includes(
+                            normalized
+                        )
+                    );
+
+                }
+            );
+
+
+        return key ||
+            null;
+
+    },
+
+
+    getCityCoordinates(
+        location
+    ) {
+
+        const key =
+            this.resolveCityKey(
+                location
             );
 
 
@@ -259,21 +752,59 @@ const FoodRescueMap = {
     locateUser() {
 
         if (
-            !this.map ||
+            !this.map
+        ) {
+
+            return;
+
+        }
+
+
+        if (
             !navigator.geolocation
         ) {
+
+            this.showLocationError(
+                "Geolocation is not supported by this browser."
+            );
+
             return;
+
         }
 
 
         navigator.geolocation.getCurrentPosition(
+
             position => {
 
-                const lat =
-                    position.coords.latitude;
+                const latitude =
+                    Number(
+                        position.coords.latitude
+                    );
 
-                const lng =
-                    position.coords.longitude;
+
+                const longitude =
+                    Number(
+                        position.coords.longitude
+                    );
+
+
+                if (
+                    !Number.isFinite(
+                        latitude
+                    ) ||
+                    !Number.isFinite(
+                        longitude
+                    )
+                ) {
+
+                    this.showLocationError(
+                        "Invalid location data received."
+                    );
+
+                    return;
+
+                }
 
 
                 if (
@@ -285,44 +816,153 @@ const FoodRescueMap = {
                 }
 
 
+                const labels = {
+
+                    title:
+                        mapText(
+                            "yourLocation"
+                        ),
+
+                    description:
+                        mapText(
+                            "sessionOnly"
+                        )
+
+                };
+
+
                 this.userMarker =
                     L.marker(
-                        [lat, lng]
+                        [
+                            latitude,
+                            longitude
+                        ]
                     )
                     .addTo(
                         this.map
-                    )
-                    .bindPopup(
-                        "<strong>Your location</strong><br>Used only for this map session."
                     );
+
+
+                this.userMarker.bindPopup(`
+
+                    <strong>
+                        ${mapEscapeHTML(
+                            labels.title
+                        )}
+                    </strong>
+
+                    <br>
+
+                    <span>
+                        ${mapEscapeHTML(
+                            labels.description
+                        )}
+                    </span>
+
+                `);
 
 
                 this.userMarker.openPopup();
 
 
                 this.map.setView(
-                    [lat, lng],
-                    10
+                    [
+                        latitude,
+                        longitude
+                    ],
+                    10,
+                    {
+                        animate:
+                            true
+                    }
                 );
 
             },
 
-            () => {
 
-                /* User denied location.
-                   Keep default Algeria view. */
+            error => {
+
+                let message =
+                    "Location unavailable.";
+
+
+                if (
+                    error?.code ===
+                    1
+                ) {
+
+                    message =
+                        "Location permission was denied.";
+
+                }
+                else if (
+                    error?.code ===
+                    2
+                ) {
+
+                    message =
+                        "Your location could not be determined.";
+
+                }
+                else if (
+                    error?.code ===
+                    3
+                ) {
+
+                    message =
+                        "Location request timed out.";
+
+                }
+
+
+                console.warn(
+                    "Geolocation error:",
+                    error
+                );
+
+
+                this.showLocationError(
+                    message
+                );
 
             },
 
+
             {
-                enableHighAccuracy: true,
 
-                timeout: 8000,
+                enableHighAccuracy:
+                    true,
 
-                maximumAge: 300000
+                timeout:
+                    8000,
+
+                maximumAge:
+                    300000
 
             }
+
         );
+
+    },
+
+
+    /* =====================================
+       LOCATION ERROR
+    ===================================== */
+
+    showLocationError(
+        message
+    ) {
+
+        console.warn(
+            "FoodRescue location:",
+            message
+        );
+
+        /*
+           Do not interrupt the user with
+           alert(). Keep the default map.
+        */
 
     },
 
@@ -340,22 +980,24 @@ const FoodRescueMap = {
             !this.map ||
             !organization
         ) {
+
             return;
+
         }
 
 
         const targetCity =
-            String(
-                organization.city || ""
-            )
-            .toLowerCase()
-            .trim();
+            this.resolveCityKey(
+                organization.city
+            );
 
 
         const target =
-            this.cities[
-                targetCity
-            ];
+            targetCity
+                ? this.cities[
+                    targetCity
+                ]
+                : null;
 
 
         const source =
@@ -364,40 +1006,80 @@ const FoodRescueMap = {
             );
 
 
-        if (!target) {
+        if (
+            !target
+        ) {
+
+            console.warn(
+                "Rescue destination city not found:",
+                organization.city
+            );
+
             return;
+
+        }
+
+
+        if (
+            !this.routeLayer
+        ) {
+
+            return;
+
         }
 
 
         this.routeLayer.clearLayers();
 
 
+        const organizationName =
+            mapEscapeHTML(
+                organization.name ||
+                "Rescue organization"
+            );
+
+
+        /* =================================
+           DESTINATION
+        ================================= */
+
         const targetMarker =
             L.circleMarker(
                 target,
                 {
-                    radius: 11,
 
-                    weight: 3,
+                    radius:
+                        11,
 
-                    color: "#facc15",
+                    weight:
+                        3,
 
-                    fillColor: "#4ade80",
+                    color:
+                        "#facc15",
 
-                    fillOpacity: 0.95
+                    fillColor:
+                        "#4ade80",
+
+                    fillOpacity:
+                        0.95
+
                 }
             );
 
 
-        targetMarker
-            .bindPopup(`
-                <strong>
-                    Rescue destination
-                </strong>
-                <br>
-                ${organization.name}
-            `)
-            .openPopup();
+        targetMarker.bindPopup(`
+
+            <strong>
+                ${mapText(
+                    "rescueDestination"
+                )}
+            </strong>
+
+            <br>
+
+            ${organizationName}
+
+        `);
 
 
         targetMarker.addTo(
@@ -405,35 +1087,64 @@ const FoodRescueMap = {
         );
 
 
-        if (source) {
+        /* =================================
+           SOURCE
+        ================================= */
+
+        if (
+            source
+        ) {
 
             const sourceMarker =
                 L.circleMarker(
                     source,
                     {
-                        radius: 8,
 
-                        weight: 2,
+                        radius:
+                            8,
 
-                        color: "#ffffff",
+                        weight:
+                            2,
 
-                        fillColor: "#4ade80",
+                        color:
+                            "#ffffff",
 
-                        fillOpacity: 0.9
+                        fillColor:
+                            "#4ade80",
+
+                        fillOpacity:
+                            0.9
+
                     }
                 );
 
 
-            sourceMarker
-                .bindPopup(
-                    "<strong>Surplus source</strong>"
-                );
+            sourceMarker.bindPopup(`
+
+                <strong>
+                    ${mapText(
+                        "surplusSource"
+                    )}
+                </strong>
+
+                <br>
+
+                ${mapEscapeHTML(
+                    surplusLocation ||
+                    "—"
+                )}
+
+            `);
 
 
             sourceMarker.addTo(
                 this.routeLayer
             );
 
+
+            /* =================================
+               ROUTE
+            ================================= */
 
             const line =
                 L.polyline(
@@ -442,14 +1153,19 @@ const FoodRescueMap = {
                         target
                     ],
                     {
-                        weight: 4,
+
+                        weight:
+                            4,
 
                         dashArray:
                             "10 8",
 
-                        color: "#4ade80",
+                        color:
+                            "#4ade80",
 
-                        opacity: 0.8
+                        opacity:
+                            0.8
+
                     }
                 );
 
@@ -465,23 +1181,35 @@ const FoodRescueMap = {
                     target
                 ],
                 {
+
                     padding:
-                        [40, 40]
+                        [
+                            40,
+                            40
+                        ],
+
+                    maxZoom:
+                        11
+
+                }
+            );
+
+        }
+        else {
+
+            this.map.setView(
+                target,
+                9,
+                {
+                    animate:
+                        true
                 }
             );
 
         }
 
-        else {
-
-            this.map.setView(
-                target,
-                9
-            );
-
-        }
-
     }
+
 
 };
 
@@ -498,3 +1226,11 @@ document.addEventListener(
 
     }
 );
+
+
+/* =========================================
+   GLOBAL ACCESS
+========================================= */
+
+window.FoodRescueMap =
+    FoodRescueMap;
