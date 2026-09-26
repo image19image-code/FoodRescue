@@ -1,1288 +1,1329 @@
 "use strict";
 
-/* ========================================
-   FOODRESCUE — PLATFORM CORE
-======================================== */
+/* =========================================================
+   FOODRESCUE — FINAL PLATFORM CORE
+========================================================= */
 
+document.addEventListener("DOMContentLoaded", () => {
 
-/* ========================================
-   DOM
-======================================== */
+    /* =====================================================
+       DOM
+    ===================================================== */
 
-const rescueFoodButton =
-    document.getElementById("rescueFoodButton");
+    const $ = (id) => document.getElementById(id);
 
-const surplusForm =
-    document.getElementById("surplusForm");
+    const rescueFoodButton = $("rescueFoodButton");
+    const exploreButton = $("exploreButton");
+    const joinNetworkButton = $("joinNetworkButton");
 
-const analyzeSurplusButton =
-    document.getElementById("analyzeSurplusButton");
+    const surplusForm = $("surplusForm");
+    const analyzeSurplusButton = $("analyzeSurplusButton");
 
-const analysisResult =
-    document.getElementById("analysisResult");
+    const analysisResult = $("analysisResult");
+    const resultEmpty = document.querySelector(".result-empty");
+    const resultContent = $("resultContent");
 
-const resultEmpty =
-    document.querySelector(".result-empty");
+    const priorityScore = $("priorityScore");
+    const priorityLevel = $("priorityLevel");
+    const resultFood = $("resultFood");
+    const resultQuantity = $("resultQuantity");
+    const resultTime = $("resultTime");
+    const resultLocation = $("resultLocation");
+    const recommendationText = $("recommendationText");
 
-const resultContent =
-    document.getElementById("resultContent");
+    const matchingResults = $("matchingResults");
+    const rescueOperation = $("rescueOperation");
+    const selectedOrganization = $("selectedOrganization");
+    const startRescueButton = $("startRescueButton");
 
-const priorityScore =
-    document.getElementById("priorityScore");
+    const locateUserButton = $("locateUserButton");
 
-const priorityLevel =
-    document.getElementById("priorityLevel");
+    const commandCurrentEmpty = $("commandCurrentEmpty");
+    const commandCurrentDetails = $("commandCurrentDetails");
+    const currentOperationStatus = $("currentOperationStatus");
 
-const resultFood =
-    document.getElementById("resultFood");
+    const commandOrganization = $("commandOrganization");
+    const commandLocation = $("commandLocation");
+    const commandFood = $("commandFood");
+    const commandQuantity = $("commandQuantity");
+    const commandMatch = $("commandMatch");
+    const commandId = $("commandId");
 
-const resultQuantity =
-    document.getElementById("resultQuantity");
+    const commandStepMatched = $("commandStepMatched");
+    const commandStepCollection = $("commandStepCollection");
+    const commandStepRescued = $("commandStepRescued");
 
-const resultTime =
-    document.getElementById("resultTime");
+    const commandRescues = $("commandRescues");
+    const commandMeals = $("commandMeals");
+    const commandKg = $("commandKg");
+    const commandCo2 = $("commandCo2");
 
-const resultLocation =
-    document.getElementById("resultLocation");
+    const rescueHistory = $("rescueHistory");
 
-const recommendationText =
-    document.getElementById("recommendationText");
+    const heroRescues = $("heroRescues");
+    const heroKgSaved = $("heroKgSaved");
+    const heroOrganizations = $("heroOrganizations");
 
-const matchingResults =
-    document.getElementById("matchingResults");
+    const impactMeals = $("impactMeals");
+    const impactKg = $("impactKg");
+    const impactCo2 = $("impactCo2");
+    const impactActive = $("impactActive");
 
-const rescueOperation =
-    document.getElementById("rescueOperation");
 
-const selectedOrganization =
-    document.getElementById("selectedOrganization");
+    /* =====================================================
+       BASIC SAFETY
+    ===================================================== */
 
-const startRescueButton =
-    document.getElementById("startRescueButton");
+    function escapeHTML(value) {
 
-const exploreButton =
-    document.getElementById("exploreButton");
+        return String(value ?? "")
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
 
-const joinNetworkButton =
-    document.getElementById("joinNetworkButton");
+    }
 
 
-/* ========================================
-   COMMAND CENTER
-======================================== */
+    function safeText(element, value) {
 
-const commandCurrentEmpty =
-    document.getElementById("commandCurrentEmpty");
+        if (element) {
+            element.textContent =
+                String(value ?? "");
+        }
 
-const commandCurrentDetails =
-    document.getElementById("commandCurrentDetails");
+    }
 
-const currentOperationStatus =
-    document.getElementById("currentOperationStatus");
 
-const commandOrganization =
-    document.getElementById("commandOrganization");
+    function formatDate(value) {
 
-const commandLocation =
-    document.getElementById("commandLocation");
+        if (!value) {
+            return "—";
+        }
 
-const commandFood =
-    document.getElementById("commandFood");
+        const date =
+            new Date(value);
 
-const commandQuantity =
-    document.getElementById("commandQuantity");
+        if (
+            Number.isNaN(
+                date.getTime()
+            )
+        ) {
+            return "—";
+        }
 
-const commandMatch =
-    document.getElementById("commandMatch");
+        return date.toLocaleString(
+            undefined,
+            {
+                dateStyle: "medium",
+                timeStyle: "short"
+            }
+        );
 
-const commandId =
-    document.getElementById("commandId");
+    }
 
-const commandStepMatched =
-    document.getElementById("commandStepMatched");
 
-const commandStepCollection =
-    document.getElementById("commandStepCollection");
+    function generateOperationId() {
 
-const commandStepRescued =
-    document.getElementById("commandStepRescued");
+        const timestamp =
+            Date.now().toString(36).toUpperCase();
 
-const commandRescues =
-    document.getElementById("commandRescues");
+        const random =
+            Math.random()
+                .toString(36)
+                .slice(2, 7)
+                .toUpperCase();
 
-const commandMeals =
-    document.getElementById("commandMeals");
+        return `FR-${timestamp}-${random}`;
 
-const commandKg =
-    document.getElementById("commandKg");
+    }
 
-const commandCo2 =
-    document.getElementById("commandCo2");
 
-const rescueHistory =
-    document.getElementById("rescueHistory");
+    /* =====================================================
+       STATE
+    ===================================================== */
 
-const heroRescues =
-    document.getElementById("heroRescues");
+    const STORAGE_KEY =
+        "foodrescue_platform_final_v3";
 
-const heroKgSaved =
-    document.getElementById("heroKgSaved");
+    const DEFAULT_STATE = {
+        metrics: {
+            rescuesStarted: 0,
+            mealsRescued: 128,
+            kgSaved: 42.8,
+            co2Avoided: 18.4,
+            activeOperations: 24,
+            organizations:
+                Array.isArray(
+                    window.RESCUE_ORGANIZATIONS
+                )
+                    ? window.RESCUE_ORGANIZATIONS.length
+                    : 0
+        },
 
-const heroOrganizations =
-    document.getElementById("heroOrganizations");
+        currentOperation: null,
+        history: []
+    };
 
-const impactMeals =
-    document.getElementById("impactMeals");
 
-const impactKg =
-    document.getElementById("impactKg");
+    function cloneDefaultState() {
 
-const impactCo2 =
-    document.getElementById("impactCo2");
+        return JSON.parse(
+            JSON.stringify(
+                DEFAULT_STATE
+            )
+        );
 
-const impactActive =
-    document.getElementById("impactActive");
+    }
 
 
-/* ========================================
-   STATE
-======================================== */
+    function loadState() {
 
-const STORAGE_KEY =
-    "foodrescue_platform_v2";
+        try {
 
+            const saved =
+                localStorage.getItem(
+                    STORAGE_KEY
+                );
 
-const DEFAULT_STATE = {
+            if (!saved) {
+                return cloneDefaultState();
+            }
 
-    metrics: {
+            const parsed =
+                JSON.parse(saved);
 
-        rescuesStarted: 0,
+            return {
+                ...cloneDefaultState(),
+                ...parsed,
 
-        mealsRescued: 128,
+                metrics: {
+                    ...DEFAULT_STATE.metrics,
+                    ...(parsed.metrics || {})
+                },
 
-        kgSaved: 42.8,
+                history:
+                    Array.isArray(parsed.history)
+                        ? parsed.history
+                        : []
+            };
 
-        co2Avoided: 18.4,
+        }
+        catch (error) {
 
-        activeOperations: 24,
-
-        organizations:
-            Array.isArray(RESCUE_ORGANIZATIONS)
-                ? RESCUE_ORGANIZATIONS.length
-                : 0
-
-    },
-
-    currentOperation: null,
-
-    history: []
-
-};
-
-
-function createDefaultState() {
-
-    return JSON.parse(
-        JSON.stringify(
-            DEFAULT_STATE
-        )
-    );
-
-}
-
-
-function loadState() {
-
-    try {
-
-        const saved =
-            localStorage.getItem(
-                STORAGE_KEY
+            console.warn(
+                "FoodRescue state reset:",
+                error
             );
 
+            return cloneDefaultState();
 
-        if (!saved) {
+        }
 
-            return createDefaultState();
+    }
+
+
+    let state =
+        loadState();
+
+
+    function saveState() {
+
+        try {
+
+            localStorage.setItem(
+                STORAGE_KEY,
+                JSON.stringify(state)
+            );
+
+        }
+        catch (error) {
+
+            console.warn(
+                "FoodRescue state save failed:",
+                error
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       NAVIGATION
+    ===================================================== */
+
+    rescueFoodButton?.addEventListener(
+        "click",
+        () => {
+
+            $("rescue")
+                ?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+
+        }
+    );
+
+
+    exploreButton?.addEventListener(
+        "click",
+        () => {
+
+            $("network")
+                ?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+
+        }
+    );
+
+
+    joinNetworkButton?.addEventListener(
+        "click",
+        () => {
+
+            $("rescue")
+                ?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+
+        }
+    );
+
+
+    /* =====================================================
+       ADVANCED INTELLIGENCE PANEL
+    ===================================================== */
+
+    function createAdvancedPanels() {
+
+        const commandSection =
+            $("command-center");
+
+        if (!commandSection) {
+            return;
+        }
+
+        if (
+            $("advancedIntelligencePanel")
+        ) {
+            return;
+        }
+
+        const panel =
+            document.createElement("div");
+
+        panel.id =
+            "advancedIntelligencePanel";
+
+        panel.className =
+            "advanced-intelligence";
+
+        panel.innerHTML = `
+            <div class="advanced-header">
+                <div>
+                    <span class="command-label">
+                        RESCUE INTELLIGENCE
+                    </span>
+
+                    <h3>
+                        AI decision layer
+                    </h3>
+                </div>
+
+                <span
+                    id="aiConfidenceBadge"
+                    class="ai-confidence"
+                >
+                    READY
+                </span>
+            </div>
+
+            <div class="advanced-grid">
+
+                <div class="advanced-card">
+                    <span class="advanced-card-label">
+                        AI ASSESSMENT
+                    </span>
+
+                    <h4 id="aiSummary">
+                        Waiting for surplus analysis
+                    </h4>
+
+                    <p id="aiAction">
+                        Submit a surplus to activate rescue intelligence.
+                    </p>
+                </div>
+
+                <div class="advanced-card">
+                    <span class="advanced-card-label">
+                        DETECTED SIGNALS
+                    </span>
+
+                    <div
+                        id="aiSignals"
+                        class="signal-list"
+                    >
+                        <span class="signal-empty">
+                            No signals detected yet.
+                        </span>
+                    </div>
+                </div>
+
+                <div class="advanced-card">
+                    <span class="advanced-card-label">
+                        NEXT SURPLUS FORECAST
+                    </span>
+
+                    <div
+                        id="predictionValue"
+                        class="forecast-value"
+                    >
+                        —
+                    </div>
+
+                    <span
+                        id="predictionTrend"
+                        class="forecast-trend"
+                    >
+                        Collecting operational data
+                    </span>
+
+                    <p id="predictionRecommendation">
+                        More rescue history is required for forecasting.
+                    </p>
+                </div>
+
+                <div class="advanced-card impact-engine-card">
+                    <span class="advanced-card-label">
+                        RESCUE IMPACT
+                    </span>
+
+                    <div
+                        id="operationImpact"
+                        class="operation-impact-grid"
+                    >
+                        <div>
+                            <strong>—</strong>
+                            <span>kg saved</span>
+                        </div>
+
+                        <div>
+                            <strong>—</strong>
+                            <span>CO₂ avoided</span>
+                        </div>
+
+                        <div>
+                            <strong>—</strong>
+                            <span>meals</span>
+                        </div>
+
+                        <div>
+                            <strong>—</strong>
+                            <span>water</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        `;
+
+        const historyCard =
+            commandSection.querySelector(
+                ".history-card"
+            );
+
+        if (historyCard) {
+
+            historyCard.parentNode.insertBefore(
+                panel,
+                historyCard
+            );
+
+        }
+        else {
+
+            commandSection.appendChild(
+                panel
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       METRICS
+    ===================================================== */
+
+    function updateMetrics() {
+
+        if (heroRescues) {
+            heroRescues.textContent =
+                state.metrics.rescuesStarted;
+        }
+
+        if (heroKgSaved) {
+            heroKgSaved.textContent =
+                Number(
+                    state.metrics.kgSaved
+                ).toFixed(1);
+        }
+
+        if (heroOrganizations) {
+            heroOrganizations.textContent =
+                state.metrics.organizations;
+        }
+
+        if (impactMeals) {
+            impactMeals.textContent =
+                Math.round(
+                    state.metrics.mealsRescued
+                );
+        }
+
+        if (impactKg) {
+            impactKg.textContent =
+                `${Number(
+                    state.metrics.kgSaved
+                ).toFixed(1)} kg`;
+        }
+
+        if (impactCo2) {
+            impactCo2.textContent =
+                `${Number(
+                    state.metrics.co2Avoided
+                ).toFixed(1)} kg`;
+        }
+
+        if (impactActive) {
+            impactActive.textContent =
+                Math.round(
+                    state.metrics.activeOperations
+                );
+        }
+
+        if (commandRescues) {
+            commandRescues.textContent =
+                state.metrics.rescuesStarted;
+        }
+
+        if (commandMeals) {
+            commandMeals.textContent =
+                Math.round(
+                    state.metrics.mealsRescued
+                );
+        }
+
+        if (commandKg) {
+            commandKg.textContent =
+                `${Number(
+                    state.metrics.kgSaved
+                ).toFixed(1)} kg`;
+        }
+
+        if (commandCo2) {
+            commandCo2.textContent =
+                `${Number(
+                    state.metrics.co2Avoided
+                ).toFixed(1)} kg`;
+        }
+
+    }
+
+
+    /* =====================================================
+       AI LOCAL
+    ===================================================== */
+
+    function renderLocalAI(data) {
+
+        createAdvancedPanels();
+
+        const summary =
+            $("aiSummary");
+
+        const action =
+            $("aiAction");
+
+        const badge =
+            $("aiConfidenceBadge");
+
+        const signals =
+            $("aiSignals");
+
+        if (!data) {
+            return;
+        }
+
+        safeText(
+            summary,
+            data.summary ||
+            "Local rescue intelligence completed."
+        );
+
+        safeText(
+            action,
+            data.suggestedAction ||
+            "Proceed with the recommended rescue workflow."
+        );
+
+        safeText(
+            badge,
+            `${Number(
+                data.confidence || 0
+            )}% CONFIDENCE`
+        );
+
+        badge?.classList.add("ready");
+
+        if (
+            Array.isArray(
+                data.riskSignals
+            ) &&
+            data.riskSignals.length
+        ) {
+
+            signals.innerHTML =
+                data.riskSignals
+                    .map(
+                        signal =>
+                            `<span class="signal-pill">
+                                ${escapeHTML(signal)}
+                            </span>`
+                    )
+                    .join("");
+
+        }
+        else {
+
+            signals.innerHTML = `
+                <span class="signal-good">
+                    No explicit risk signals in the notes.
+                </span>
+            `;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       AI BACKEND
+    ===================================================== */
+
+    function renderAIBackendResult(ai) {
+
+        createAdvancedPanels();
+
+        const summary =
+            $("aiSummary");
+
+        const action =
+            $("aiAction");
+
+        const badge =
+            $("aiConfidenceBadge");
+
+        if (!ai) {
+            return;
+        }
+
+        /*
+           Current backend contract:
+           enabled + analysis
+        */
+
+        const connected =
+            ai.enabled === true;
+
+        const text =
+            typeof ai.analysis === "string"
+                ? ai.analysis.trim()
+                : "";
+
+        if (
+            connected &&
+            text
+        ) {
+
+            safeText(
+                summary,
+                "Gemini AI analysis completed"
+            );
+
+            safeText(
+                action,
+                text
+            );
+
+            safeText(
+                badge,
+                "AI CONNECTED"
+            );
+
+            badge?.classList.add(
+                "ready"
+            );
+
+            return;
+        }
+
+        safeText(
+            badge,
+            "AI FALLBACK"
+        );
+
+        badge?.classList.remove(
+            "ready"
+        );
+
+    }
+
+
+    /* =====================================================
+       PREDICTION
+    ===================================================== */
+
+    function renderPrediction() {
+
+        createAdvancedPanels();
+
+        if (
+            typeof predictFutureSurplus !==
+            "function"
+        ) {
+            return;
+        }
+
+        const result =
+            predictFutureSurplus(
+                state.history
+            );
+
+        safeText(
+            $("predictionValue"),
+            result.predictedQuantity > 0
+                ? String(
+                    result.predictedQuantity
+                )
+                : "—"
+        );
+
+        safeText(
+            $("predictionTrend"),
+            result.trend ||
+            "INSUFFICIENT DATA"
+        );
+
+        safeText(
+            $("predictionRecommendation"),
+            result.recommendation ||
+            "Collect more rescue history."
+        );
+
+    }
+
+
+    /* =====================================================
+       IMPACT
+    ===================================================== */
+
+    function renderOperationImpact(
+        quantity,
+        unit
+    ) {
+
+        createAdvancedPanels();
+
+        const container =
+            $("operationImpact");
+
+        if (
+            !container ||
+            typeof calculateImpact !==
+            "function"
+        ) {
+            return;
+        }
+
+        const impact =
+            calculateImpact(
+                quantity,
+                unit
+            );
+
+        container.innerHTML = `
+            <div>
+                <strong>
+                    ${Number(
+                        impact.kgSaved
+                    ).toFixed(2)}
+                </strong>
+                <span>
+                    kg saved
+                </span>
+            </div>
+
+            <div>
+                <strong>
+                    ${Number(
+                        impact.co2Avoided
+                    ).toFixed(2)}
+                </strong>
+                <span>
+                    CO₂ avoided
+                </span>
+            </div>
+
+            <div>
+                <strong>
+                    ${Math.round(
+                        impact.meals
+                    )}
+                </strong>
+                <span>
+                    meals
+                </span>
+            </div>
+
+            <div>
+                <strong>
+                    ${Math.round(
+                        impact.waterSaved
+                    )}
+                </strong>
+                <span>
+                    water
+                </span>
+            </div>
+        `;
+
+    }
+
+
+    /* =====================================================
+       MATCHING
+    ===================================================== */
+
+    let currentMatches = [];
+    let selectedMatch = null;
+    let rescueStage = 1;
+
+
+    function renderMatches(
+        foodType,
+        quantity,
+        matches
+    ) {
+
+        let normalizedMatches =
+            Array.isArray(matches)
+                ? matches
+                : [];
+
+        if (
+            !normalizedMatches.length &&
+            typeof findBestMatches ===
+            "function"
+        ) {
+
+            normalizedMatches =
+                findBestMatches(
+                    foodType,
+                    quantity,
+                    window.RESCUE_ORGANIZATIONS
+                );
+
+        }
+
+        currentMatches =
+            normalizedMatches;
+
+        selectedMatch =
+            currentMatches.length
+                ? currentMatches[0]
+                : null;
+
+        if (
+            !currentMatches.length
+        ) {
+
+            if (matchingResults) {
+
+                matchingResults.innerHTML = `
+                    <div class="matching-empty">
+                        No suitable rescue organizations were found.
+                    </div>
+                `;
+
+            }
+
+            rescueOperation?.classList.add(
+                "hidden"
+            );
+
+            return;
 
         }
 
 
-        const parsed =
-            JSON.parse(saved);
+        if (matchingResults) {
 
+            matchingResults.innerHTML =
+                currentMatches
+                    .map(
+                        (
+                            organization,
+                            index
+                        ) => {
+
+                            const letter =
+                                String.fromCharCode(
+                                    65 + index
+                                );
+
+                            const foodLabel =
+                                window.FOOD_LABELS?.[
+                                    foodType
+                                ] ||
+                                foodType;
+
+                            let reason =
+                                "";
+
+                            if (
+                                typeof getMatchReason ===
+                                "function"
+                            ) {
+
+                                reason =
+                                    getMatchReason(
+                                        foodType,
+                                        quantity,
+                                        organization
+                                    );
+
+                            }
+
+                            return `
+                                <div
+                                    class="match-result-card"
+                                    data-match-index="${index}"
+                                >
+
+                                    <div class="match-result-avatar">
+                                        ${letter}
+                                    </div>
+
+                                    <div class="match-result-info">
+
+                                        <strong>
+                                            ${escapeHTML(
+                                                organization.name
+                                            )}
+                                        </strong>
+
+                                        <span>
+                                            ${escapeHTML(
+                                                organization.distance
+                                            )} km away ·
+                                            Capacity
+                                            ${escapeHTML(
+                                                organization.capacity
+                                            )}
+                                        </span>
+
+                                        <span class="match-result-reason">
+                                            ${escapeHTML(
+                                                reason
+                                            )}
+                                        </span>
+
+                                    </div>
+
+                                    <div class="match-result-score">
+
+                                        <strong>
+                                            ${escapeHTML(
+                                                organization.matchScore
+                                            )}%
+                                        </strong>
+
+                                        <span>
+                                            Match
+                                        </span>
+
+                                        <button
+                                            class="match-select-button"
+                                            type="button"
+                                            data-index="${index}"
+                                        >
+                                            SELECT
+                                        </button>
+
+                                    </div>
+
+                                </div>
+                            `;
+
+                        }
+                    )
+                    .join("");
+
+        }
+
+
+        if (
+            selectedOrganization &&
+            selectedMatch
+        ) {
+
+            selectedOrganization.textContent =
+                selectedMatch.name;
+
+        }
+
+        rescueOperation?.classList.remove(
+            "hidden"
+        );
+
+    }
+
+
+    matchingResults?.addEventListener(
+        "click",
+        event => {
+
+            const button =
+                event.target.closest(
+                    ".match-select-button"
+                );
+
+            if (!button) {
+                return;
+            }
+
+            event.preventDefault();
+
+            const index =
+                Number(
+                    button.dataset.index
+                );
+
+            const organization =
+                currentMatches[index];
+
+            if (!organization) {
+                return;
+            }
+
+            selectedMatch =
+                organization;
+
+            safeText(
+                selectedOrganization,
+                organization.name
+            );
+
+
+            document
+                .querySelectorAll(
+                    ".match-result-card"
+                )
+                .forEach(
+                    card => {
+                        card.style.borderColor =
+                            "rgba(255,255,255,0.07)";
+                    }
+                );
+
+            const selectedCard =
+                button.closest(
+                    ".match-result-card"
+                );
+
+            if (selectedCard) {
+
+                selectedCard.style.borderColor =
+                    "rgba(74,222,128,0.45)";
+
+            }
+
+
+            try {
+
+                if (
+                    window.FoodRescueMap &&
+                    typeof FoodRescueMap.showRescueOperation ===
+                    "function"
+                ) {
+
+                    FoodRescueMap.showRescueOperation(
+                        organization,
+                        $("location")?.value.trim()
+                    );
+
+                }
+
+            }
+            catch (error) {
+
+                console.warn(
+                    "Map route error:",
+                    error
+                );
+
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       CURRENT OPERATION
+    ===================================================== */
+
+    function createCurrentOperation() {
+
+        if (!selectedMatch) {
+            return null;
+        }
+
+        const foodType =
+            $("foodType")?.value || "";
+
+        const quantity =
+            Number(
+                $("quantity")?.value || 0
+            );
+
+        const unit =
+            $("unit")?.value || "items";
+
+        const location =
+            $("location")?.value.trim() || "";
+
+        const foodLabel =
+            window.FOOD_LABELS?.[
+                foodType
+            ] ||
+            foodType;
 
         return {
 
-            ...createDefaultState(),
+            id:
+                generateOperationId(),
 
-            ...parsed,
+            organizationId:
+                selectedMatch.id,
 
-            metrics: {
+            organizationName:
+                selectedMatch.name,
 
-                ...DEFAULT_STATE.metrics,
+            location,
 
-                ...(parsed.metrics || {})
+            foodType,
 
-            },
+            foodLabel,
 
-            history:
-                Array.isArray(
-                    parsed.history
-                )
-                    ? parsed.history
-                    : []
+            quantity,
+
+            unit,
+
+            matchScore:
+                Number(
+                    selectedMatch.matchScore
+                ) || 0,
+
+            status:
+                "COLLECTION_PENDING",
+
+            createdAt:
+                new Date().toISOString(),
+
+            completedAt:
+                null
 
         };
 
     }
 
-    catch (error) {
 
-        console.error(
-            "FoodRescue state error:",
-            error
-        );
+    function renderCurrentOperation() {
 
-        return createDefaultState();
+        const operation =
+            state.currentOperation;
 
-    }
+        if (!operation) {
 
-}
-
-
-let state =
-    loadState();
-
-
-function saveState() {
-
-    try {
-
-        localStorage.setItem(
-            STORAGE_KEY,
-            JSON.stringify(state)
-        );
-
-    }
-
-    catch (error) {
-
-        console.error(
-            "FoodRescue save error:",
-            error
-        );
-
-    }
-
-}
-
-
-/* ========================================
-   ADVANCED UI
-======================================== */
-
-function createAdvancedPanels() {
-
-    const commandSection =
-        document.getElementById(
-            "command-center"
-        );
-
-
-    if (!commandSection) {
-        return;
-    }
-
-
-    if (
-        document.getElementById(
-            "advancedIntelligencePanel"
-        )
-    ) {
-        return;
-    }
-
-
-    const panel =
-        document.createElement(
-            "div"
-        );
-
-
-    panel.id =
-        "advancedIntelligencePanel";
-
-
-    panel.className =
-        "advanced-intelligence";
-
-
-    panel.innerHTML = `
-
-        <div class="advanced-header">
-
-            <div>
-
-                <span class="command-label">
-                    RESCUE INTELLIGENCE
-                </span>
-
-                <h3>
-                    AI decision layer
-                </h3>
-
-            </div>
-
-            <span
-                id="aiConfidenceBadge"
-                class="ai-confidence"
-            >
-                READY
-            </span>
-
-        </div>
-
-
-        <div class="advanced-grid">
-
-            <div class="advanced-card">
-
-                <span class="advanced-card-label">
-                    AI ASSESSMENT
-                </span>
-
-                <h4 id="aiSummary">
-                    Waiting for surplus analysis
-                </h4>
-
-                <p id="aiAction">
-                    Submit a surplus to activate AI-assisted rescue intelligence.
-                </p>
-
-            </div>
-
-
-            <div class="advanced-card">
-
-                <span class="advanced-card-label">
-                    DETECTED SIGNALS
-                </span>
-
-                <div
-                    id="aiSignals"
-                    class="signal-list"
-                >
-                    <span class="signal-empty">
-                        No signals detected yet.
-                    </span>
-                </div>
-
-            </div>
-
-
-            <div class="advanced-card">
-
-                <span class="advanced-card-label">
-                    NEXT SURPLUS FORECAST
-                </span>
-
-                <div
-                    id="predictionValue"
-                    class="forecast-value"
-                >
-                    —
-                </div>
-
-                <span
-                    id="predictionTrend"
-                    class="forecast-trend"
-                >
-                    Collecting operational data
-                </span>
-
-                <p id="predictionRecommendation">
-                    More rescue history is required for forecasting.
-                </p>
-
-            </div>
-
-
-            <div class="advanced-card impact-engine-card">
-
-                <span class="advanced-card-label">
-                    RESCUE IMPACT
-                </span>
-
-                <div
-                    id="operationImpact"
-                    class="operation-impact-grid"
-                >
-
-                    <div>
-                        <strong>—</strong>
-                        <span>kg saved</span>
-                    </div>
-
-                    <div>
-                        <strong>—</strong>
-                        <span>CO₂ avoided</span>
-                    </div>
-
-                    <div>
-                        <strong>—</strong>
-                        <span>meals</span>
-                    </div>
-
-                    <div>
-                        <strong>—</strong>
-                        <span>water</span>
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    `;
-
-
-    const historyCard =
-        commandSection.querySelector(
-            ".history-card"
-        );
-
-
-    if (historyCard) {
-
-        historyCard.parentNode.insertBefore(
-            panel,
-            historyCard
-        );
-
-    }
-
-    else {
-
-        commandSection.appendChild(
-            panel
-        );
-
-    }
-
-}
-
-
-/* ========================================
-   ANALYSIS HELPERS
-======================================== */
-
-function escapeHTML(value) {
-
-    return String(
-        value ?? ""
-    )
-
-        .replaceAll(
-            "&",
-            "&amp;"
-        )
-
-        .replaceAll(
-            "<",
-            "&lt;"
-        )
-
-        .replaceAll(
-            ">",
-            "&gt;"
-        )
-
-        .replaceAll(
-            '"',
-            "&quot;"
-        )
-
-        .replaceAll(
-            "'",
-            "&#039;"
-        );
-
-}
-
-
-function generateOperationId() {
-
-    const time =
-        Date.now()
-            .toString(36)
-            .toUpperCase();
-
-
-    const random =
-        Math.random()
-            .toString(36)
-            .slice(2, 6)
-            .toUpperCase();
-
-
-    return `FR-${time}-${random}`;
-
-}
-
-
-function formatDate(iso) {
-
-    const date =
-        new Date(iso);
-
-
-    if (
-        Number.isNaN(
-            date.getTime()
-        )
-    ) {
-        return "—";
-    }
-
-
-    return date.toLocaleString(
-        "en-US",
-        {
-            dateStyle: "medium",
-            timeStyle: "short"
-        }
-    );
-
-}
-
-
-/* ========================================
-   RESCUE FOOD
-======================================== */
-
-rescueFoodButton.addEventListener(
-    "click",
-    () => {
-
-        document
-            .getElementById("rescue")
-            .scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
-
-    }
-);
-
-
-/* ========================================
-   SMART MATCHING
-======================================== */
-
-let currentMatches = [];
-
-let selectedMatch = null;
-
-let rescueStage = 1;
-
-
-function renderMatches(
-    foodType,
-    quantity
-) {
-
-    currentMatches =
-        findBestMatches(
-            foodType,
-            quantity,
-            RESCUE_ORGANIZATIONS
-        );
-
-
-    if (
-        !currentMatches ||
-        !currentMatches.length
-    ) {
-
-        matchingResults.innerHTML = `
-            <div class="matching-empty">
-                No suitable rescue organizations were found.
-            </div>
-        `;
-
-        rescueOperation.classList.add(
-            "hidden"
-        );
-
-        selectedMatch = null;
-
-        return;
-    }
-
-
-    selectedMatch =
-        currentMatches[0];
-
-
-    selectedOrganization.textContent =
-        selectedMatch.name;
-
-
-    rescueOperation.classList.remove(
-        "hidden"
-    );
-
-
-    matchingResults.innerHTML =
-        currentMatches
-            .map(
-                (
-                    organization,
-                    index
-                ) => {
-
-                    const letter =
-                        String.fromCharCode(
-                            65 + index
-                        );
-
-
-                    const foodLabel =
-                        FOOD_LABELS[
-                            foodType
-                        ] || foodType;
-
-
-                    const reason =
-                        getMatchReason(
-                            foodType,
-                            quantity,
-                            organization
-                        );
-
-
-                    return `
-
-                        <div
-                            class="match-result-card"
-                            data-match-index="${index}"
-                        >
-
-                            <div class="match-result-avatar">
-                                ${letter}
-                            </div>
-
-
-                            <div class="match-result-info">
-
-                                <strong>
-                                    ${escapeHTML(
-                                        organization.name
-                                    )}
-                                </strong>
-
-                                <span>
-                                    ${organization.distance}
-                                    km away ·
-                                    Capacity
-                                    ${organization.capacity}
-                                </span>
-
-                                <span class="match-result-reason">
-                                    ${escapeHTML(
-                                        foodLabel
-                                    )}
-                                    ·
-                                    ${escapeHTML(
-                                        reason
-                                    )}
-                                </span>
-
-                            </div>
-
-
-                            <div class="match-result-score">
-
-                                <strong>
-                                    ${organization.matchScore}%
-                                </strong>
-
-                                <span>
-                                    Match
-                                </span>
-
-                                <button
-                                    class="match-select-button"
-                                    type="button"
-                                    data-index="${index}"
-                                >
-                                    SELECT
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                    `;
-
-                }
-            )
-            .join("");
-
-}
-
-
-matchingResults.addEventListener(
-    "click",
-    event => {
-
-        const button =
-            event.target.closest(
-                ".match-select-button"
+            commandCurrentEmpty?.classList.remove(
+                "hidden"
             );
 
+            commandCurrentDetails?.classList.add(
+                "hidden"
+            );
 
-        if (!button) {
+            safeText(
+                currentOperationStatus,
+                "IDLE"
+            );
+
+            currentOperationStatus?.classList.remove(
+                "live",
+                "completed"
+            );
+
             return;
         }
 
 
-        event.preventDefault();
+        commandCurrentEmpty?.classList.add(
+            "hidden"
+        );
 
-        event.stopPropagation();
-
-
-        const index =
-            Number(
-                button.dataset.index
-            );
-
-
-        const organization =
-            currentMatches[index];
-
-
-        if (!organization) {
-            return;
-        }
-
-
-        selectedMatch =
-            organization;
-            if (
-    typeof FoodRescueMap !== "undefined"
-) {
-
-    FoodRescueMap.showRescueOperation(
-        organization,
-        document
-            .getElementById("location")
-            .value
-            .trim()
-    );
-
-}
-
-
-        selectedOrganization.textContent =
-            organization.name;
-
-
-        rescueOperation.classList.remove(
+        commandCurrentDetails?.classList.remove(
             "hidden"
         );
 
 
-        const cards =
-            matchingResults.querySelectorAll(
-                ".match-result-card"
-            );
+        safeText(
+            commandOrganization,
+            operation.organizationName
+        );
 
+        safeText(
+            commandLocation,
+            operation.location
+        );
 
-        cards.forEach(
-            card => {
+        safeText(
+            commandFood,
+            operation.foodLabel
+        );
 
-                card.style.borderColor =
-                    "rgba(255,255,255,0.07)";
+        safeText(
+            commandQuantity,
+            `${operation.quantity} ${operation.unit}`
+        );
 
-            }
+        safeText(
+            commandMatch,
+            `${operation.matchScore}%`
+        );
+
+        safeText(
+            commandId,
+            operation.id
         );
 
 
-        if (cards[index]) {
+        commandStepMatched?.classList.add(
+            "active"
+        );
 
-            cards[index].style.borderColor =
-                "rgba(74,222,128,0.45)";
+
+        if (
+            operation.status ===
+            "COLLECTION_PENDING"
+        ) {
+
+            commandStepCollection?.classList.add(
+                "active"
+            );
+
+            commandStepRescued?.classList.remove(
+                "active"
+            );
+
+            safeText(
+                currentOperationStatus,
+                "LIVE"
+            );
+
+            currentOperationStatus?.classList.add(
+                "live"
+            );
+
+            currentOperationStatus?.classList.remove(
+                "completed"
+            );
+
+        }
+        else if (
+            operation.status ===
+            "RESCUED"
+        ) {
+
+            commandStepCollection?.classList.add(
+                "active"
+            );
+
+            commandStepRescued?.classList.add(
+                "active"
+            );
+
+            safeText(
+                currentOperationStatus,
+                "COMPLETED"
+            );
+
+            currentOperationStatus?.classList.add(
+                "completed"
+            );
+
+            currentOperationStatus?.classList.remove(
+                "live"
+            );
 
         }
 
-
-        rescueOperation.scrollIntoView({
-            behavior: "smooth",
-            block: "nearest"
-        });
-
-    }
-);
-
-
-/* ========================================
-   AI INSIGHT
-======================================== */
-
-function renderAIInsight(data) {
-
-    createAdvancedPanels();
-
-
-    const confidenceBadge =
-        document.getElementById(
-            "aiConfidenceBadge"
-        );
-
-    const aiSummary =
-        document.getElementById(
-            "aiSummary"
-        );
-
-    const aiAction =
-        document.getElementById(
-            "aiAction"
-        );
-
-    const aiSignals =
-        document.getElementById(
-            "aiSignals"
-        );
-
-
-    if (!data) {
-        return;
     }
 
 
-    aiSummary.textContent =
-        data.summary;
+    /* =====================================================
+       HISTORY
+    ===================================================== */
+
+    function renderHistory() {
+
+        if (!rescueHistory) {
+            return;
+        }
+
+        if (
+            !Array.isArray(
+                state.history
+            ) ||
+            !state.history.length
+        ) {
+
+            rescueHistory.innerHTML = `
+                <div class="history-empty">
+                    Completed rescue operations will appear here.
+                </div>
+            `;
+
+            return;
+        }
 
 
-    aiAction.textContent =
-        data.suggestedAction;
-
-
-    confidenceBadge.textContent =
-        `${data.confidence}% CONFIDENCE`;
-
-
-    confidenceBadge.classList.add(
-        "ready"
-    );
-
-
-    if (
-        !data.riskSignals ||
-        !data.riskSignals.length
-    ) {
-
-        aiSignals.innerHTML = `
-            <span class="signal-good">
-                No explicit risk signals in the notes.
-            </span>
-        `;
-
-        return;
-    }
-
-
-    aiSignals.innerHTML =
-        data.riskSignals
-            .map(
-                signal =>
-                    `
-                        <span class="signal-pill">
-                            ${escapeHTML(signal)}
-                        </span>
-                    `
-            )
-            .join("");
-
-}
-
-
-/* ========================================
-   PREDICTION
-======================================== */
-
-function renderPrediction() {
-
-    createAdvancedPanels();
-
-
-    const value =
-        document.getElementById(
-            "predictionValue"
-        );
-
-    const trend =
-        document.getElementById(
-            "predictionTrend"
-        );
-
-    const recommendation =
-        document.getElementById(
-            "predictionRecommendation"
-        );
-
-
-    const prediction =
-        predictFutureSurplus(
+        rescueHistory.innerHTML =
             state.history
-        );
-
-
-    if (
-        !prediction ||
-        prediction.confidence === 0
-    ) {
-
-        value.textContent =
-            "—";
-
-        trend.textContent =
-            "INSUFFICIENT DATA";
-
-        recommendation.textContent =
-            "Complete more rescue operations to activate historical surplus forecasting.";
-
-        return;
-    }
-
-
-    value.textContent =
-        `${prediction.predictedQuantity} units`;
-
-
-    trend.textContent =
-        `${prediction.trend} · ${prediction.confidence}% confidence`;
-
-
-    recommendation.textContent =
-        prediction.recommendation;
-
-}
-
-
-/* ========================================
-   OPERATION IMPACT
-======================================== */
-
-function renderOperationImpact(
-    quantity,
-    unit
-) {
-
-    createAdvancedPanels();
-
-
-    const container =
-        document.getElementById(
-            "operationImpact"
-        );
-
-
-    if (!container) {
-        return;
-    }
-
-
-    const impact =
-        calculateImpact(
-            quantity,
-            unit
-        );
-
-
-    container.innerHTML = `
-
-        <div>
-            <strong>
-                ${impact.kgSaved.toFixed(1)}
-            </strong>
-
-            <span>
-                kg saved
-            </span>
-        </div>
-
-
-        <div>
-            <strong>
-                ${impact.co2Avoided.toFixed(1)}
-            </strong>
-
-            <span>
-                CO₂ avoided
-            </span>
-        </div>
-
-
-        <div>
-            <strong>
-                ${impact.meals}
-            </strong>
-
-            <span>
-                meals
-            </span>
-        </div>
-
-
-        <div>
-            <strong>
-                ${(impact.waterSaved / 1000).toFixed(1)}k L
-            </strong>
-
-            <span>
-                water
-            </span>
-        </div>
-
-    `;
-
-}
-
-
-/* ========================================
-   COMMAND CENTER
-======================================== */
-
-function updateMetrics() {
-
-    const metrics =
-        state.metrics;
-
-
-    heroRescues.textContent =
-        metrics.rescuesStarted;
-
-
-    heroKgSaved.textContent =
-        metrics.kgSaved.toFixed(1);
-
-
-    heroOrganizations.textContent =
-        metrics.organizations;
-
-
-    impactMeals.textContent =
-        Math.round(
-            metrics.mealsRescued
-        );
-
-
-    impactKg.textContent =
-        `${metrics.kgSaved.toFixed(1)} kg`;
-
-
-    impactCo2.textContent =
-        `${metrics.co2Avoided.toFixed(1)} kg`;
-
-
-    impactActive.textContent =
-        metrics.activeOperations;
-
-
-    commandRescues.textContent =
-        metrics.rescuesStarted;
-
-
-    commandMeals.textContent =
-        Math.round(
-            metrics.mealsRescued
-        );
-
-
-    commandKg.textContent =
-        `${metrics.kgSaved.toFixed(1)} kg`;
-
-
-    commandCo2.textContent =
-        `${metrics.co2Avoided.toFixed(1)} kg`;
-
-}
-
-
-function renderCurrentOperation() {
-
-    const operation =
-        state.currentOperation;
-
-
-    if (!operation) {
-
-        commandCurrentEmpty.classList.remove(
-            "hidden"
-        );
-
-
-        commandCurrentDetails.classList.add(
-            "hidden"
-        );
-
-
-        currentOperationStatus.textContent =
-            "IDLE";
-
-
-        currentOperationStatus.classList.remove(
-            "live",
-            "completed"
-        );
-
-
-        return;
-    }
-
-
-    commandCurrentEmpty.classList.add(
-        "hidden"
-    );
-
-
-    commandCurrentDetails.classList.remove(
-        "hidden"
-    );
-
-
-    commandOrganization.textContent =
-        operation.organizationName;
-
-
-    commandLocation.textContent =
-        `${operation.location} · ${formatDate(
-            operation.createdAt
-        )}`;
-
-
-    commandFood.textContent =
-        operation.foodLabel;
-
-
-    commandQuantity.textContent =
-        `${operation.quantity} ${operation.unit}`;
-
-
-    commandMatch.textContent =
-        `${operation.matchScore}%`;
-
-
-    commandId.textContent =
-        operation.id;
-
-
-    commandStepMatched.classList.add(
-        "active"
-    );
-
-
-    if (
-        operation.status ===
-        "COLLECTION PENDING"
-    ) {
-
-        commandStepCollection.classList.add(
-            "active"
-        );
-
-        commandStepRescued.classList.remove(
-            "active"
-        );
-
-
-        currentOperationStatus.textContent =
-            "LIVE";
-
-
-        currentOperationStatus.classList.add(
-            "live"
-        );
-
-        currentOperationStatus.classList.remove(
-            "completed"
-        );
-
-
-        return;
-    }
-
-
-    if (
-        operation.status ===
-        "RESCUED"
-    ) {
-
-        commandStepCollection.classList.add(
-            "active"
-        );
-
-
-        commandStepRescued.classList.add(
-            "active"
-        );
-
-
-        currentOperationStatus.textContent =
-            "COMPLETED";
-
-
-        currentOperationStatus.classList.add(
-            "completed"
-        );
-
-
-        currentOperationStatus.classList.remove(
-            "live"
-        );
-
-    }
-
-}
-
-
-function renderHistory() {
-
-    if (!rescueHistory) {
-        return;
-    }
-
-
-    if (!state.history.length) {
-
-        rescueHistory.innerHTML = `
-            <div class="history-empty">
-                Completed rescue operations will appear here.
-            </div>
-        `;
-
-        return;
-    }
-
-
-    rescueHistory.innerHTML =
-        state.history
-            .slice(0, 12)
-            .map(
-                operation => {
-
-                    return `
-
+                .slice(0, 12)
+                .map(
+                    operation => `
                         <div class="history-item">
 
                             <div class="history-icon">
                                 ✓
                             </div>
-
 
                             <div class="history-main">
 
@@ -1294,10 +1335,13 @@ function renderHistory() {
 
                                 <span>
                                     ${escapeHTML(
-                                        operation.foodLabel
+                                        operation.foodLabel ||
+                                        operation.foodType
                                     )}
                                     ·
-                                    ${operation.quantity}
+                                    ${escapeHTML(
+                                        operation.quantity
+                                    )}
                                     ${escapeHTML(
                                         operation.unit
                                     )}
@@ -1315,11 +1359,12 @@ function renderHistory() {
 
                             </div>
 
-
                             <div class="history-meta">
 
                                 <strong>
-                                    ${operation.matchScore}%
+                                    ${escapeHTML(
+                                        operation.matchScore
+                                    )}%
                                 </strong>
 
                                 <span>
@@ -1329,716 +1374,160 @@ function renderHistory() {
                             </div>
 
                         </div>
+                    `
+                )
+                .join("");
 
-                    `;
-
-                }
-            )
-            .join("");
-
-}
-
-
-/* ========================================
-   CREATE OPERATION
-======================================== */
-
-function createCurrentOperation() {
-
-    if (!selectedMatch) {
-        return null;
     }
 
 
-    const foodType =
-        document.getElementById(
-            "foodType"
-        ).value;
+    /* =====================================================
+       WEATHER
+    ===================================================== */
 
-
-    const quantity =
-        Number(
-            document.getElementById(
-                "quantity"
-            ).value
-        );
-
-
-    const unit =
-        document.getElementById(
-            "unit"
-        ).value;
-
-
-    const location =
-        document.getElementById(
-            "location"
-        ).value
-            .trim();
-
-
-    const foodLabel =
-        FOOD_LABELS[foodType] ||
-        foodType;
-
-
-    return {
-
-        id:
-            generateOperationId(),
-
-        organizationId:
-            selectedMatch.id,
-
-        organizationName:
-            selectedMatch.name,
-
-        location,
-
-        foodType,
-
-        foodLabel,
-
-        quantity,
-
-        unit,
-
-        matchScore:
-            selectedMatch.matchScore,
-
-        status:
-            "COLLECTION PENDING",
-
-        createdAt:
-            new Date().toISOString(),
-
-        completedAt:
-            null
-
-    };
-
-}
-
-
-/* ========================================
-   START / COMPLETE RESCUE
-======================================== */
-
-startRescueButton.addEventListener(
-    "click",
-    event => {
-
-        event.preventDefault();
-
-        event.stopPropagation();
-
-
-        /* ====================================
-           STAGE 1
-        ==================================== */
+    async function loadWeather(location, score) {
 
         if (
-            rescueStage === 1 &&
-            selectedMatch
+            !location ||
+            !window.FoodRescueAPI ||
+            typeof FoodRescueAPI.getWeather !==
+            "function"
         ) {
-
-            state.currentOperation =
-                createCurrentOperation();
-
-
-            state.metrics.rescuesStarted +=
-                1;
-
-
-            state.metrics.activeOperations +=
-                1;
-
-
-            saveState();
-
-
-            startRescueButton.textContent =
-                "Mark as Rescued ✓";
-
-
-            rescueStage =
-                2;
-
-
-            renderCurrentOperation();
-
-            updateMetrics();
-
-
-            document
-                .getElementById(
-                    "command-center"
-                )
-                ?.scrollIntoView({
-                    behavior: "smooth",
-                    block: "start"
-                });
-
-
             return;
         }
 
+        try {
 
-        /* ====================================
-           STAGE 2
-        ==================================== */
-
-        if (
-            rescueStage === 2 &&
-            state.currentOperation
-        ) {
-
-            const operation =
-                state.currentOperation;
-
-
-            operation.status =
-                "RESCUED";
-
-
-            operation.completedAt =
-                new Date().toISOString();
-
-
-            const impact =
-                calculateImpact(
-                    operation.quantity,
-                    operation.unit
+            const response =
+                await FoodRescueAPI.getWeather(
+                    location
                 );
 
+            const weather =
+                response?.weather ||
+                response;
 
-            state.metrics.activeOperations =
-                Math.max(
-                    0,
-                    state.metrics.activeOperations - 1
+            if (
+                typeof renderWeatherPanel ===
+                "function"
+            ) {
+
+                const riskScore =
+                    Number(
+                        weather.operationalRisk
+                    ) || 0;
+
+                renderWeatherPanel(
+                    {
+                        location:
+                            weather.location,
+
+                        current: {
+                            temperature:
+                                weather.temperature,
+
+                            humidity:
+                                weather.humidity,
+
+                            precipitation:
+                                weather.precipitation,
+
+                            precipitationProbability:
+                                0,
+
+                            wind:
+                                weather.wind
+                        },
+
+                        risk: {
+                            score:
+                                riskScore,
+
+                            level:
+                                riskScore >= 70
+                                    ? "HIGH"
+                                    : riskScore >= 40
+                                        ? "MEDIUM"
+                                        : "LOW",
+
+                            factors: []
+                        }
+                    },
+                    Number(score) || 0
                 );
 
-
-            state.metrics.kgSaved +=
-                impact.kgSaved;
-
-
-            state.metrics.co2Avoided +=
-                impact.co2Avoided;
-
-
-            state.metrics.mealsRescued +=
-                impact.meals;
-
-
-            state.history.unshift(
-                {
-                    ...operation
-                }
-            );
-
-
-            state.currentOperation =
-                null;
-
-
-            saveState();
-
-
-            startRescueButton.textContent =
-                "Rescue Completed ✓";
-
-
-            startRescueButton.disabled =
-                true;
-
-
-            rescueStage =
-                3;
-
-
-            renderOperationImpact(
-                operation.quantity,
-                operation.unit
-            );
-
-
-            renderPrediction();
-            /* ========================================
-   ENVIRONMENTAL INTELLIGENCE
-======================================== */
-
-FoodRescueWeather
-    .getWeather(location)
-    .then(
-        weather => {
-
-            renderWeatherPanel(
-                weather,
-                score
-            );
+            }
 
         }
-    )
-    .catch(
-        error => {
+        catch (error) {
 
-            console.error(
-                "Environmental intelligence error:",
+            console.warn(
+                "Weather unavailable:",
                 error
             );
 
         }
-    );
-
-            updateMetrics();
-
-            renderCurrentOperation();
-
-            renderHistory();
-
-
-            document
-                .getElementById(
-                    "command-center"
-                )
-                ?.scrollIntoView({
-                    behavior: "smooth",
-                    block: "start"
-                });
-
-        }
-
-    }
-);
-
-
-/* ========================================
-   ANALYZE SURPLUS
-======================================== */
-/* ========================================
-   RENDER BACKEND AI
-======================================== */
-
-function renderAIBackendResult(
-    ai
-) {
-
-    const panel =
-        document.getElementById(
-            "advancedIntelligencePanel"
-        );
-
-
-    if (!panel) {
-        return;
-    }
-
-
-    const summary =
-        panel.querySelector(
-            "#aiSummary"
-        );
-
-
-    const action =
-        panel.querySelector(
-            "#aiAction"
-        );
-
-
-    const badge =
-        panel.querySelector(
-            "#aiConfidenceBadge"
-        );
-
-
-    if (
-        summary &&
-        ai.raw
-    ) {
-
-        summary.textContent =
-            "AI analysis completed";
 
     }
 
 
-    if (
-        action &&
-        ai.raw
-    ) {
-
-        action.textContent =
-            ai.raw;
-
-    }
-
-
-    if (badge) {
-
-        badge.textContent =
-            "AI CONNECTED";
-
-        badge.classList.add(
-            "ready"
-        );
-
-    }
-
-}
-/* ========================================
-   ANALYZE SURPLUS — BACKEND INTELLIGENCE
-======================================== */
-
-async function analyzeSurplus() {
-
-    if (
-        !surplusForm.checkValidity()
-    ) {
-
-        surplusForm.reportValidity();
-
-        return;
-    }
-
-
-    const foodType =
-        document.getElementById(
-            "foodType"
-        ).value;
-
-
-    const quantity =
-        Number(
-            document.getElementById(
-                "quantity"
-            ).value
-        );
-
-
-    const unit =
-        document.getElementById(
-            "unit"
-        ).value;
-
-
-    const availableFrom =
-        document.getElementById(
-            "availableFrom"
-        ).value;
-
-
-    const expiryTime =
-        document.getElementById(
-            "expiryTime"
-        ).value;
-
-
-    const location =
-        document.getElementById(
-            "location"
-        ).value.trim();
-
-
-    const notes =
-        document.getElementById(
-            "notes"
-        ).value.trim();
-
-
-    analyzeSurplusButton.disabled =
-        true;
-
-    analyzeSurplusButton.innerHTML =
-        "Analyzing intelligence...";
-
-
-    try {
-
-        const response =
-            await FoodRescueAPI.analyzeSurplus(
-                {
-                    foodType,
-                    quantity,
-                    unit,
-                    availableFrom,
-                    expiryTime,
-                    location,
-                    notes
-                }
-            );
-
-
-        const analysis =
-            response.analysis;
-
-
-        const matches =
-            Array.isArray(
-                response.matches
-            )
-                ? response.matches
-                : [];
-
-
-        /* =====================================
-           RESULT
-        ===================================== */
-
-        priorityScore.textContent =
-            analysis.priorityScore;
-
-
-        priorityLevel.textContent =
-            analysis.priorityLevel;
-
-
-        resultFood.textContent =
-            analysis.foodType;
-
-
-        resultQuantity.textContent =
-            `${analysis.quantity} ${analysis.unit}`;
-
-
-        resultTime.textContent =
-            formatRemainingTime(
-                analysis.remainingMinutes
-            );
-
-
-        resultLocation.textContent =
-            analysis.location;
-
-
-        recommendationText.textContent =
-            getRecommendation(
-                analysis.priorityScore
-            );
-
-
-        /* =====================================
-           MATCHING
-        ===================================== */
-
-        currentMatches =
-            matches;
-
-
-        selectedMatch =
-            currentMatches.length
-                ? currentMatches[0]
-                : null;
-
-
-        matchingResults.innerHTML =
-            currentMatches
-                .map(
-                    (
-                        organization,
-                        index
-                    ) => {
-
-                        const letter =
-                            String.fromCharCode(
-                                65 + index
-                            );
-
-
-                        const reason =
-                            getMatchReason(
-                                foodType,
-                                quantity,
-                                organization
-                            );
-
-
-                        return `
-                            <div
-                                class="match-result-card"
-                                data-match-index="${index}"
-                            >
-
-                                <div class="match-result-avatar">
-                                    ${letter}
-                                </div>
-
-                                <div class="match-result-info">
-
-                                    <strong>
-                                        ${escapeHTML(
-                                            organization.name
-                                        )}
-                                    </strong>
-
-                                    <span>
-                                        ${organization.distance}
-                                        km away ·
-                                        Capacity
-                                        ${organization.capacity}
-                                    </span>
-
-                                    <span class="match-result-reason">
-                                        ${escapeHTML(
-                                            reason
-                                        )}
-                                    </span>
-
-                                </div>
-
-                                <div class="match-result-score">
-
-                                    <strong>
-                                        ${organization.matchScore}%
-                                    </strong>
-
-                                    <span>
-                                        Match
-                                    </span>
-
-                                    <button
-                                        class="match-select-button"
-                                        type="button"
-                                        data-index="${index}"
-                                    >
-                                        SELECT
-                                    </button>
-
-                                </div>
-
-                            </div>
-                        `;
-
-                    }
-                )
-                .join("");
-
-
-        /* =====================================
-           BEST MATCH
-        ===================================== */
-
-        if (selectedMatch) {
-
-            selectedOrganization.textContent =
-                selectedMatch.name;
-
-
-            rescueOperation.classList.remove(
-                "hidden"
-            );
-
-        }
-
-
-        /* =====================================
-           AI BACKEND
-        ===================================== */
+    /* =====================================================
+       ANALYZE SURPLUS
+    ===================================================== */
+
+    async function analyzeSurplus() {
 
         if (
-            response.ai &&
-            response.ai.available
+            !surplusForm ||
+            !surplusForm.checkValidity()
         ) {
 
-            renderAIBackendResult(
-                response.ai
-            );
+            surplusForm?.reportValidity();
+
+            return;
 
         }
 
 
-        /* =====================================
-           WEATHER
-        ===================================== */
+        const foodType =
+            $("foodType")?.value || "";
 
-        FoodRescueAPI
-            .getWeather(
-                location
-            )
-            .then(
-                weatherResponse => {
-
-                    const weather =
-                        weatherResponse.weather ||
-                        weatherResponse;
-
-
-                    if (
-                        typeof renderWeatherPanel ===
-                        "function"
-                    ) {
-
-                        renderWeatherPanel(
-                            {
-                                location:
-                                    weather.location,
-
-                                current:
-                                    {
-                                        temperature:
-                                            weather.temperature,
-
-                                        humidity:
-                                            weather.humidity,
-
-                                        precipitation:
-                                            weather.precipitation,
-
-                                        precipitationProbability:
-                                            0,
-
-                                        wind:
-                                            weather.wind
-                                    },
-
-                                risk:
-                                    {
-                                        score:
-                                            weather.operationalRisk,
-
-                                        level:
-                                            weather.operationalRisk >= 70
-                                                ? "HIGH"
-                                                : weather.operationalRisk >= 40
-                                                    ? "MEDIUM"
-                                                    : "LOW",
-
-                                        factors:
-                                            []
-                                    }
-
-                            },
-                            analysis.priorityScore
-                        );
-
-                    }
-
-                }
-            )
-            .catch(
-                error => {
-
-                    console.warn(
-                        "Weather unavailable:",
-                        error
-                    );
-
-                }
+        const quantity =
+            Number(
+                $("quantity")?.value || 0
             );
 
+        const unit =
+            $("unit")?.value || "items";
 
-        /* =====================================
-           AI LOCAL INSIGHT
-        ===================================== */
+        const availableFrom =
+            $("availableFrom")?.value || "";
 
-        if (
-            typeof analyzeSurplusWithAI ===
-            "function"
-        ) {
+        const expiryTime =
+            $("expiryTime")?.value || "";
 
-            const localAI =
-                analyzeSurplusWithAI(
+        const location =
+            $("location")?.value.trim() || "";
+
+        const notes =
+            $("notes")?.value.trim() || "";
+
+
+        analyzeSurplusButton.disabled =
+            true;
+
+        analyzeSurplusButton.innerHTML =
+            `Analyzing intelligence...`;
+
+
+        try {
+
+            /* =============================================
+               BACKEND FIRST
+            ============================================= */
+
+            const response =
+                await window.FoodRescueAPI.analyzeSurplus(
                     {
                         foodType,
                         quantity,
@@ -2051,1437 +1540,1423 @@ async function analyzeSurplus() {
                 );
 
 
-            renderAIInsight(
-                localAI
+            const analysis =
+                response?.analysis;
+
+
+            const matches =
+                Array.isArray(
+                    response?.matches
+                )
+                    ? response.matches
+                    : [];
+
+
+            if (!analysis) {
+                throw new Error(
+                    "Backend returned no analysis."
+                );
+            }
+
+
+            /* =============================================
+               MAIN RESULT
+            ============================================= */
+
+            safeText(
+                priorityScore,
+                analysis.priorityScore
+            );
+
+            safeText(
+                priorityLevel,
+                analysis.priorityLevel
+            );
+
+            safeText(
+                resultFood,
+                window.FOOD_LABELS?.[
+                    analysis.foodType
+                ] ||
+                analysis.foodType
+            );
+
+            safeText(
+                resultQuantity,
+                `${analysis.quantity} ${analysis.unit}`
+            );
+
+
+            const remainingMinutes =
+                Number(
+                    analysis.remainingMinutes
+                ) || 0;
+
+
+            if (
+                typeof formatRemainingTime ===
+                "function"
+            ) {
+
+                safeText(
+                    resultTime,
+                    formatRemainingTime(
+                        remainingMinutes
+                    )
+                );
+
+            }
+            else {
+
+                safeText(
+                    resultTime,
+                    `${remainingMinutes}m`
+                );
+
+            }
+
+
+            safeText(
+                resultLocation,
+                analysis.location
+            );
+
+
+            safeText(
+                recommendationText,
+                typeof getRecommendation ===
+                "function"
+                    ? getRecommendation(
+                        Number(
+                            analysis.priorityScore
+                        ) || 0
+                    )
+                    : "Proceed with the rescue workflow."
+            );
+
+
+            /* =============================================
+               MATCHING
+            ============================================= */
+
+            renderMatches(
+                foodType,
+                quantity,
+                matches
+            );
+
+
+            /* =============================================
+               LOCAL AI
+            ============================================= */
+
+            if (
+                typeof analyzeSurplusWithAI ===
+                "function"
+            ) {
+
+                const localAI =
+                    analyzeSurplusWithAI(
+                        {
+                            foodType,
+                            quantity,
+                            unit,
+                            availableFrom,
+                            expiryTime,
+                            location,
+                            notes
+                        }
+                    );
+
+                renderLocalAI(
+                    localAI
+                );
+
+            }
+
+
+            /* =============================================
+               BACKEND AI
+            ============================================= */
+
+            if (response.ai) {
+
+                renderAIBackendResult(
+                    response.ai
+                );
+
+            }
+
+
+            /* =============================================
+               WEATHER
+            ============================================= */
+
+            loadWeather(
+                location,
+                analysis.priorityScore
+            );
+
+
+            /* =============================================
+               IMPACT
+            ============================================= */
+
+            renderOperationImpact(
+                quantity,
+                unit
+            );
+
+
+            /* =============================================
+               PREDICTION
+            ============================================= */
+
+            renderPrediction();
+
+
+            /* =============================================
+               SHOW
+            ============================================= */
+
+            resultEmpty?.classList.add(
+                "hidden"
+            );
+
+            resultContent?.classList.remove(
+                "hidden"
+            );
+
+
+            analysisResult?.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+
+
+            analysisResult?.setAttribute(
+                "tabindex",
+                "-1"
             );
 
         }
+        catch (error) {
 
-
-        /* =====================================
-           IMPACT
-        ===================================== */
-
-        renderOperationImpact(
-            quantity,
-            unit
-        );
-
-
-        /* =====================================
-           PREDICTION
-        ===================================== */
-
-        renderPrediction();
-
-
-        /* =====================================
-           SHOW RESULT
-        ===================================== */
-
-        resultEmpty.classList.add(
-            "hidden"
-        );
-
-
-        resultContent.classList.remove(
-            "hidden"
-        );
-
-
-        history.replaceState(
-            null,
-            "",
-            window.location.pathname +
-            window.location.search
-        );
-
-
-        analysisResult.setAttribute(
-            "tabindex",
-            "-1"
-        );
-
-
-        analysisResult.focus({
-            preventScroll: true
-        });
-
-    }
-
-
-    catch (error) {
-
-        console.error(
-            "Backend analysis failed:",
-            error
-        );
-
-
-        /* =====================================
-           LOCAL FALLBACK
-        ===================================== */
-
-        const timeAnalysis =
-            analyzeRescueTime(
-                availableFrom,
-                expiryTime
+            console.error(
+                "FoodRescue analysis error:",
+                error
             );
 
 
-        const score =
-            calculatePriority(
-                foodType,
-                quantity,
-                availableFrom,
-                expiryTime
-            );
+            /* =============================================
+               LOCAL FALLBACK
+            ============================================= */
+
+            try {
+
+                const timeAnalysis =
+                    typeof analyzeRescueTime ===
+                    "function"
+                        ? analyzeRescueTime(
+                            availableFrom,
+                            expiryTime
+                        )
+                        : {
+                            remainingMinutes: 0
+                        };
 
 
-        priorityScore.textContent =
-            score;
+                const score =
+                    typeof calculatePriority ===
+                    "function"
+                        ? calculatePriority(
+                            foodType,
+                            quantity,
+                            availableFrom,
+                            expiryTime
+                        )
+                        : 0;
 
 
-        priorityLevel.textContent =
-            getPriorityLabel(
-                score
-            );
+                safeText(
+                    priorityScore,
+                    score
+                );
+
+                safeText(
+                    priorityLevel,
+                    typeof getPriorityLabel ===
+                    "function"
+                        ? getPriorityLabel(
+                            score
+                        )
+                        : "LOCAL ANALYSIS"
+                );
+
+                safeText(
+                    resultFood,
+                    window.FOOD_LABELS?.[
+                        foodType
+                    ] ||
+                    foodType
+                );
+
+                safeText(
+                    resultQuantity,
+                    `${quantity} ${unit}`
+                );
+
+                safeText(
+                    resultTime,
+                    typeof formatRemainingTime ===
+                    "function"
+                        ? formatRemainingTime(
+                            timeAnalysis.remainingMinutes
+                        )
+                        : "—"
+                );
+
+                safeText(
+                    resultLocation,
+                    location
+                );
+
+                safeText(
+                    recommendationText,
+                    "The cloud API is temporarily unavailable. Local rescue intelligence is active."
+                );
 
 
-        resultFood.textContent =
-            foodType;
+                renderMatches(
+                    foodType,
+                    quantity
+                );
 
 
-        resultQuantity.textContent =
-            `${quantity} ${unit}`;
+                if (
+                    typeof analyzeSurplusWithAI ===
+                    "function"
+                ) {
+
+                    renderLocalAI(
+                        analyzeSurplusWithAI(
+                            {
+                                foodType,
+                                quantity,
+                                unit,
+                                availableFrom,
+                                expiryTime,
+                                location,
+                                notes
+                            }
+                        )
+                    );
+
+                }
 
 
-        resultTime.textContent =
-            formatRemainingTime(
-                timeAnalysis.remainingMinutes
-            );
+                renderOperationImpact(
+                    quantity,
+                    unit
+                );
+
+                renderPrediction();
 
 
-        resultLocation.textContent =
-            location;
+                resultEmpty?.classList.add(
+                    "hidden"
+                );
 
+                resultContent?.classList.remove(
+                    "hidden"
+                );
 
-        recommendationText.textContent =
-            "Backend unavailable. Local rescue intelligence is being used as a fallback.";
+            }
+            catch (fallbackError) {
 
+                console.error(
+                    "FoodRescue local fallback error:",
+                    fallbackError
+                );
 
-        renderMatches(
-            foodType,
-            quantity
-        );
+                safeText(
+                    recommendationText,
+                    "FoodRescue could not complete the analysis."
+                );
 
+            }
 
-        resultEmpty.classList.add(
-            "hidden"
-        );
+        }
+        finally {
 
+            analyzeSurplusButton.disabled =
+                false;
 
-        resultContent.classList.remove(
-            "hidden"
-        );
+            analyzeSurplusButton.innerHTML =
+                `Analyze Surplus <span>→</span>`;
+
+        }
 
     }
 
 
-    finally {
+    /* =====================================================
+       ANALYZE EVENTS
+    ===================================================== */
 
-        analyzeSurplusButton.disabled =
-            false;
+    analyzeSurplusButton?.addEventListener(
+        "click",
+        event => {
 
+            event.preventDefault();
 
-        analyzeSurplusButton.innerHTML =
-            "Analyze Surplus <span>→</span>";
+            analyzeSurplus();
 
-    }
-
-}
-
-
-/* ========================================
-   ANALYZE BUTTON
-======================================== */
-
-analyzeSurplusButton.addEventListener(
-    "click",
-    event => {
-
-        event.preventDefault();
-
-        event.stopPropagation();
-
-        analyzeSurplus();
-
-    }
-);
-
-
-/* ========================================
-   FORM SUBMIT
-======================================== */
-
-surplusForm.addEventListener(
-    "submit",
-    event => {
-
-        event.preventDefault();
-
-        event.stopPropagation();
-
-        analyzeSurplus();
-
-    }
-);
-
-
-/* ========================================
-   EXPLORE
-======================================== */
-
-exploreButton.addEventListener(
-    "click",
-    () => {
-
-        document
-            .getElementById(
-                "network"
-            )
-            .scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
-
-    }
-);
-
-
-/* ========================================
-   JOIN
-======================================== */
-
-joinNetworkButton.addEventListener(
-    "click",
-    () => {
-
-        document
-            .getElementById(
-                "rescue"
-            )
-            .scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
-
-    }
-);
-
-
-/* ========================================
-   INIT
-======================================== */
-
-createAdvancedPanels();
-
-updateMetrics();
-
-renderCurrentOperation();
-
-renderHistory();
-
-renderPrediction();
-const locateUserButton =
-    document.getElementById(
-        "locateUserButton"
+        }
     );
 
 
-if (locateUserButton) {
+    surplusForm?.addEventListener(
+        "submit",
+        event => {
 
-    locateUserButton.addEventListener(
+            event.preventDefault();
+
+            analyzeSurplus();
+
+        }
+    );
+
+
+    /* =====================================================
+       RESCUE OPERATION
+    ===================================================== */
+
+    startRescueButton?.addEventListener(
+        "click",
+        async event => {
+
+            event.preventDefault();
+
+            /* =============================================
+               STAGE 1 → COLLECTION
+            ============================================= */
+
+            if (
+                rescueStage === 1 &&
+                selectedMatch
+            ) {
+
+                const operation =
+                    createCurrentOperation();
+
+                if (!operation) {
+                    return;
+                }
+
+                try {
+
+                    if (
+                        window.FoodRescueAPI &&
+                        typeof FoodRescueAPI.createRescue ===
+                        "function"
+                    ) {
+
+                        const response =
+                            await FoodRescueAPI.createRescue(
+                                {
+                                    foodType:
+                                        operation.foodType,
+
+                                    quantity:
+                                        operation.quantity,
+
+                                    unit:
+                                        operation.unit,
+
+                                    location:
+                                        operation.location,
+
+                                    organizationId:
+                                        operation.organizationId,
+
+                                    organizationName:
+                                        operation.organizationName,
+
+                                    matchScore:
+                                        operation.matchScore
+                                }
+                            );
+
+
+                        if (
+                            response?.rescue?.id
+                        ) {
+
+                            operation.id =
+                                response.rescue.id;
+
+                        }
+
+                    }
+
+                }
+                catch (error) {
+
+                    console.warn(
+                        "Cloud rescue creation failed; using local state:",
+                        error
+                    );
+
+                }
+
+
+                state.currentOperation =
+                    operation;
+
+                state.metrics.rescuesStarted +=
+                    1;
+
+                state.metrics.activeOperations +=
+                    1;
+
+
+                rescueStage =
+                    2;
+
+
+                saveState();
+
+
+                safeText(
+                    startRescueButton,
+                    "Mark as Rescued ✓"
+                );
+
+
+                renderCurrentOperation();
+                renderOperationImpact(
+                    operation.quantity,
+                    operation.unit
+                );
+
+                updateMetrics();
+                renderHistory();
+                renderPrediction();
+
+
+                if (
+                    window.FoodRescueMap &&
+                    typeof FoodRescueMap.showRescueOperation ===
+                    "function"
+                ) {
+
+                    FoodRescueMap.showRescueOperation(
+                        selectedMatch,
+                        operation.location
+                    );
+
+                }
+
+
+                $("command-center")
+                    ?.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start"
+                    });
+
+                return;
+
+            }
+
+
+            /* =============================================
+               STAGE 2 → RESCUED
+            ============================================= */
+
+            if (
+                rescueStage === 2 &&
+                state.currentOperation
+            ) {
+
+                const operation =
+                    state.currentOperation;
+
+                safeText(
+                    startRescueButton,
+                    "Completing rescue..."
+                );
+
+
+                try {
+
+                    if (
+                        window.FoodRescueAPI &&
+                        typeof FoodRescueAPI.completeRescue ===
+                        "function"
+                    ) {
+
+                        await FoodRescueAPI.completeRescue(
+                            operation.id
+                        );
+
+                    }
+
+                }
+                catch (error) {
+
+                    console.warn(
+                        "Cloud rescue completion failed; completing locally:",
+                        error
+                    );
+
+                }
+
+
+                operation.status =
+                    "RESCUED";
+
+                operation.completedAt =
+                    new Date().toISOString();
+
+
+                const impact =
+                    typeof calculateImpact ===
+                    "function"
+                        ? calculateImpact(
+                            operation.quantity,
+                            operation.unit
+                        )
+                        : {
+                            kgSaved: 0,
+                            meals: 0,
+                            co2Avoided: 0,
+                            waterSaved: 0
+                        };
+
+
+                state.metrics.activeOperations =
+                    Math.max(
+                        0,
+                        state.metrics.activeOperations - 1
+                    );
+
+                state.metrics.kgSaved +=
+                    Number(
+                        impact.kgSaved
+                    ) || 0;
+
+                state.metrics.co2Avoided +=
+                    Number(
+                        impact.co2Avoided
+                    ) || 0;
+
+                state.metrics.mealsRescued +=
+                    Number(
+                        impact.meals
+                    ) || 0;
+
+
+                state.history.unshift(
+                    {
+                        ...operation
+                    }
+                );
+
+
+                state.currentOperation =
+                    null;
+
+
+                rescueStage =
+                    3;
+
+
+                saveState();
+
+
+                safeText(
+                    startRescueButton,
+                    "Rescue Completed ✓"
+                );
+
+                startRescueButton.disabled =
+                    true;
+
+
+                renderOperationImpact(
+                    operation.quantity,
+                    operation.unit
+                );
+
+                renderPrediction();
+                renderCurrentOperation();
+                renderHistory();
+                updateMetrics();
+
+
+                $("command-center")
+                    ?.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start"
+                    });
+
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       MAP
+    ===================================================== */
+
+    locateUserButton?.addEventListener(
         "click",
         () => {
 
-            FoodRescueMap.locateUser();
-
-        }
-    );
-
-}
-/* ========================================
-   FOODRESCUE — LANGUAGE SELECTOR
-======================================== */
-
-(function initLanguageSelector() {
-
-    const languageButton =
-        document.querySelector(".language-button");
-
-    const languageSelector =
-        document.querySelector(".language-selector");
-
-    if (!languageButton || !languageSelector) {
-        return;
-    }
-
-    const translations = {
-
-        en: {
-            label: "EN",
-            dir: "ltr",
-
-            navHow: "How it works",
-            navImpact: "Impact",
-            navNetwork: "Network",
-            navCommand: "Command Center",
-
-            heroBadge:
-                "Building the world's food rescue intelligence network",
-
-            heroTitle1: "Save food",
-            heroTitle2: "before it becomes waste.",
-
-            heroDescription:
-                "FoodRescue connects surplus food with the right people and organizations before valuable food is lost.",
-
-            rescueFood:
-                "Rescue Food",
-
-            explore:
-                "Explore the Network",
-
-            globalImpact:
-                "GLOBAL IMPACT",
-
-            impactTitle:
-                "Every rescued meal counts.",
-
-            howTitle:
-                "From surplus to rescue.",
-
-            networkLabel:
-                "ONE NETWORK",
-
-            startRescue:
-                "START A RESCUE",
-
-            rescueTitle:
-                "Tell us about the surplus.",
-
-            analyze:
-                "Analyze Surplus",
-
-            commandLabel:
-                "RESCUE COMMAND CENTER",
-
-            languages:
-                "Language"
-        },
-
-        ar: {
-            label: "AR",
-            dir: "rtl",
-
-            navHow: "كيف تعمل المنصة",
-            navImpact: "الأثر",
-            navNetwork: "الشبكة",
-            navCommand: "مركز القيادة",
-
-            heroBadge:
-                "نبني شبكة عالمية ذكية لإنقاذ الغذاء",
-
-            heroTitle1: "أنقذ الطعام",
-            heroTitle2: "قبل أن يتحول إلى نفايات.",
-
-            heroDescription:
-                "تربط FoodRescue فائض الطعام بالأشخاص والمنظمات المناسبة قبل ضياعه.",
-
-            rescueFood:
-                "أنقذ الطعام",
-
-            explore:
-                "استكشف الشبكة",
-
-            globalImpact:
-                "الأثر العالمي",
-
-            impactTitle:
-                "كل وجبة يتم إنقاذها مهمة.",
-
-            howTitle:
-                "من الفائض إلى الإنقاذ.",
-
-            networkLabel:
-                "شبكة واحدة",
-
-            startRescue:
-                "ابدأ عملية إنقاذ",
-
-            rescueTitle:
-                "أخبرنا عن فائض الطعام.",
-
-            analyze:
-                "تحليل الفائض",
-
-            commandLabel:
-                "مركز قيادة الإنقاذ",
-
-            languages:
-                "اللغة"
-        },
-
-        fr: {
-            label: "FR",
-            dir: "ltr",
-
-            navHow: "Comment ça marche",
-            navImpact: "Impact",
-            navNetwork: "Réseau",
-            navCommand: "Centre de contrôle",
-
-            heroBadge:
-                "Construire le réseau mondial intelligent de sauvetage alimentaire",
-
-            heroTitle1:
-                "Sauvez la nourriture",
-
-            heroTitle2:
-                "avant qu'elle ne devienne un déchet.",
-
-            heroDescription:
-                "FoodRescue connecte les surplus alimentaires aux bonnes personnes et organisations avant leur perte.",
-
-            rescueFood:
-                "Sauver la nourriture",
-
-            explore:
-                "Explorer le réseau",
-
-            globalImpact:
-                "IMPACT MONDIAL",
-
-            impactTitle:
-                "Chaque repas sauvé compte.",
-
-            howTitle:
-                "Du surplus au sauvetage.",
-
-            networkLabel:
-                "UN SEUL RÉSEAU",
-
-            startRescue:
-                "DÉMARRER UN SAUVETAGE",
-
-            rescueTitle:
-                "Parlez-nous du surplus.",
-
-            analyze:
-                "Analyser le surplus",
-
-            commandLabel:
-                "CENTRE DE CONTRÔLE",
-
-            languages:
-                "Langue"
-        },
-
-        zh: {
-            label: "ZH",
-            dir: "ltr",
-
-            navHow: "工作原理",
-            navImpact: "影响",
-            navNetwork: "网络",
-            navCommand: "指挥中心",
-
-            heroBadge:
-                "构建全球智能食物救援网络",
-
-            heroTitle1: "拯救食物",
-            heroTitle2: "在它变成废弃物之前。",
-
-            heroDescription:
-                "FoodRescue 将剩余食物与合适的人和组织连接起来，避免有价值的食物被浪费。",
-
-            rescueFood:
-                "拯救食物",
-
-            explore:
-                "探索网络",
-
-            globalImpact:
-                "全球影响",
-
-            impactTitle:
-                "每一份被拯救的食物都很重要。",
-
-            howTitle:
-                "从剩余食物到救援。",
-
-            networkLabel:
-                "一个网络",
-
-            startRescue:
-                "开始救援",
-
-            rescueTitle:
-                "告诉我们剩余食物的信息。",
-
-            analyze:
-                "分析剩余食物",
-
-            commandLabel:
-                "救援指挥中心",
-
-            languages:
-                "语言"
-        },
-
-        de: {
-            label: "DE",
-            dir: "ltr",
-
-            navHow: "So funktioniert es",
-            navImpact: "Wirkung",
-            navNetwork: "Netzwerk",
-            navCommand: "Kontrollzentrum",
-
-            heroBadge:
-                "Wir bauen das intelligente globale Lebensmittelrettungsnetzwerk",
-
-            heroTitle1:
-                "Lebensmittel retten",
-
-            heroTitle2:
-                "bevor sie zu Abfall werden.",
-
-            heroDescription:
-                "FoodRescue verbindet überschüssige Lebensmittel mit den richtigen Menschen und Organisationen, bevor sie verloren gehen.",
-
-            rescueFood:
-                "Lebensmittel retten",
-
-            explore:
-                "Netzwerk erkunden",
-
-            globalImpact:
-                "GLOBALE WIRKUNG",
-
-            impactTitle:
-                "Jede gerettete Mahlzeit zählt.",
-
-            howTitle:
-                "Vom Überschuss zur Rettung.",
-
-            networkLabel:
-                "EIN NETZWERK",
-
-            startRescue:
-                "RETTUNG STARTEN",
-
-            rescueTitle:
-                "Erzählen Sie uns vom Überschuss.",
-
-            analyze:
-                "Überschuss analysieren",
-
-            commandLabel:
-                "RETTUNGS-KONTROLLZENTRUM",
-
-            languages:
-                "Sprache"
-        }
-
-    };
-
-
-    const menu =
-        document.createElement("div");
-
-    menu.className =
-        "foodrescue-language-menu";
-
-    menu.setAttribute(
-        "aria-hidden",
-        "true"
-    );
-
-    menu.innerHTML = `
-        <button type="button" data-lang="en">
-            English
-        </button>
-
-        <button type="button" data-lang="ar">
-            العربية
-        </button>
-
-        <button type="button" data-lang="fr">
-            Français
-        </button>
-
-        <button type="button" data-lang="zh">
-            中文
-        </button>
-
-        <button type="button" data-lang="de">
-            Deutsch
-        </button>
-    `;
-
-    languageSelector.style.position =
-        "relative";
-
-    languageSelector.appendChild(menu);
-
-
-    const style =
-        document.createElement("style");
-
-    style.textContent = `
-
-        .foodrescue-language-menu {
-            position: absolute;
-            top: calc(100% + 10px);
-            right: 0;
-            width: 170px;
-            padding: 7px;
-            border: 1px solid rgba(255,255,255,0.10);
-            border-radius: 14px;
-            background: rgba(9,20,15,0.98);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.35);
-            backdrop-filter: blur(18px);
-            display: none;
-            z-index: 9999;
-        }
-
-        .foodrescue-language-menu.open {
-            display: grid;
-            gap: 4px;
-        }
-
-        .foodrescue-language-menu button {
-            width: 100%;
-            padding: 10px 12px;
-            border: 0;
-            border-radius: 9px;
-            background: transparent;
-            color: #d9e3de;
-            text-align: left;
-            cursor: pointer;
-            transition: 0.2s ease;
-        }
-
-        .foodrescue-language-menu button:hover {
-            background: rgba(74,222,128,0.10);
-            color: #4ade80;
-        }
-
-        html[dir="rtl"]
-        .foodrescue-language-menu {
-            right: auto;
-            left: 0;
-        }
-
-        html[dir="rtl"]
-        .foodrescue-language-menu button {
-            text-align: right;
-        }
-
-    `;
-
-    document.head.appendChild(style);
-
-
-    function setText(selector, value) {
-
-        const element =
-            document.querySelector(selector);
-
-        if (element && value) {
-            element.textContent = value;
-        }
-
-    }
-
-
-    function applyLanguage(language) {
-
-        const t =
-            translations[language] ||
-            translations.en;
-
-        document.documentElement.lang =
-            language;
-
-        document.documentElement.dir =
-            t.dir;
-
-        languageButton.textContent =
-            `${t.label} ▾`;
-
-
-        setText(
-            '.nav-links a[href="#how-it-works"]',
-            t.navHow
-        );
-
-        setText(
-            '.nav-links a[href="#impact"]',
-            t.navImpact
-        );
-
-        setText(
-            '.nav-links a[href="#network"]',
-            t.navNetwork
-        );
-
-        setText(
-            '.nav-links a[href="#command-center"]',
-            t.navCommand
-        );
-
-        setText(
-            '.status-badge',
-            t.heroBadge
-        );
-
-        const heroTitle =
-            document.querySelector(".hero h1");
-
-        if (heroTitle) {
-
-            const spans =
-                heroTitle.querySelectorAll("span");
-
-            if (spans.length >= 1) {
-                spans[0].textContent =
-                    t.heroTitle2;
-            }
-
-            heroTitle.childNodes.forEach(
-                node => {
-
-                    if (
-                        node.nodeType ===
-                        Node.TEXT_NODE &&
-                        node.textContent.trim()
-                    ) {
-                        node.textContent =
-                            t.heroTitle1 + " ";
-                    }
+            try {
+
+                if (
+                    window.FoodRescueMap &&
+                    typeof FoodRescueMap.locateUser ===
+                    "function"
+                ) {
+
+                    FoodRescueMap.locateUser();
 
                 }
+
+            }
+            catch (error) {
+
+                console.warn(
+                    "Location error:",
+                    error
+                );
+
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       LANGUAGE SYSTEM
+    ===================================================== */
+
+    function initLanguageSystem() {
+
+        const selector =
+            document.querySelector(
+                ".language-selector"
             );
+
+        const button =
+            document.querySelector(
+                ".language-button"
+            );
+
+        if (!selector || !button) {
+            return;
+        }
+
+
+        const translations = {
+
+            en: {
+                code: "EN",
+
+                how: "How it works",
+                impact: "Impact",
+                network: "Network",
+                command: "Command Center",
+
+                badge:
+                    "Building the world's food rescue intelligence network",
+
+                heroFirst:
+                    "Save food",
+
+                heroSecond:
+                    "before it becomes waste.",
+
+                description:
+                    "FoodRescue connects surplus food with the right people and organizations before valuable food is lost.",
+
+                rescueFood:
+                    "Rescue Food",
+
+                explore:
+                    "Explore the Network",
+
+                globalImpact:
+                    "GLOBAL IMPACT",
+
+                impactTitle:
+                    "Every rescued meal counts.",
+
+                howLabel:
+                    "THE RESCUE ENGINE",
+
+                howTitle:
+                    "From surplus to rescue.",
+
+                networkLabel:
+                    "ONE NETWORK",
+
+                rescueLabel:
+                    "START A RESCUE",
+
+                rescueTitle:
+                    "Tell us about the surplus.",
+
+                analyze:
+                    "Analyze Surplus"
+
+            },
+
+            ar: {
+                code: "AR",
+
+                how: "كيف تعمل المنصة",
+                impact: "الأثر",
+                network: "الشبكة",
+                command: "مركز القيادة",
+
+                badge:
+                    "نبني شبكة عالمية ذكية لإنقاذ الغذاء",
+
+                heroFirst:
+                    "أنقذ الطعام",
+
+                heroSecond:
+                    "قبل أن يتحول إلى نفايات.",
+
+                description:
+                    "تربط FoodRescue فائض الطعام بالأشخاص والمنظمات المناسبة قبل ضياع الطعام.",
+
+                rescueFood:
+                    "إنقاذ الطعام",
+
+                explore:
+                    "استكشف الشبكة",
+
+                globalImpact:
+                    "الأثر العالمي",
+
+                impactTitle:
+                    "كل وجبة يتم إنقاذها مهمة.",
+
+                howLabel:
+                    "محرك الإنقاذ",
+
+                howTitle:
+                    "من الفائض إلى الإنقاذ.",
+
+                networkLabel:
+                    "شبكة واحدة",
+
+                rescueLabel:
+                    "ابدأ عملية إنقاذ",
+
+                rescueTitle:
+                    "أخبرنا عن فائض الطعام.",
+
+                analyze:
+                    "تحليل الفائض"
+
+            },
+
+            fr: {
+                code: "FR",
+
+                how: "Comment ça marche",
+                impact: "Impact",
+                network: "Réseau",
+                command: "Centre de contrôle",
+
+                badge:
+                    "Construire le réseau mondial intelligent de sauvetage alimentaire",
+
+                heroFirst:
+                    "Sauvez la nourriture",
+
+                heroSecond:
+                    "avant qu'elle ne devienne un déchet.",
+
+                description:
+                    "FoodRescue connecte les surplus alimentaires aux bonnes personnes et organisations avant leur perte.",
+
+                rescueFood:
+                    "Sauver la nourriture",
+
+                explore:
+                    "Explorer le réseau",
+
+                globalImpact:
+                    "IMPACT MONDIAL",
+
+                impactTitle:
+                    "Chaque repas sauvé compte.",
+
+                howLabel:
+                    "MOTEUR DE SAUVETAGE",
+
+                howTitle:
+                    "Du surplus au sauvetage.",
+
+                networkLabel:
+                    "UN SEUL RÉSEAU",
+
+                rescueLabel:
+                    "DÉMARRER UN SAUVETAGE",
+
+                rescueTitle:
+                    "Parlez-nous du surplus.",
+
+                analyze:
+                    "Analyser le surplus"
+
+            },
+
+            zh: {
+                code: "ZH",
+
+                how: "工作原理",
+                impact: "影响",
+                network: "网络",
+                command: "指挥中心",
+
+                badge:
+                    "构建全球智能食物救援网络",
+
+                heroFirst:
+                    "拯救食物",
+
+                heroSecond:
+                    "在它变成废弃物之前。",
+
+                description:
+                    "FoodRescue 将剩余食物与合适的人和组织连接起来，减少食物浪费。",
+
+                rescueFood:
+                    "拯救食物",
+
+                explore:
+                    "探索网络",
+
+                globalImpact:
+                    "全球影响",
+
+                impactTitle:
+                    "每一份被拯救的食物都很重要。",
+
+                howLabel:
+                    "救援引擎",
+
+                howTitle:
+                    "从剩余食物到救援。",
+
+                networkLabel:
+                    "一个网络",
+
+                rescueLabel:
+                    "开始救援",
+
+                rescueTitle:
+                    "告诉我们剩余食物的信息。",
+
+                analyze:
+                    "分析剩余食物"
+
+            },
+
+            de: {
+                code: "DE",
+
+                how: "So funktioniert es",
+                impact: "Wirkung",
+                network: "Netzwerk",
+                command: "Kontrollzentrum",
+
+                badge:
+                    "Wir bauen ein intelligentes globales Lebensmittelrettungsnetzwerk",
+
+                heroFirst:
+                    "Lebensmittel retten",
+
+                heroSecond:
+                    "bevor sie zu Abfall werden.",
+
+                description:
+                    "FoodRescue verbindet überschüssige Lebensmittel mit den richtigen Menschen und Organisationen.",
+
+                rescueFood:
+                    "Lebensmittel retten",
+
+                explore:
+                    "Netzwerk erkunden",
+
+                globalImpact:
+                    "GLOBALE WIRKUNG",
+
+                impactTitle:
+                    "Jede gerettete Mahlzeit zählt.",
+
+                howLabel:
+                    "RETTUNGS-ENGINE",
+
+                howTitle:
+                    "Vom Überschuss zur Rettung.",
+
+                networkLabel:
+                    "EIN NETZWERK",
+
+                rescueLabel:
+                    "RETTUNG STARTEN",
+
+                rescueTitle:
+                    "Erzählen Sie uns vom Überschuss.",
+
+                analyze:
+                    "Überschuss analysieren"
+
+            }
+
+        };
+
+
+        const menu =
+            document.createElement(
+                "div"
+            );
+
+        menu.className =
+            "foodrescue-language-menu";
+
+        menu.innerHTML = `
+            <button type="button" data-lang="en">
+                English
+            </button>
+
+            <button type="button" data-lang="ar">
+                العربية
+            </button>
+
+            <button type="button" data-lang="fr">
+                Français
+            </button>
+
+            <button type="button" data-lang="zh">
+                中文
+            </button>
+
+            <button type="button" data-lang="de">
+                Deutsch
+            </button>
+        `;
+
+
+        const style =
+            document.createElement(
+                "style"
+            );
+
+        style.textContent = `
+
+            .language-selector {
+                position: relative;
+            }
+
+            .foodrescue-language-menu {
+                position: absolute;
+                top: calc(100% + 10px);
+                right: 0;
+                min-width: 175px;
+                padding: 7px;
+                border-radius: 14px;
+                background: rgba(7,16,13,0.98);
+                border: 1px solid rgba(255,255,255,0.12);
+                box-shadow: 0 18px 45px rgba(0,0,0,0.35);
+                backdrop-filter: blur(16px);
+                display: none;
+                z-index: 999999;
+            }
+
+            .foodrescue-language-menu.open {
+                display: grid;
+                gap: 4px;
+            }
+
+            .foodrescue-language-menu button {
+                width: 100%;
+                border: 0;
+                border-radius: 9px;
+                padding: 10px 12px;
+                background: transparent;
+                color: #e8f0eb;
+                text-align: left;
+                cursor: pointer;
+                font: inherit;
+            }
+
+            .foodrescue-language-menu button:hover {
+                background: rgba(74,222,128,0.12);
+                color: #4ade80;
+            }
+
+            html[dir="rtl"]
+            .foodrescue-language-menu {
+                right: auto;
+                left: 0;
+            }
+
+            html[dir="rtl"]
+            .foodrescue-language-menu button {
+                text-align: right;
+            }
+
+        `;
+
+        document.head.appendChild(
+            style
+        );
+
+        selector.appendChild(
+            menu
+        );
+
+
+        function setSelectorText(
+            selectorText,
+            value
+        ) {
+
+            const element =
+                document.querySelector(
+                    selectorText
+                );
+
+            if (element) {
+                element.textContent =
+                    value;
+            }
 
         }
 
 
-        setText(
-            ".hero-description",
-            t.heroDescription
-        );
-
-        setText(
-            "#rescueFoodButton",
-            t.rescueFood
-        );
-
-        setText(
-            "#exploreButton",
-            t.explore
-        );
-
-        setText(
-            "#analyzeSurplusButton",
-            t.analyze
-        );
-
-
-        localStorage.setItem(
-            "foodrescue_language",
+        function applyLanguage(
             language
-        );
+        ) {
 
-        menu.classList.remove("open");
-
-        menu.setAttribute(
-            "aria-hidden",
-            "true"
-        );
-
-    }
+            const t =
+                translations[language] ||
+                translations.en;
 
 
-    languageButton.addEventListener(
-        "click",
-        event => {
+            document.documentElement.lang =
+                language;
 
-            event.preventDefault();
+            document.documentElement.dir =
+                language === "ar"
+                    ? "rtl"
+                    : "ltr";
 
-            event.stopPropagation();
 
-            const isOpen =
-                menu.classList.toggle(
-                    "open"
-                );
+            button.textContent =
+                `${t.code} ▾`;
 
-            menu.setAttribute(
-                "aria-hidden",
-                String(!isOpen)
+
+            setSelectorText(
+                '.nav-links a[href="#how-it-works"]',
+                t.how
             );
 
-        }
-    );
-
-
-    menu.addEventListener(
-        "click",
-        event => {
-
-            const target =
-                event.target.closest(
-                    "[data-lang]"
-                );
-
-            if (!target) {
-                return;
-            }
-
-            applyLanguage(
-                target.dataset.lang
+            setSelectorText(
+                '.nav-links a[href="#impact"]',
+                t.impact
             );
 
-        }
-    );
+            setSelectorText(
+                '.nav-links a[href="#network"]',
+                t.network
+            );
+
+            setSelectorText(
+                '.nav-links a[href="#command-center"]',
+                t.command
+            );
 
 
-    document.addEventListener(
-        "click",
-        event => {
+            setSelectorText(
+                ".status-badge",
+                t.badge
+            );
 
-            if (
-                !languageSelector.contains(
-                    event.target
-                )
-            ) {
 
-                menu.classList.remove(
-                    "open"
+            const hero =
+                document.querySelector(
+                    ".hero h1"
                 );
 
-                menu.setAttribute(
-                    "aria-hidden",
-                    "true"
-                );
+            if (hero) {
+
+                hero.innerHTML = `
+                    ${escapeHTML(
+                        t.heroFirst
+                    )}
+                    <span>
+                        ${escapeHTML(
+                            t.heroSecond
+                        )}
+                    </span>
+                `;
 
             }
 
-        }
-    );
 
+            setSelectorText(
+                ".hero-description",
+                t.description
+            );
 
-    const savedLanguage =
-        localStorage.getItem(
-            "foodrescue_language"
-        );
+            setSelectorText(
+                "#rescueFoodButton",
+                t.rescueFood
+            );
 
-    if (
-        savedLanguage &&
-        translations[savedLanguage]
-    ) {
+            setSelectorText(
+                "#exploreButton",
+                t.explore
+            );
 
-        applyLanguage(
-            savedLanguage
-        );
 
-    }
+            setSelectorText(
+                ".impact-section .eyebrow",
+                t.globalImpact
+            );
 
-})();
-/* =========================================================
-   FOODRESCUE — FINAL LANGUAGE SYSTEM
-========================================================= */
+            setSelectorText(
+                ".impact-section .section-heading h2",
+                t.impactTitle
+            );
 
-(function () {
 
-    "use strict";
+            setSelectorText(
+                ".how-section .eyebrow",
+                t.howLabel
+            );
 
-    const selector =
-        document.querySelector(".language-selector");
+            setSelectorText(
+                ".how-section .section-heading h2",
+                t.howTitle
+            );
 
-    const button =
-        document.querySelector(".language-button");
 
-    if (!selector || !button) {
-        console.warn(
-            "FoodRescue language selector not found."
-        );
-        return;
-    }
+            setSelectorText(
+                ".network-section .eyebrow",
+                t.networkLabel
+            );
 
-    const translations = {
 
-        en: {
-            code: "EN",
+            setSelectorText(
+                ".submission-section .eyebrow",
+                t.rescueLabel
+            );
 
-            how: "How it works",
-            impact: "Impact",
-            network: "Network",
-            command: "Command Center",
+            setSelectorText(
+                ".submission-section .section-heading h2",
+                t.rescueTitle
+            );
 
-            badge:
-                "Building the world's food rescue intelligence network",
+            setSelectorText(
+                "#analyzeSurplusButton",
+                `${t.analyze} →`
+            );
 
-            hero1: "Save food",
-            hero2: "before it becomes waste.",
 
-            description:
-                "FoodRescue connects surplus food with the right people and organizations before valuable food is lost.",
+            try {
 
-            rescueFood:
-                "Rescue Food",
+                localStorage.setItem(
+                    "foodrescue_language",
+                    language
+                );
 
-            explore:
-                "Explore the Network",
-
-            globalImpact:
-                "GLOBAL IMPACT",
-
-            impactTitle:
-                "Every rescued meal counts.",
-
-            howTitle:
-                "From surplus to rescue.",
-
-            networkLabel:
-                "ONE NETWORK",
-
-            rescueStart:
-                "START A RESCUE",
-
-            rescueTitle:
-                "Tell us about the surplus.",
-
-            analyze:
-                "Analyze Surplus"
-        },
-
-        ar: {
-            code: "AR",
-
-            how: "كيف تعمل المنصة",
-            impact: "الأثر",
-            network: "الشبكة",
-            command: "مركز القيادة",
-
-            badge:
-                "نبني شبكة عالمية ذكية لإنقاذ الغذاء",
-
-            hero1:
-                "أنقذ الطعام",
-
-            hero2:
-                "قبل أن يتحول إلى نفايات.",
-
-            description:
-                "تربط FoodRescue فائض الطعام بالأشخاص والمنظمات المناسبة قبل ضياع الطعام.",
-
-            rescueFood:
-                "إنقاذ الطعام",
-
-            explore:
-                "استكشف الشبكة",
-
-            globalImpact:
-                "الأثر العالمي",
-
-            impactTitle:
-                "كل وجبة يتم إنقاذها مهمة.",
-
-            howTitle:
-                "من الفائض إلى الإنقاذ.",
-
-            networkLabel:
-                "شبكة واحدة",
-
-            rescueStart:
-                "ابدأ عملية إنقاذ",
-
-            rescueTitle:
-                "أخبرنا عن فائض الطعام.",
-
-            analyze:
-                "تحليل الفائض"
-        },
-
-        fr: {
-            code: "FR",
-
-            how: "Comment ça marche",
-            impact: "Impact",
-            network: "Réseau",
-            command: "Centre de contrôle",
-
-            badge:
-                "Construire le réseau mondial intelligent de sauvetage alimentaire",
-
-            hero1:
-                "Sauvez la nourriture",
-
-            hero2:
-                "avant qu'elle ne devienne un déchet.",
-
-            description:
-                "FoodRescue connecte les surplus alimentaires aux bonnes personnes et organisations avant leur perte.",
-
-            rescueFood:
-                "Sauver la nourriture",
-
-            explore:
-                "Explorer le réseau",
-
-            globalImpact:
-                "IMPACT MONDIAL",
-
-            impactTitle:
-                "Chaque repas sauvé compte.",
-
-            howTitle:
-                "Du surplus au sauvetage.",
-
-            networkLabel:
-                "UN SEUL RÉSEAU",
-
-            rescueStart:
-                "DÉMARRER UN SAUVETAGE",
-
-            rescueTitle:
-                "Parlez-nous du surplus.",
-
-            analyze:
-                "Analyser le surplus"
-        },
-
-        zh: {
-            code: "ZH",
-
-            how: "工作原理",
-            impact: "影响",
-            network: "网络",
-            command: "指挥中心",
-
-            badge:
-                "构建全球智能食物救援网络",
-
-            hero1:
-                "拯救食物",
-
-            hero2:
-                "在它变成废弃物之前。",
-
-            description:
-                "FoodRescue 将剩余食物与合适的人和组织连接起来，减少食物浪费。",
-
-            rescueFood:
-                "拯救食物",
-
-            explore:
-                "探索网络",
-
-            globalImpact:
-                "全球影响",
-
-            impactTitle:
-                "每一份被拯救的食物都很重要。",
-
-            howTitle:
-                "从剩余食物到救援。",
-
-            networkLabel:
-                "一个网络",
-
-            rescueStart:
-                "开始救援",
-
-            rescueTitle:
-                "告诉我们剩余食物的信息。",
-
-            analyze:
-                "分析剩余食物"
-        },
-
-        de: {
-            code: "DE",
-
-            how: "So funktioniert es",
-            impact: "Wirkung",
-            network: "Netzwerk",
-            command: "Kontrollzentrum",
-
-            badge:
-                "Wir bauen ein intelligentes globales Lebensmittelrettungsnetzwerk",
-
-            hero1:
-                "Lebensmittel retten",
-
-            hero2:
-                "bevor sie zu Abfall werden.",
-
-            description:
-                "FoodRescue verbindet überschüssige Lebensmittel mit den richtigen Menschen und Organisationen.",
-
-            rescueFood:
-                "Lebensmittel retten",
-
-            explore:
-                "Netzwerk erkunden",
-
-            globalImpact:
-                "GLOBALE WIRKUNG",
-
-            impactTitle:
-                "Jede gerettete Mahlzeit zählt.",
-
-            howTitle:
-                "Vom Überschuss zur Rettung.",
-
-            networkLabel:
-                "EIN NETZWERK",
-
-            rescueStart:
-                "RETTUNG STARTEN",
-
-            rescueTitle:
-                "Erzählen Sie uns vom Überschuss.",
-
-            analyze:
-                "Überschuss analysieren"
-        }
-
-    };
-
-
-    const menu =
-        document.createElement("div");
-
-    menu.className =
-        "foodrescue-language-menu";
-
-    menu.innerHTML = `
-        <button type="button" data-language="en">
-            English
-        </button>
-
-        <button type="button" data-language="ar">
-            العربية
-        </button>
-
-        <button type="button" data-language="fr">
-            Français
-        </button>
-
-        <button type="button" data-language="zh">
-            中文
-        </button>
-
-        <button type="button" data-language="de">
-            Deutsch
-        </button>
-    `;
-
-
-    const style =
-        document.createElement("style");
-
-    style.textContent = `
-        .language-selector {
-            position: relative;
-        }
-
-        .foodrescue-language-menu {
-            position: absolute;
-            top: calc(100% + 10px);
-            right: 0;
-            min-width: 170px;
-            padding: 6px;
-            border-radius: 14px;
-            background: rgba(7,16,13,0.98);
-            border: 1px solid rgba(255,255,255,0.12);
-            box-shadow: 0 18px 45px rgba(0,0,0,0.35);
-            backdrop-filter: blur(16px);
-            display: none;
-            z-index: 99999;
-        }
-
-        .foodrescue-language-menu.open {
-            display: grid;
-            gap: 4px;
-        }
-
-        .foodrescue-language-menu button {
-            width: 100%;
-            padding: 10px 12px;
-            border: 0;
-            border-radius: 9px;
-            background: transparent;
-            color: #e6eee9;
-            text-align: left;
-            cursor: pointer;
-            font: inherit;
-        }
-
-        .foodrescue-language-menu button:hover {
-            background: rgba(74,222,128,0.12);
-            color: #4ade80;
-        }
-
-        html[dir="rtl"]
-        .foodrescue-language-menu {
-            right: auto;
-            left: 0;
-        }
-
-        html[dir="rtl"]
-        .foodrescue-language-menu button {
-            text-align: right;
-        }
-    `;
-
-    document.head.appendChild(style);
-
-    selector.appendChild(menu);
-
-
-    function set(selectorText, value) {
-
-        const element =
-            document.querySelector(selectorText);
-
-        if (element) {
-            element.textContent = value;
-        }
-
-    }
-
-
-    function applyLanguage(language) {
-
-        const t =
-            translations[language] ||
-            translations.en;
-
-        document.documentElement.lang =
-            language;
-
-        document.documentElement.dir =
-            language === "ar"
-                ? "rtl"
-                : "ltr";
-
-
-        button.textContent =
-            `${t.code} ▾`;
-
-
-        set(
-            '.nav-links a[href="#how-it-works"]',
-            t.how
-        );
-
-        set(
-            '.nav-links a[href="#impact"]',
-            t.impact
-        );
-
-        set(
-            '.nav-links a[href="#network"]',
-            t.network
-        );
-
-        set(
-            '.nav-links a[href="#command-center"]',
-            t.command
-        );
-
-        set(
-            ".status-badge",
-            t.badge
-        );
-
-        const hero =
-            document.querySelector(".hero h1");
-
-        if (hero) {
-
-            const span =
-                hero.querySelector("span");
-
-            if (span) {
-                span.textContent =
-                    t.hero2;
             }
-
-            const textNodes =
-                Array.from(hero.childNodes)
-                    .filter(
-                        node =>
-                            node.nodeType ===
-                            Node.TEXT_NODE
-                    );
-
-            textNodes.forEach(
-                node => {
-
-                    if (
-                        node.textContent.trim()
-                    ) {
-
-                        node.textContent =
-                            `${t.hero1} `;
-
-                    }
-
-                }
-            );
-
-        }
+            catch {}
 
 
-        set(
-            ".hero-description",
-            t.description
-        );
-
-        set(
-            "#rescueFoodButton",
-            t.rescueFood
-        );
-
-        set(
-            "#exploreButton",
-            t.explore
-        );
-
-        set(
-            ".impact-section .section-heading h2",
-            t.impactTitle
-        );
-
-        set(
-            ".how-section .section-heading h2",
-            t.howTitle
-        );
-
-        set(
-            ".network-section .eyebrow",
-            t.networkLabel
-        );
-
-        set(
-            ".submission-section .eyebrow",
-            t.rescueStart
-        );
-
-        set(
-            ".submission-section .section-heading h2",
-            t.rescueTitle
-        );
-
-        set(
-            "#analyzeSurplusButton",
-            t.analyze
-        );
-
-
-        try {
-            localStorage.setItem(
-                "foodrescue_language",
-                language
-            );
-        }
-        catch {}
-
-
-        menu.classList.remove(
-            "open"
-        );
-
-    }
-
-
-    button.addEventListener(
-        "click",
-        event => {
-
-            event.preventDefault();
-            event.stopPropagation();
-
-            menu.classList.toggle(
+            menu.classList.remove(
                 "open"
             );
 
         }
-    );
 
 
-    menu.addEventListener(
-        "click",
-        event => {
+        button.addEventListener(
+            "click",
+            event => {
 
-            const target =
-                event.target.closest(
-                    "[data-language]"
-                );
+                event.preventDefault();
+                event.stopPropagation();
 
-            if (!target) {
-                return;
-            }
-
-            applyLanguage(
-                target.dataset.language
-            );
-
-        }
-    );
-
-
-    document.addEventListener(
-        "click",
-        event => {
-
-            if (
-                !selector.contains(
-                    event.target
-                )
-            ) {
-
-                menu.classList.remove(
+                menu.classList.toggle(
                     "open"
                 );
 
             }
+        );
+
+
+        menu.addEventListener(
+            "click",
+            event => {
+
+                const target =
+                    event.target.closest(
+                        "[data-lang]"
+                    );
+
+                if (!target) {
+                    return;
+                }
+
+                applyLanguage(
+                    target.dataset.lang
+                );
+
+            }
+        );
+
+
+        document.addEventListener(
+            "click",
+            event => {
+
+                if (
+                    !selector.contains(
+                        event.target
+                    )
+                ) {
+
+                    menu.classList.remove(
+                        "open"
+                    );
+
+                }
+
+            }
+        );
+
+
+        let saved =
+            "en";
+
+        try {
+
+            saved =
+                localStorage.getItem(
+                    "foodrescue_language"
+                ) ||
+                "en";
 
         }
-    );
+        catch {}
 
 
-    let savedLanguage = "en";
+        applyLanguage(
+            translations[saved]
+                ? saved
+                : "en"
+        );
+
+    }
+
+
+    /* =====================================================
+       INIT
+    ===================================================== */
+
+    createAdvancedPanels();
+
+    updateMetrics();
+
+    renderCurrentOperation();
+
+    renderHistory();
+
+    renderPrediction();
+
+    initLanguageSystem();
+
+
+    /* =====================================================
+       MAP INIT
+    ===================================================== */
 
     try {
-        savedLanguage =
-            localStorage.getItem(
-                "foodrescue_language"
-            ) || "en";
+
+        if (
+            window.FoodRescueMap &&
+            typeof FoodRescueMap.init ===
+            "function"
+        ) {
+
+            FoodRescueMap.init();
+
+        }
+
     }
-    catch {}
+    catch (error) {
+
+        console.warn(
+            "Map initialization warning:",
+            error
+        );
+
+    }
 
 
-    applyLanguage(
-        translations[savedLanguage]
-            ? savedLanguage
-            : "en"
+    /* =====================================================
+       RESTORE ACTIVE OPERATION
+    ===================================================== */
+
+    if (
+        state.currentOperation
+    ) {
+
+        rescueStage =
+            state.currentOperation.status ===
+            "RESCUED"
+                ? 3
+                : 2;
+
+        if (
+            rescueStage === 2
+        ) {
+
+            startRescueButton.disabled =
+                false;
+
+            safeText(
+                startRescueButton,
+                "Mark as Rescued ✓"
+            );
+
+        }
+        else {
+
+            startRescueButton.disabled =
+                true;
+
+        }
+
+    }
+
+
+    console.log(
+        "FoodRescue final platform initialized successfully."
     );
 
-})();
+});
