@@ -4,87 +4,289 @@
    FOODRESCUE — ENVIRONMENTAL INTELLIGENCE
 ========================================= */
 
+
+/* =========================================
+   CONFIG
+========================================= */
+
+const WEATHER_CACHE_TTL =
+    10 * 60 * 1000; // 10 minutes
+
+const GEOCODING_CACHE_TTL =
+    24 * 60 * 60 * 1000; // 24 hours
+
+
+/* =========================================
+   HELPERS
+========================================= */
+
+function weatherEscapeHTML(value) {
+
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+}
+
+
+function weatherSafeNumber(
+    value,
+    fallback = 0
+) {
+
+    const number =
+        Number(value);
+
+    return Number.isFinite(number)
+        ? number
+        : fallback;
+
+}
+
+
+function weatherNow() {
+
+    return Date.now();
+
+}
+
+
+/* =========================================
+   ENVIRONMENTAL INTELLIGENCE
+========================================= */
+
 const FoodRescueWeather = {
 
     cache: new Map(),
 
-    async getCoordinates(location) {
 
-        if (!location) {
+    /* =====================================
+       CACHE
+    ===================================== */
+
+    getCached(
+        key
+    ) {
+
+        const entry =
+            this.cache.get(
+                key
+            );
+
+
+        if (!entry) {
+            return null;
+        }
+
+
+        if (
+            weatherNow() -
+            entry.timestamp >
+            entry.ttl
+        ) {
+
+            this.cache.delete(
+                key
+            );
+
+            return null;
+
+        }
+
+
+        return entry.data;
+
+    },
+
+
+    setCached(
+        key,
+        data,
+        ttl
+    ) {
+
+        this.cache.set(
+            key,
+            {
+                data,
+                timestamp:
+                    weatherNow(),
+                ttl
+            }
+        );
+
+    },
+
+
+    /* =====================================
+       GEOCODING
+    ===================================== */
+
+    async getCoordinates(
+        location
+    ) {
+
+        if (
+            typeof location !== "string" ||
+            !location.trim()
+        ) {
+
             throw new Error(
                 "Location is required."
             );
+
         }
+
+
+        const cleanLocation =
+            location.trim();
+
 
         const key =
-            location
-                .trim()
-                .toLowerCase();
+            `geo:${cleanLocation.toLowerCase()}`;
 
-        if (this.cache.has(key)) {
-            return this.cache.get(key);
+
+        const cached =
+            this.getCached(
+                key
+            );
+
+
+        if (cached) {
+
+            return cached;
+
         }
+
 
         const url =
             "https://geocoding-api.open-meteo.com/v1/search" +
-            `?name=${encodeURIComponent(location)}` +
-            "&count=1" +
+            `?name=${encodeURIComponent(
+                cleanLocation
+            )}` +
+            "&count=5" +
             "&language=en" +
             "&format=json";
 
+
         const response =
-            await fetch(url);
+            await fetch(
+                url,
+                {
+                    method: "GET",
+                    headers: {
+                        Accept:
+                            "application/json"
+                    }
+                }
+            );
+
 
         if (!response.ok) {
+
             throw new Error(
-                "Geocoding request failed."
+                `Geocoding request failed (${response.status}).`
             );
+
         }
+
 
         const data =
             await response.json();
 
+
         if (
-            !data.results ||
+            !Array.isArray(
+                data.results
+            ) ||
             !data.results.length
         ) {
+
             throw new Error(
                 "Location not found."
             );
+
         }
+
+
+        /*
+           Prefer the first result returned by
+           Open-Meteo, which is its best match.
+        */
 
         const result =
             data.results[0];
 
+
         const coordinates = {
 
             latitude:
-                result.latitude,
+                weatherSafeNumber(
+                    result.latitude
+                ),
 
             longitude:
-                result.longitude,
+                weatherSafeNumber(
+                    result.longitude
+                ),
 
             city:
-                result.name,
+                result.name ||
+                cleanLocation,
 
             country:
-                result.country,
+                result.country ||
+                "",
+
+            countryCode:
+                result.country_code ||
+                "",
 
             timezone:
-                result.timezone
+                result.timezone ||
+                "auto"
 
         };
 
-        this.cache.set(
+
+        if (
+            !Number.isFinite(
+                coordinates.latitude
+            ) ||
+            !Number.isFinite(
+                coordinates.longitude
+            )
+        ) {
+
+            throw new Error(
+                "Invalid coordinates returned."
+            );
+
+        }
+
+
+        this.setCached(
             key,
-            coordinates
+            coordinates,
+            GEOCODING_CACHE_TTL
         );
 
+
         return coordinates;
+
     },
 
 
-    async getWeather(location) {
+    /* =====================================
+       WEATHER
+    ===================================== */
+
+    async getWeather(
+        location
+    ) {
 
         const coordinates =
             await this.getCoordinates(
@@ -96,43 +298,79 @@ const FoodRescueWeather = {
             `weather:${coordinates.latitude}:${coordinates.longitude}`;
 
 
-        if (this.cache.has(cacheKey)) {
-            return this.cache.get(cacheKey);
+        const cached =
+            this.getCached(
+                cacheKey
+            );
+
+
+        if (cached) {
+
+            return cached;
+
         }
+
+
+        const timezone =
+            coordinates.timezone ||
+            "auto";
+
+
+        const currentVariables = [
+            "temperature_2m",
+            "relative_humidity_2m",
+            "apparent_temperature",
+            "precipitation",
+            "rain",
+            "wind_speed_10m"
+        ];
+
+
+        const hourlyVariables = [
+            "precipitation_probability",
+            "temperature_2m"
+        ];
 
 
         const url =
             "https://api.open-meteo.com/v1/forecast" +
-            `?latitude=${coordinates.latitude}` +
-            `&longitude=${coordinates.longitude}` +
-            "&current=" +
-            [
-                "temperature_2m",
-                "relative_humidity_2m",
-                "apparent_temperature",
-                "precipitation",
-                "rain",
-                "wind_speed_10m"
-            ].join(",") +
-            "&hourly=" +
-            [
-                "precipitation_probability",
-                "temperature_2m"
-            ].join(",") +
+            `?latitude=${encodeURIComponent(
+                coordinates.latitude
+            )}` +
+            `&longitude=${encodeURIComponent(
+                coordinates.longitude
+            )}` +
+            `&current=${encodeURIComponent(
+                currentVariables.join(",")
+            )}` +
+            `&hourly=${encodeURIComponent(
+                hourlyVariables.join(",")
+            )}` +
             "&forecast_days=1" +
             `&timezone=${encodeURIComponent(
-                coordinates.timezone || "auto"
+                timezone
             )}`;
 
 
         const response =
-            await fetch(url);
+            await fetch(
+                url,
+                {
+                    method: "GET",
+                    headers: {
+                        Accept:
+                            "application/json"
+                    }
+                }
+            );
 
 
         if (!response.ok) {
+
             throw new Error(
-                "Weather request failed."
+                `Weather request failed (${response.status}).`
             );
+
         }
 
 
@@ -144,75 +382,173 @@ const FoodRescueWeather = {
             data.current || {};
 
 
+        const hourly =
+            data.hourly || {};
+
+
+        /* =================================
+           CURRENT WEATHER
+        ================================= */
+
         const currentTime =
-            current.time;
+            current.time ||
+            "";
 
 
         const hourlyTimes =
-            data.hourly?.time || [];
+            Array.isArray(
+                hourly.time
+            )
+                ? hourly.time
+                : [];
 
 
         const precipitationProbabilities =
-            data.hourly?.precipitation_probability || [];
+            Array.isArray(
+                hourly.precipitation_probability
+            )
+                ? hourly.precipitation_probability
+                : [];
 
 
-        const currentIndex =
-            hourlyTimes.indexOf(
-                currentTime
+        /*
+           Exact time matching can fail because
+           different API responses may represent
+           timestamps with slightly different formatting.
+
+           Therefore find the closest hourly timestamp.
+        */
+
+        let currentIndex = -1;
+
+
+        if (
+            currentTime &&
+            hourlyTimes.length
+        ) {
+
+            const currentTimestamp =
+                new Date(
+                    currentTime
+                ).getTime();
+
+
+            let smallestDifference =
+                Infinity;
+
+
+            hourlyTimes.forEach(
+                (
+                    time,
+                    index
+                ) => {
+
+                    const timestamp =
+                        new Date(
+                            time
+                        ).getTime();
+
+
+                    if (
+                        !Number.isFinite(
+                            timestamp
+                        ) ||
+                        !Number.isFinite(
+                            currentTimestamp
+                        )
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    const difference =
+                        Math.abs(
+                            timestamp -
+                            currentTimestamp
+                        );
+
+
+                    if (
+                        difference <
+                        smallestDifference
+                    ) {
+
+                        smallestDifference =
+                            difference;
+
+                        currentIndex =
+                            index;
+
+                    }
+
+                }
             );
+
+        }
 
 
         const precipitationProbability =
             currentIndex >= 0
-                ? (
+                ? weatherSafeNumber(
                     precipitationProbabilities[
                         currentIndex
-                    ] ?? 0
+                    ]
                 )
                 : 0;
 
+
+        /* =================================
+           RESULT
+        ================================= */
 
         const result = {
 
             location:
                 coordinates,
 
+
             current: {
 
                 temperature:
-                    Number(
-                        current.temperature_2m ?? 0
+                    weatherSafeNumber(
+                        current.temperature_2m
                     ),
+
 
                 apparentTemperature:
-                    Number(
-                        current.apparent_temperature ?? 0
+                    weatherSafeNumber(
+                        current.apparent_temperature
                     ),
+
 
                 humidity:
-                    Number(
-                        current.relative_humidity_2m ?? 0
+                    weatherSafeNumber(
+                        current.relative_humidity_2m
                     ),
+
 
                 precipitation:
-                    Number(
-                        current.precipitation ?? 0
+                    weatherSafeNumber(
+                        current.precipitation
                     ),
+
 
                 rain:
-                    Number(
-                        current.rain ?? 0
+                    weatherSafeNumber(
+                        current.rain
                     ),
+
 
                 wind:
-                    Number(
-                        current.wind_speed_10m ?? 0
+                    weatherSafeNumber(
+                        current.wind_speed_10m
                     ),
 
+
                 precipitationProbability:
-                    Number(
-                        precipitationProbability
-                    )
+                    precipitationProbability
 
             }
 
@@ -225,40 +561,86 @@ const FoodRescueWeather = {
             );
 
 
-        this.cache.set(
+        this.setCached(
             cacheKey,
-            result
+            result,
+            WEATHER_CACHE_TTL
         );
 
 
         return result;
+
     },
 
 
-    calculateRisk(weather) {
+    /* =====================================
+       RISK ENGINE
+    ===================================== */
+
+    calculateRisk(
+        weather
+    ) {
+
+        const safeWeather =
+            weather || {};
+
 
         let score = 0;
+
 
         const factors = [];
 
 
+        const precipitationProbability =
+            weatherSafeNumber(
+                safeWeather.precipitationProbability
+            );
+
+
+        const wind =
+            weatherSafeNumber(
+                safeWeather.wind
+            );
+
+
+        const temperature =
+            weatherSafeNumber(
+                safeWeather.temperature
+            );
+
+
+        const humidity =
+            weatherSafeNumber(
+                safeWeather.humidity
+            );
+
+
+        /* =================================
+           PRECIPITATION
+        ================================= */
+
         if (
-            weather.precipitationProbability >= 70
+            precipitationProbability >=
+            70
         ) {
 
-            score += 35;
+            score +=
+                35;
+
 
             factors.push(
                 "High precipitation probability"
             );
 
         }
-
         else if (
-            weather.precipitationProbability >= 40
+            precipitationProbability >=
+            40
         ) {
 
-            score += 20;
+            score +=
+                20;
+
 
             factors.push(
                 "Moderate precipitation probability"
@@ -267,23 +649,32 @@ const FoodRescueWeather = {
         }
 
 
+        /* =================================
+           WIND
+        ================================= */
+
         if (
-            weather.wind >= 45
+            wind >=
+            45
         ) {
 
-            score += 25;
+            score +=
+                25;
+
 
             factors.push(
                 "High wind speed"
             );
 
         }
-
         else if (
-            weather.wind >= 30
+            wind >=
+            30
         ) {
 
-            score += 12;
+            score +=
+                12;
+
 
             factors.push(
                 "Elevated wind speed"
@@ -292,23 +683,32 @@ const FoodRescueWeather = {
         }
 
 
+        /* =================================
+           TEMPERATURE
+        ================================= */
+
         if (
-            weather.temperature >= 35
+            temperature >=
+            35
         ) {
 
-            score += 25;
+            score +=
+                25;
+
 
             factors.push(
                 "High temperature"
             );
 
         }
-
         else if (
-            weather.temperature >= 30
+            temperature >=
+            30
         ) {
 
-            score += 12;
+            score +=
+                12;
+
 
             factors.push(
                 "Elevated temperature"
@@ -317,11 +717,18 @@ const FoodRescueWeather = {
         }
 
 
+        /* =================================
+           HUMIDITY
+        ================================= */
+
         if (
-            weather.humidity >= 85
+            humidity >=
+            85
         ) {
 
-            score += 15;
+            score +=
+                15;
+
 
             factors.push(
                 "Very high humidity"
@@ -332,7 +739,12 @@ const FoodRescueWeather = {
 
         score =
             Math.min(
-                score,
+                Math.max(
+                    Math.round(
+                        score
+                    ),
+                    0
+                ),
                 100
             );
 
@@ -341,12 +753,23 @@ const FoodRescueWeather = {
             "LOW";
 
 
-        if (score >= 70) {
-            level = "HIGH";
-        }
+        if (
+            score >=
+            70
+        ) {
 
-        else if (score >= 40) {
-            level = "MEDIUM";
+            level =
+                "HIGH";
+
+        }
+        else if (
+            score >=
+            40
+        ) {
+
+            level =
+                "MEDIUM";
+
         }
 
 
@@ -363,6 +786,10 @@ const FoodRescueWeather = {
     },
 
 
+    /* =====================================
+       RECOMMENDATION ENGINE
+    ===================================== */
+
     getRecommendation(
         weather,
         rescuePriority
@@ -371,8 +798,47 @@ const FoodRescueWeather = {
         const recommendations = [];
 
 
+        const current =
+            weather?.current || {};
+
+
+        const risk =
+            weather?.risk || {
+
+
+                level:
+                    "LOW",
+
+                score:
+                    0,
+
+                factors:
+                    []
+
+            };
+
+
+        const safeRescuePriority =
+            weatherSafeNumber(
+                rescuePriority
+            );
+
+
+        const temperature =
+            weatherSafeNumber(
+                current.temperature
+            );
+
+
+        const precipitationProbability =
+            weatherSafeNumber(
+                current.precipitationProbability
+            );
+
+
         if (
-            weather.risk.level === "HIGH"
+            risk.level ===
+            "HIGH"
         ) {
 
             recommendations.push(
@@ -383,7 +849,8 @@ const FoodRescueWeather = {
 
 
         if (
-            weather.current.temperature >= 30
+            temperature >=
+            30
         ) {
 
             recommendations.push(
@@ -394,7 +861,8 @@ const FoodRescueWeather = {
 
 
         if (
-            weather.current.precipitationProbability >= 60
+            precipitationProbability >=
+            60
         ) {
 
             recommendations.push(
@@ -405,7 +873,8 @@ const FoodRescueWeather = {
 
 
         if (
-            rescuePriority >= 80
+            safeRescuePriority >=
+            80
         ) {
 
             recommendations.push(
@@ -415,7 +884,9 @@ const FoodRescueWeather = {
         }
 
 
-        if (!recommendations.length) {
+        if (
+            !recommendations.length
+        ) {
 
             recommendations.push(
                 "Current environmental conditions do not indicate additional operational constraints."
@@ -425,6 +896,7 @@ const FoodRescueWeather = {
 
 
         return recommendations;
+
     }
 
 };
@@ -450,12 +922,89 @@ function renderWeatherPanel(
     }
 
 
+    if (
+        !weather ||
+        !weather.current ||
+        !weather.risk ||
+        !weather.location
+    ) {
+
+        panel.innerHTML = "";
+
+        return;
+
+    }
+
+
     const current =
         weather.current;
 
 
     const risk =
         weather.risk;
+
+
+    const location =
+        weather.location;
+
+
+    const temperature =
+        weatherSafeNumber(
+            current.temperature
+        );
+
+
+    const humidity =
+        weatherSafeNumber(
+            current.humidity
+        );
+
+
+    const precipitationProbability =
+        weatherSafeNumber(
+            current.precipitationProbability
+        );
+
+
+    const wind =
+        weatherSafeNumber(
+            current.wind
+        );
+
+
+    const riskScore =
+        Math.min(
+            100,
+            Math.max(
+                0,
+                weatherSafeNumber(
+                    risk.score
+                )
+            )
+        );
+
+
+    const riskLevel =
+        String(
+            risk.level ||
+            "LOW"
+        ).toUpperCase();
+
+
+    const factors =
+        Array.isArray(
+            risk.factors
+        )
+            ? risk.factors
+            : [];
+
+
+    const recommendations =
+        FoodRescueWeather
+            .getRecommendation(
+                weather,
+                rescuePriority
+            );
 
 
     panel.innerHTML = `
@@ -474,10 +1023,15 @@ function renderWeatherPanel(
 
             </div>
 
+
             <span
-                class="weather-risk-badge ${risk.level.toLowerCase()}"
+                class="weather-risk-badge ${weatherEscapeHTML(
+                    riskLevel.toLowerCase()
+                )}"
             >
-                ${risk.level} RISK
+                ${weatherEscapeHTML(
+                    riskLevel
+                )} RISK
             </span>
 
         </div>
@@ -486,17 +1040,24 @@ function renderWeatherPanel(
         <div class="weather-location">
 
             <strong>
-                ${weather.location.city}
+                ${weatherEscapeHTML(
+                    location.city ||
+                    "Unknown location"
+                )}
             </strong>
 
             <span>
-                ${weather.location.country}
+                ${weatherEscapeHTML(
+                    location.country ||
+                    ""
+                )}
             </span>
 
         </div>
 
 
         <div class="weather-metrics">
+
 
             <div class="weather-metric">
 
@@ -505,7 +1066,7 @@ function renderWeatherPanel(
                 </span>
 
                 <strong>
-                    ${current.temperature.toFixed(1)}°C
+                    ${temperature.toFixed(1)}°C
                 </strong>
 
             </div>
@@ -518,7 +1079,7 @@ function renderWeatherPanel(
                 </span>
 
                 <strong>
-                    ${current.humidity}%
+                    ${humidity.toFixed(0)}%
                 </strong>
 
             </div>
@@ -531,7 +1092,7 @@ function renderWeatherPanel(
                 </span>
 
                 <strong>
-                    ${current.precipitationProbability}%
+                    ${precipitationProbability.toFixed(0)}%
                 </strong>
 
             </div>
@@ -544,10 +1105,11 @@ function renderWeatherPanel(
                 </span>
 
                 <strong>
-                    ${current.wind.toFixed(1)} km/h
+                    ${wind.toFixed(1)} km/h
                 </strong>
 
             </div>
+
 
         </div>
 
@@ -561,7 +1123,7 @@ function renderWeatherPanel(
                 </span>
 
                 <strong>
-                    ${risk.score}/100
+                    ${riskScore}/100
                 </strong>
 
             </div>
@@ -570,7 +1132,7 @@ function renderWeatherPanel(
             <div class="weather-progress">
 
                 <div
-                    style="width:${risk.score}%"
+                    style="width:${riskScore}%"
                 ></div>
 
             </div>
@@ -581,22 +1143,28 @@ function renderWeatherPanel(
         <div class="weather-factors">
 
             ${
-                risk.factors.length
+                factors.length
 
-                    ? risk.factors
+                    ? factors
                         .map(
                             factor => `
+
                                 <span>
-                                    ${factor}
+                                    ${weatherEscapeHTML(
+                                        factor
+                                    )}
                                 </span>
+
                             `
                         )
                         .join("")
 
                     : `
+
                         <span class="weather-safe">
                             No major environmental risk detected.
                         </span>
+
                     `
             }
 
@@ -606,16 +1174,16 @@ function renderWeatherPanel(
         <div class="weather-recommendation">
 
             ${
-                FoodRescueWeather
-                    .getRecommendation(
-                        weather,
-                        rescuePriority
-                    )
+                recommendations
                     .map(
                         item => `
+
                             <p>
-                                ${item}
+                                ${weatherEscapeHTML(
+                                    item
+                                )}
                             </p>
+
                         `
                     )
                     .join("")
@@ -624,6 +1192,20 @@ function renderWeatherPanel(
         </div>
 
     `;
+
+
+    panel.dataset.riskScore =
+        String(
+            riskScore
+        );
+
+
+    panel.dataset.location =
+        String(
+            location.city ||
+            ""
+        );
+
 }
 
 
@@ -633,6 +1215,7 @@ function renderWeatherPanel(
 
 window.FoodRescueWeather =
     FoodRescueWeather;
+
 
 window.renderWeatherPanel =
     renderWeatherPanel;
