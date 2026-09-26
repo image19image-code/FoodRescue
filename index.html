@@ -1,0 +1,1813 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="FoodRescue — intelligent food surplus detection, smart matching, rescue operations and measurable impact."
+    >
+
+    <meta
+        name="theme-color"
+        content="#07100d"
+    >
+
+    <title>
+        FoodRescue — Save Food Before It Becomes Waste
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+    <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+>
+</head>
+
+
+<body>
+
+
+    <!-- ========================================
+         NAVIGATION
+    ========================================= -->
+
+    <header class="navbar">
+
+        <div class="logo">
+
+            <span class="logo-icon">
+                ♻
+            </span>
+
+            <span>
+                Food<span>Rescue</span>
+            </span>
+
+        </div>
+
+
+        <nav class="nav-links">
+
+            <a href="#how-it-works">
+                How it works
+            </a>
+
+            <a href="#impact">
+                Impact
+            </a>
+
+            <a href="#network">
+                Network
+            </a>
+
+            <a href="#command-center">
+                Command Center
+            </a>
+
+        </nav>
+
+
+        <div class="language-selector">
+
+            <button
+                class="language-button"
+                type="button"
+            >
+                EN ▾
+            </button>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- ========================================
+         MAIN
+    ========================================= -->
+
+    <main>
+
+
+        <!-- ========================================
+             HERO
+        ========================================= -->
+
+        <section class="hero">
+
+
+            <!-- HERO CONTENT -->
+
+            <div class="hero-content">
+
+
+                <div class="status-badge">
+
+                    <span class="status-dot"></span>
+
+                    Building the world's food rescue intelligence network
+
+                </div>
+
+
+                <h1>
+
+                    Save food
+
+                    <span>
+                        before it becomes waste.
+                    </span>
+
+                </h1>
+
+
+                <p class="hero-description">
+
+                    FoodRescue connects surplus food with the right
+                    people and organizations before valuable food is lost.
+
+                </p>
+
+
+                <div class="hero-actions">
+
+                    <button
+                        class="primary-button"
+                        id="rescueFoodButton"
+                        type="button"
+                    >
+
+                        Rescue Food
+
+                        <span>
+                            →
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        class="secondary-button"
+                        id="exploreButton"
+                        type="button"
+                    >
+
+                        Explore the Network
+
+                    </button>
+
+                </div>
+
+
+                <div class="hero-trust">
+
+                    <div>
+
+                        <strong id="heroRescues">
+                            0
+                        </strong>
+
+                        <span>
+                            rescues started
+                        </span>
+
+                    </div>
+
+
+                    <div>
+
+                        <strong id="heroKgSaved">
+                            0
+                        </strong>
+
+                        <span>
+                            kg saved
+                        </span>
+
+                    </div>
+
+
+                    <div>
+
+                        <strong id="heroOrganizations">
+                            0
+                        </strong>
+
+                        <span>
+                            organizations
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- ========================================
+                 HERO INTELLIGENCE CARD
+            ========================================= -->
+
+            <div class="hero-visual">
+
+
+                <div class="intelligence-card">
+
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <span class="mini-label">
+                                FOOD RESCUE INTELLIGENCE
+                            </span>
+
+                            <h3>
+                                Live Rescue Monitor
+                            </h3>
+
+                        </div>
+
+
+                        <span class="live-indicator">
+                            LIVE
+                        </span>
+
+                    </div>
+
+
+
+                    <div class="rescue-alert">
+
+
+                        <div class="food-icon">
+                            🍞
+                        </div>
+
+
+                        <div class="alert-content">
+
+                            <span class="alert-label">
+                                SURPLUS DETECTED
+                            </span>
+
+                            <strong>
+                                40 bakery items
+                            </strong>
+
+                            <span>
+                                Estimated spoilage window:
+                                1h 42m
+                            </span>
+
+                        </div>
+
+
+                        <div class="priority">
+
+                            <span>
+                                PRIORITY
+                            </span>
+
+                            <strong>
+                                92
+                            </strong>
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <div class="matching-section">
+
+
+                        <div class="section-title">
+                            Smart Matching
+                        </div>
+
+
+                        <div class="match">
+
+
+                            <div class="match-avatar">
+                                A
+                            </div>
+
+
+                            <div class="match-info">
+
+                                <strong>
+                                    Local Food Association
+                                </strong>
+
+                                <span>
+                                    2.1 km away · Needs bread
+                                </span>
+
+                            </div>
+
+
+                            <div class="match-score">
+                                97%
+                            </div>
+
+
+                        </div>
+
+
+
+                        <div class="match">
+
+
+                            <div class="match-avatar">
+                                B
+                            </div>
+
+
+                            <div class="match-info">
+
+                                <strong>
+                                    Community Kitchen
+                                </strong>
+
+                                <span>
+                                    3.8 km away · Capacity 60
+                                </span>
+
+                            </div>
+
+
+                            <div class="match-score">
+                                91%
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <div class="rescue-progress">
+
+
+                        <div class="progress-header">
+
+                            <span>
+                                Rescue window
+                            </span>
+
+                            <strong>
+                                68%
+                            </strong>
+
+                        </div>
+
+
+                        <div class="progress-bar">
+
+                            <div class="progress-value"></div>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- ========================================
+             IMPACT
+        ========================================= -->
+
+        <section
+            class="impact-section"
+            id="impact"
+        >
+
+
+            <div class="section-heading">
+
+
+                <span class="eyebrow">
+                    GLOBAL IMPACT
+                </span>
+
+
+                <h2>
+                    Every rescued meal counts.
+                </h2>
+
+
+                <p>
+                    FoodRescue transforms individual rescue actions
+                    into measurable environmental and social impact.
+                </p>
+
+
+            </div>
+
+
+
+            <div class="impact-grid">
+
+
+                <div class="impact-card">
+
+                    <span class="impact-icon">
+                        🍽
+                    </span>
+
+                    <strong id="impactMeals">
+                        128
+                    </strong>
+
+                    <span>
+                        Meals rescued
+                    </span>
+
+                </div>
+
+
+
+                <div class="impact-card">
+
+                    <span class="impact-icon">
+                        ♻
+                    </span>
+
+                    <strong id="impactKg">
+                        42.8 kg
+                    </strong>
+
+                    <span>
+                        Food waste prevented
+                    </span>
+
+                </div>
+
+
+
+                <div class="impact-card">
+
+                    <span class="impact-icon">
+                        🌍
+                    </span>
+
+                    <strong id="impactCo2">
+                        18.4 kg
+                    </strong>
+
+                    <span>
+                        Estimated CO₂ avoided
+                    </span>
+
+                </div>
+
+
+
+                <div class="impact-card">
+
+                    <span class="impact-icon">
+                        🤝
+                    </span>
+
+                    <strong id="impactActive">
+                        24
+                    </strong>
+
+                    <span>
+                        Active rescue operations
+                    </span>
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- ========================================
+             HOW IT WORKS
+        ========================================= -->
+
+        <section
+            class="how-section"
+            id="how-it-works"
+        >
+
+
+            <div class="section-heading">
+
+
+                <span class="eyebrow">
+                    THE RESCUE ENGINE
+                </span>
+
+
+                <h2>
+                    From surplus to rescue.
+                </h2>
+
+
+                <p>
+                    Three intelligent steps turn potential waste
+                    into measurable impact.
+                </p>
+
+
+            </div>
+
+
+
+            <div class="steps">
+
+
+                <article class="step-card">
+
+                    <div class="step-number">
+                        01
+                    </div>
+
+                    <div class="step-icon">
+                        🔎
+                    </div>
+
+                    <h3>
+                        Detect
+                    </h3>
+
+                    <p>
+                        Businesses report surplus food or allow
+                        FoodRescue to predict recurring surplus.
+                    </p>
+
+                </article>
+
+
+
+                <article class="step-card">
+
+                    <div class="step-number">
+                        02
+                    </div>
+
+                    <div class="step-icon">
+                        🧠
+                    </div>
+
+                    <h3>
+                        Match
+                    </h3>
+
+                    <p>
+                        The rescue engine evaluates urgency,
+                        distance, capacity and food requirements.
+                    </p>
+
+                </article>
+
+
+
+                <article class="step-card">
+
+                    <div class="step-number">
+                        03
+                    </div>
+
+                    <div class="step-icon">
+                        🚚
+                    </div>
+
+                    <h3>
+                        Rescue
+                    </h3>
+
+                    <p>
+                        The selected recipient coordinates collection
+                        and the platform records the impact.
+                    </p>
+
+                </article>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- ========================================
+             NETWORK
+        ========================================= -->
+
+        <section
+            class="network-section"
+            id="network"
+        >
+
+
+            <div class="network-content">
+
+
+                <span class="eyebrow">
+                    ONE NETWORK
+                </span>
+
+
+                <h2>
+                    Businesses.
+                    Organizations.
+                    Communities.
+                </h2>
+
+
+                <p>
+                    A connected infrastructure where every participant
+                    can contribute to reducing food waste.
+                </p>
+
+
+                <button
+                    class="primary-button"
+                    id="joinNetworkButton"
+                    type="button"
+                >
+
+                    Join the Network
+
+                    <span>
+                        →
+                    </span>
+
+                </button>
+
+
+            </div>
+
+
+
+            <div class="network-visual">
+
+
+                <div class="network-node node-center">
+                    FOOD<br>
+                    RESCUE
+                </div>
+
+
+                <div class="network-node node-one">
+                    🏪
+                </div>
+
+
+                <div class="network-node node-two">
+                    🏨
+                </div>
+
+
+                <div class="network-node node-three">
+                    🤝
+                </div>
+
+
+                <div class="network-node node-four">
+                    👨‍👩‍👧
+                </div>
+
+
+                <div class="network-line line-one"></div>
+                <div class="network-line line-two"></div>
+                <div class="network-line line-three"></div>
+                <div class="network-line line-four"></div>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- ========================================
+             RESCUE SUBMISSION
+        ========================================= -->
+
+        <section
+            class="submission-section"
+            id="rescue"
+        >
+
+
+            <div class="section-heading">
+
+
+                <span class="eyebrow">
+                    START A RESCUE
+                </span>
+
+
+                <h2>
+                    Tell us about the surplus.
+                </h2>
+
+
+                <p>
+                    Provide a few details and FoodRescue will determine
+                    how urgently the food should be rescued.
+                </p>
+
+
+            </div>
+
+
+
+            <div class="submission-layout">
+
+
+                <!-- FORM -->
+
+                <form
+                    id="surplusForm"
+                    class="surplus-form"
+                    autocomplete="off"
+                >
+
+
+                    <div class="form-group">
+
+                        <label for="foodType">
+                            Food type
+                        </label>
+
+
+                        <select
+                            id="foodType"
+                            required
+                        >
+
+                            <option value="">
+                                Select food type
+                            </option>
+
+                            <option value="bakery">
+                                Bakery
+                            </option>
+
+                            <option value="prepared">
+                                Prepared meals
+                            </option>
+
+                            <option value="fruit">
+                                Fruits
+                            </option>
+
+                            <option value="vegetables">
+                                Vegetables
+                            </option>
+
+                            <option value="dairy">
+                                Dairy
+                            </option>
+
+                            <option value="other">
+                                Other
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+
+                    <div class="form-row">
+
+
+                        <div class="form-group">
+
+                            <label for="quantity">
+                                Quantity
+                            </label>
+
+
+                            <input
+                                id="quantity"
+                                type="number"
+                                min="1"
+                                placeholder="e.g. 40"
+                                required
+                            >
+
+                        </div>
+
+
+
+                        <div class="form-group">
+
+                            <label for="unit">
+                                Unit
+                            </label>
+
+
+                            <select id="unit">
+
+                                <option value="items">
+                                    Items
+                                </option>
+
+                                <option value="kg">
+                                    Kilograms
+                                </option>
+
+                                <option value="meals">
+                                    Meals
+                                </option>
+
+                                <option value="boxes">
+                                    Boxes
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <div class="form-row">
+
+
+                        <div class="form-group">
+
+                            <label for="availableFrom">
+                                Available from
+                            </label>
+
+
+                            <input
+                                id="availableFrom"
+                                type="time"
+                                required
+                            >
+
+                        </div>
+
+
+
+                        <div class="form-group">
+
+                            <label for="expiryTime">
+                                Estimated expiry
+                            </label>
+
+
+                            <input
+                                id="expiryTime"
+                                type="time"
+                                required
+                            >
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <div class="form-group">
+
+                        <label for="location">
+                            Location
+                        </label>
+
+
+                        <input
+                            id="location"
+                            type="text"
+                            placeholder="City or neighborhood"
+                            required
+                        >
+
+                    </div>
+
+
+
+                    <div class="form-group">
+
+                        <label for="notes">
+                            Additional information
+                        </label>
+
+
+                        <textarea
+                            id="notes"
+                            rows="4"
+                            placeholder="Describe the food, packaging, storage conditions..."
+                        ></textarea>
+
+                    </div>
+
+
+
+                    <button
+                        type="button"
+                        class="primary-button submit-button"
+                        id="analyzeSurplusButton"
+                    >
+
+                        Analyze Surplus
+
+                        <span>
+                            →
+                        </span>
+
+                    </button>
+
+
+                </form>
+
+
+
+                <!-- ========================================
+                     ANALYSIS RESULT
+                ========================================= -->
+
+                <div
+                    class="analysis-result"
+                    id="analysisResult"
+                >
+
+
+                    <div class="result-empty">
+
+
+                        <div class="result-icon">
+                            🧠
+                        </div>
+
+
+                        <h3>
+                            Rescue Intelligence
+                        </h3>
+
+
+                        <p>
+                            Submit surplus information to generate
+                            an initial rescue priority assessment.
+                        </p>
+
+
+                    </div>
+
+
+
+                    <div
+                        class="result-content hidden"
+                        id="resultContent"
+                    >
+
+
+                        <span class="result-label">
+                            RESCUE PRIORITY
+                        </span>
+
+
+                        <div class="priority-score">
+
+                            <strong id="priorityScore">
+                                0
+                            </strong>
+
+                            <span>
+                                /100
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            class="priority-level"
+                            id="priorityLevel"
+                        >
+                            WAITING
+                        </div>
+
+
+                        <div class="result-divider"></div>
+
+
+
+                        <div class="result-factors">
+
+
+                            <div>
+
+                                <span>
+                                    Food
+                                </span>
+
+                                <strong id="resultFood">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+
+                            <div>
+
+                                <span>
+                                    Quantity
+                                </span>
+
+                                <strong id="resultQuantity">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+
+                            <div>
+
+                                <span>
+                                    Time remaining
+                                </span>
+
+                                <strong id="resultTime">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+
+                            <div>
+
+                                <span>
+                                    Location
+                                </span>
+
+                                <strong id="resultLocation">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                        </div>
+
+
+
+                        <!-- RECOMMENDATION -->
+
+                        <div class="recommendation">
+
+
+                            <span>
+                                RECOMMENDED ACTION
+                            </span>
+
+
+                            <p id="recommendationText">
+                                —
+                            </p>
+
+
+                        </div>
+
+
+
+                        <!-- ========================================
+                             SMART MATCHING
+                        ========================================= -->
+
+                        <div class="smart-matching">
+
+
+                            <div class="matching-header">
+
+                                <span>
+                                    INTELLIGENT MATCHING
+                                </span>
+
+                                <strong>
+                                    Best rescue matches
+                                </strong>
+
+                            </div>
+
+
+
+                            <div
+                                id="matchingResults"
+                                class="matching-results"
+                            >
+
+                                <div class="matching-empty">
+
+                                    Submit surplus information to find
+                                    suitable rescue organizations.
+
+                                </div>
+
+                            </div>
+
+
+
+                            <!-- ========================================
+                                 RESCUE OPERATION
+                            ========================================= -->
+
+                            <div
+                                id="rescueOperation"
+                                class="rescue-operation hidden"
+                            >
+
+
+                                <div class="operation-header">
+
+
+                                    <span>
+                                        RESCUE OPERATION
+                                    </span>
+
+
+                                    <strong
+                                        id="selectedOrganization"
+                                    >
+                                        —
+                                    </strong>
+
+
+                                </div>
+
+
+
+                                <div class="operation-status">
+
+
+                                    <div
+                                        class="status-step active"
+                                    >
+
+                                        <span>
+                                            1
+                                        </span>
+
+                                        <strong>
+                                            MATCHED
+                                        </strong>
+
+                                    </div>
+
+
+
+                                    <div class="status-line"></div>
+
+
+
+                                    <div class="status-step">
+
+                                        <span>
+                                            2
+                                        </span>
+
+                                        <strong>
+                                            COLLECTION
+                                        </strong>
+
+                                    </div>
+
+
+
+                                    <div class="status-line"></div>
+
+
+
+                                    <div class="status-step">
+
+                                        <span>
+                                            3
+                                        </span>
+
+                                        <strong>
+                                            RESCUED
+                                        </strong>
+
+                                    </div>
+
+
+                                </div>
+
+
+
+                                <button
+                                    id="startRescueButton"
+                                    class="primary-button"
+                                    type="button"
+                                >
+
+                                    Start Rescue
+
+                                    <span>
+                                        →
+                                    </span>
+
+                                </button>
+
+
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+        <!-- ========================================
+     LIVE RESCUE MAP
+========================================= -->
+
+<section
+    class="map-section"
+    id="live-map"
+>
+
+    <div class="section-heading">
+
+        <span class="eyebrow">
+            LIVE RESCUE NETWORK
+        </span>
+
+        <h2>
+            See the rescue network in motion.
+        </h2>
+
+        <p>
+            Monitor participating organizations,
+            surplus locations and active rescue routes.
+        </p>
+
+    </div>
+
+
+    <div class="map-shell">
+
+        <div
+            id="rescueMap"
+            class="rescue-map"
+        ></div>
+
+
+        <div class="map-overlay">
+
+            <div class="map-status">
+
+                <span class="status-dot"></span>
+
+                NETWORK ONLINE
+
+            </div>
+
+
+            <button
+                id="locateUserButton"
+                class="map-control-button"
+                type="button"
+            >
+                Locate me
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+        <!-- ========================================
+             RESCUE COMMAND CENTER
+        ========================================= -->
+
+        <section
+            class="command-center-section"
+            id="command-center"
+        >
+
+
+            <div class="section-heading">
+
+
+                <span class="eyebrow">
+                    RESCUE COMMAND CENTER
+                </span>
+
+
+                <h2>
+                    Every rescue. Tracked to completion.
+                </h2>
+
+
+                <p>
+                    FoodRescue turns each rescue decision into
+                    a traceable operational workflow.
+                </p>
+
+
+            </div>
+
+
+
+            <div class="command-center-grid">
+
+
+                <!-- CURRENT OPERATION -->
+
+                <div class="command-card current-operation-card">
+
+
+                    <div class="command-card-header">
+
+
+                        <div>
+
+                            <span class="command-label">
+                                LIVE OPERATION
+                            </span>
+
+                            <h3>
+                                Current rescue
+                            </h3>
+
+                        </div>
+
+
+                        <span
+                            id="currentOperationStatus"
+                            class="operation-badge"
+                        >
+                            IDLE
+                        </span>
+
+
+                    </div>
+
+
+
+                    <div
+                        id="commandCurrentEmpty"
+                        class="command-empty"
+                    >
+
+                        No active rescue operation.
+                        Analyze a surplus to create one.
+
+                    </div>
+
+
+
+                    <div
+                        id="commandCurrentDetails"
+                        class="hidden"
+                    >
+
+
+                        <div class="command-organization">
+
+
+                            <div class="command-avatar">
+                                FR
+                            </div>
+
+
+                            <div>
+
+                                <strong
+                                    id="commandOrganization"
+                                >
+                                    —
+                                </strong>
+
+
+                                <span
+                                    id="commandLocation"
+                                >
+                                    —
+                                </span>
+
+                            </div>
+
+
+                        </div>
+
+
+
+                        <div class="command-facts">
+
+
+                            <div>
+
+                                <span>
+                                    Food
+                                </span>
+
+                                <strong
+                                    id="commandFood"
+                                >
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Quantity
+                                </span>
+
+                                <strong
+                                    id="commandQuantity"
+                                >
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Match
+                                </span>
+
+                                <strong
+                                    id="commandMatch"
+                                >
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Operation
+                                </span>
+
+                                <strong
+                                    id="commandId"
+                                >
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                        </div>
+
+
+
+                        <div class="command-timeline">
+
+
+                            <div
+                                id="commandStepMatched"
+                                class="command-step active"
+                            >
+
+                                <span>
+                                    1
+                                </span>
+
+
+                                <div>
+
+                                    <strong>
+                                        MATCHED
+                                    </strong>
+
+                                    <small>
+                                        Recipient selected
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+
+
+                            <div class="command-connector"></div>
+
+
+
+                            <div
+                                id="commandStepCollection"
+                                class="command-step"
+                            >
+
+                                <span>
+                                    2
+                                </span>
+
+
+                                <div>
+
+                                    <strong>
+                                        COLLECTION
+                                    </strong>
+
+                                    <small>
+                                        Pickup in progress
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+
+
+                            <div class="command-connector"></div>
+
+
+
+                            <div
+                                id="commandStepRescued"
+                                class="command-step"
+                            >
+
+                                <span>
+                                    3
+                                </span>
+
+
+                                <div>
+
+                                    <strong>
+                                        RESCUED
+                                    </strong>
+
+                                    <small>
+                                        Operation completed
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- IMPACT SNAPSHOT -->
+
+                <div class="command-card">
+
+
+                    <div class="command-card-header">
+
+
+                        <div>
+
+                            <span class="command-label">
+                                LIVE IMPACT
+                            </span>
+
+                            <h3>
+                                Rescue performance
+                            </h3>
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <div class="performance-grid">
+
+
+                        <div class="performance-item">
+
+                            <strong id="commandRescues">
+                                0
+                            </strong>
+
+                            <span>
+                                Rescues started
+                            </span>
+
+                        </div>
+
+
+
+                        <div class="performance-item">
+
+                            <strong id="commandMeals">
+                                128
+                            </strong>
+
+                            <span>
+                                Meals rescued
+                            </span>
+
+                        </div>
+
+
+
+                        <div class="performance-item">
+
+                            <strong id="commandKg">
+                                42.8 kg
+                            </strong>
+
+                            <span>
+                                Estimated food saved
+                            </span>
+
+                        </div>
+
+
+
+                        <div class="performance-item">
+
+                            <strong id="commandCo2">
+                                18.4 kg
+                            </strong>
+
+                            <span>
+                                Estimated CO₂ avoided
+                            </span>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- ========================================
+                 HISTORY
+            ========================================= -->
+            <div
+    id="weatherIntelligence"
+    class="weather-intelligence"
+>
+</div>
+            <div class="history-card">
+
+
+                <div class="command-card-header">
+
+
+                    <div>
+
+                        <span class="command-label">
+                            RESCUE HISTORY
+                        </span>
+
+                        <h3>
+                            Recent operations
+                        </h3>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <div
+                    id="rescueHistory"
+                    class="rescue-history"
+                >
+
+                    <div class="history-empty">
+
+                        Completed rescue operations will appear here.
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- ========================================
+         FOOTER
+    ========================================= -->
+
+    <footer>
+
+
+        <div class="footer-logo">
+            ♻ FoodRescue
+        </div>
+
+
+        <p>
+            Building technology for a world with less food waste.
+        </p>
+
+
+        <span>
+            © 2026 FoodRescue
+        </span>
+
+
+    </footer>
+
+
+
+    <!-- ========================================
+         JAVASCRIPT
+    ========================================= -->
+
+    <script src="data.js?v=4"></script>
+    <script src="rescue-engine.js?v=6"></script>
+    <script src="matching-engine.js?v=4"></script>
+    <script src="ai-engine.js?v=4"></script>
+    <script src="prediction-engine.js?v=4"></script>
+    <script src="impact-engine.js?v=4"></script>
+    <script src="api-client.js?v=1"></script>
+
+    <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+>   </script>
+
+<script src="map-engine.js?v=1"></script>
+
+<script src="weather-engine.js?v=1"></script>
+
+<script src="app.js?v=9"></script>
+
+
+</body>
+
+</html>
