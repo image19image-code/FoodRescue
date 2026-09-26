@@ -2247,712 +2247,3078 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function initLanguageSystem() {
 
-        const selector =
-            document.querySelector(
-                ".language-selector"
+    const selector =
+        document.querySelector(".language-selector");
+
+    const button =
+        document.querySelector(".language-button");
+
+    if (!selector || !button) {
+        console.warn(
+            "FoodRescue language selector not found."
+        );
+        return;
+    }
+
+
+    const translations = {
+
+        en: {
+            code: "EN",
+
+            how: "How it works",
+            impact: "Impact",
+            network: "Network",
+            command: "Command Center",
+
+            heroBadge:
+                "Building the world's food rescue intelligence network",
+
+            heroFirst:
+                "Save food",
+
+            heroSecond:
+                "before it becomes waste.",
+
+            heroDescription:
+                "FoodRescue connects surplus food with the right people and organizations before valuable food is lost.",
+
+            rescueFood:
+                "Rescue Food",
+
+            explore:
+                "Explore the Network",
+
+            rescuesStarted:
+                "rescues started",
+
+            kgSaved:
+                "kg saved",
+
+            organizations:
+                "organizations",
+
+            foodIntelligence:
+                "FOOD RESCUE INTELLIGENCE",
+
+            liveMonitor:
+                "Live Rescue Monitor",
+
+            live:
+                "LIVE",
+
+            surplusDetected:
+                "SURPLUS DETECTED",
+
+            bakeryItems:
+                "40 bakery items",
+
+            spoilage:
+                "Estimated spoilage window: 1h 42m",
+
+            priority:
+                "PRIORITY",
+
+            smartMatching:
+                "Smart Matching",
+
+            localFoodAssociation:
+                "Local Food Association",
+
+            associationMeta:
+                "2.1 km away · Needs bread",
+
+            communityKitchen:
+                "Community Kitchen",
+
+            kitchenMeta:
+                "3.8 km away · Capacity 60",
+
+            rescueWindow:
+                "Rescue window",
+
+            globalImpact:
+                "GLOBAL IMPACT",
+
+            impactTitle:
+                "Every rescued meal counts.",
+
+            impactDescription:
+                "FoodRescue transforms individual rescue actions into measurable environmental and social impact.",
+
+            mealsRescued:
+                "Meals rescued",
+
+            foodWastePrevented:
+                "Food waste prevented",
+
+            co2Avoided:
+                "Estimated CO₂ avoided",
+
+            activeOperations:
+                "Active rescue operations",
+
+            rescueEngine:
+                "THE RESCUE ENGINE",
+
+            howTitle:
+                "From surplus to rescue.",
+
+            howDescription:
+                "Three intelligent steps turn potential waste into measurable impact.",
+
+            detect:
+                "Detect",
+
+            detectDescription:
+                "Businesses report surplus food or allow FoodRescue to predict recurring surplus.",
+
+            match:
+                "Match",
+
+            matchDescription:
+                "The rescue engine evaluates urgency, distance, capacity and food requirements.",
+
+            rescue:
+                "Rescue",
+
+            rescueDescription:
+                "The selected recipient coordinates collection and the platform records the impact.",
+
+            oneNetwork:
+                "ONE NETWORK",
+
+            networkTitle:
+                "Businesses. Organizations. Communities.",
+
+            networkDescription:
+                "A connected infrastructure where every participant can contribute to reducing food waste.",
+
+            joinNetwork:
+                "Join the Network",
+
+            startRescue:
+                "START A RESCUE",
+
+            surplusTitle:
+                "Tell us about the surplus.",
+
+            surplusDescription:
+                "Provide a few details and FoodRescue will determine how urgently the food should be rescued.",
+
+            foodType:
+                "Food type",
+
+            selectFood:
+                "Select food type",
+
+            bakery:
+                "Bakery",
+
+            prepared:
+                "Prepared meals",
+
+            fruits:
+                "Fruits",
+
+            vegetables:
+                "Vegetables",
+
+            dairy:
+                "Dairy",
+
+            other:
+                "Other",
+
+            quantity:
+                "Quantity",
+
+            unit:
+                "Unit",
+
+            items:
+                "Items",
+
+            kilograms:
+                "Kilograms",
+
+            meals:
+                "Meals",
+
+            boxes:
+                "Boxes",
+
+            availableFrom:
+                "Available from",
+
+            expiry:
+                "Estimated expiry",
+
+            location:
+                "Location",
+
+            locationPlaceholder:
+                "City or neighborhood",
+
+            additional:
+                "Additional information",
+
+            notesPlaceholder:
+                "Describe the food, packaging, storage conditions...",
+
+            analyze:
+                "Analyze Surplus",
+
+            intelligence:
+                "Rescue Intelligence",
+
+            submitPrompt:
+                "Submit surplus information to generate an initial rescue priority assessment.",
+
+            rescuePriority:
+                "RESCUE PRIORITY",
+
+            waiting:
+                "WAITING",
+
+            food:
+                "Food",
+
+            timeRemaining:
+                "Time remaining",
+
+            recommendedAction:
+                "RECOMMENDED ACTION",
+
+            intelligentMatching:
+                "INTELLIGENT MATCHING",
+
+            bestMatches:
+                "Best rescue matches",
+
+            noMatches:
+                "No suitable rescue organizations were found.",
+
+            matchScore:
+                "Match",
+
+            select:
+                "SELECT",
+
+            rescueOperation:
+                "RESCUE OPERATION",
+
+            matched:
+                "MATCHED",
+
+            collection:
+                "COLLECTION",
+
+            rescued:
+                "RESCUED",
+
+            startRescueButton:
+                "Start Rescue",
+
+            liveNetwork:
+                "LIVE RESCUE NETWORK",
+
+            mapTitle:
+                "See the rescue network in motion.",
+
+            mapDescription:
+                "Monitor participating organizations, surplus locations and active rescue routes.",
+
+            networkOnline:
+                "NETWORK ONLINE",
+
+            locateMe:
+                "Locate me",
+
+            commandLabel:
+                "RESCUE COMMAND CENTER",
+
+            commandTitle:
+                "Every rescue. Tracked to completion.",
+
+            commandDescription:
+                "FoodRescue turns each rescue decision into a traceable operational workflow.",
+
+            liveOperation:
+                "LIVE OPERATION",
+
+            currentRescue:
+                "Current rescue",
+
+            idle:
+                "IDLE",
+
+            noActive:
+                "No active rescue operation. Analyze a surplus to create one.",
+
+            liveImpact:
+                "LIVE IMPACT",
+
+            performance:
+                "Rescue performance",
+
+            rescueHistory:
+                "RESCUE HISTORY",
+
+            recentOperations:
+                "Recent operations",
+
+            historyEmpty:
+                "Completed rescue operations will appear here.",
+
+            aiLabel:
+                "RESCUE INTELLIGENCE",
+
+            aiTitle:
+                "AI decision layer",
+
+            ready:
+                "READY",
+
+            aiAssessment:
+                "AI ASSESSMENT",
+
+            waitingAnalysis:
+                "Waiting for surplus analysis",
+
+            aiAction:
+                "Submit a surplus to activate AI-assisted rescue intelligence.",
+
+            signals:
+                "DETECTED SIGNALS",
+
+            noSignals:
+                "No signals detected yet.",
+
+            forecast:
+                "NEXT SURPLUS FORECAST",
+
+            collecting:
+                "Collecting operational data",
+
+            forecastDescription:
+                "More rescue history is required for forecasting.",
+
+            rescueImpact:
+                "RESCUE IMPACT",
+
+            saved:
+                "kg saved",
+
+            water:
+                "water",
+
+            footer:
+                "Building technology for a world with less food waste."
+        },
+
+
+        ar: {
+            code: "AR",
+
+            how: "كيف تعمل المنصة",
+            impact: "الأثر",
+            network: "الشبكة",
+            command: "مركز القيادة",
+
+            heroBadge:
+                "نبني شبكة عالمية ذكية لإنقاذ الغذاء",
+
+            heroFirst:
+                "أنقذ الطعام",
+
+            heroSecond:
+                "قبل أن يتحول إلى نفايات.",
+
+            heroDescription:
+                "تربط FoodRescue فائض الطعام بالأشخاص والمنظمات المناسبة قبل ضياع الطعام.",
+
+            rescueFood:
+                "إنقاذ الطعام",
+
+            explore:
+                "استكشف الشبكة",
+
+            rescuesStarted:
+                "عمليات إنقاذ بدأت",
+
+            kgSaved:
+                "كغ تم إنقاذها",
+
+            organizations:
+                "منظمة",
+
+            foodIntelligence:
+                "ذكاء إنقاذ الغذاء",
+
+            liveMonitor:
+                "مراقبة الإنقاذ المباشر",
+
+            live:
+                "مباشر",
+
+            surplusDetected:
+                "تم اكتشاف فائض",
+
+            bakeryItems:
+                "40 قطعة مخبوزات",
+
+            spoilage:
+                "نافذة التلف المتوقعة: ساعة و42 دقيقة",
+
+            priority:
+                "الأولوية",
+
+            smartMatching:
+                "المطابقة الذكية",
+
+            localFoodAssociation:
+                "جمعية الغذاء المحلية",
+
+            associationMeta:
+                "2.1 كم · تحتاج إلى الخبز",
+
+            communityKitchen:
+                "المطبخ المجتمعي",
+
+            kitchenMeta:
+                "3.8 كم · السعة 60",
+
+            rescueWindow:
+                "نافذة الإنقاذ",
+
+            globalImpact:
+                "الأثر العالمي",
+
+            impactTitle:
+                "كل وجبة يتم إنقاذها مهمة.",
+
+            impactDescription:
+                "تحول FoodRescue عمليات الإنقاذ الفردية إلى أثر بيئي واجتماعي قابل للقياس.",
+
+            mealsRescued:
+                "وجبات تم إنقاذها",
+
+            foodWastePrevented:
+                "نفايات غذائية تم منعها",
+
+            co2Avoided:
+                "ثاني أكسيد الكربون المتجنب تقديريًا",
+
+            activeOperations:
+                "عمليات إنقاذ نشطة",
+
+            rescueEngine:
+                "محرك الإنقاذ",
+
+            howTitle:
+                "من الفائض إلى الإنقاذ.",
+
+            howDescription:
+                "تحول ثلاث خطوات ذكية فائض الطعام المحتمل إلى أثر قابل للقياس.",
+
+            detect:
+                "اكتشاف",
+
+            detectDescription:
+                "تبلغ الشركات عن فائض الطعام أو تسمح لـFoodRescue بالتنبؤ بالفائض المتكرر.",
+
+            match:
+                "مطابقة",
+
+            matchDescription:
+                "يقيم محرك الإنقاذ درجة الاستعجال والمسافة والسعة واحتياجات الغذاء.",
+
+            rescue:
+                "إنقاذ",
+
+            rescueDescription:
+                "ينسق المستلم المختار عملية الجمع وتسجل المنصة الأثر الناتج.",
+
+            oneNetwork:
+                "شبكة واحدة",
+
+            networkTitle:
+                "الشركات. المنظمات. المجتمعات.",
+
+            networkDescription:
+                "بنية مترابطة يمكن لكل مشارك فيها المساهمة في تقليل هدر الطعام.",
+
+            joinNetwork:
+                "انضم إلى الشبكة",
+
+            startRescue:
+                "ابدأ عملية إنقاذ",
+
+            surplusTitle:
+                "أخبرنا عن فائض الطعام.",
+
+            surplusDescription:
+                "أدخل بعض التفاصيل وسيحدد FoodRescue مدى إلحاح إنقاذ الطعام.",
+
+            foodType:
+                "نوع الطعام",
+
+            selectFood:
+                "اختر نوع الطعام",
+
+            bakery:
+                "مخبوزات",
+
+            prepared:
+                "وجبات جاهزة",
+
+            fruits:
+                "فواكه",
+
+            vegetables:
+                "خضروات",
+
+            dairy:
+                "منتجات الألبان",
+
+            other:
+                "أخرى",
+
+            quantity:
+                "الكمية",
+
+            unit:
+                "الوحدة",
+
+            items:
+                "قطع",
+
+            kilograms:
+                "كيلوغرام",
+
+            meals:
+                "وجبات",
+
+            boxes:
+                "صناديق",
+
+            availableFrom:
+                "متاح من",
+
+            expiry:
+                "انتهاء الصلاحية المتوقع",
+
+            location:
+                "الموقع",
+
+            locationPlaceholder:
+                "المدينة أو الحي",
+
+            additional:
+                "معلومات إضافية",
+
+            notesPlaceholder:
+                "صف الطعام والتغليف وظروف التخزين...",
+
+            analyze:
+                "تحليل الفائض",
+
+            intelligence:
+                "ذكاء الإنقاذ",
+
+            submitPrompt:
+                "أرسل معلومات الفائض لإنشاء تقييم أولي لأولوية الإنقاذ.",
+
+            rescuePriority:
+                "أولوية الإنقاذ",
+
+            waiting:
+                "في الانتظار",
+
+            food:
+                "الطعام",
+
+            timeRemaining:
+                "الوقت المتبقي",
+
+            recommendedAction:
+                "الإجراء الموصى به",
+
+            intelligentMatching:
+                "المطابقة الذكية",
+
+            bestMatches:
+                "أفضل جهات الإنقاذ المطابقة",
+
+            noMatches:
+                "لم يتم العثور على منظمات إنقاذ مناسبة.",
+
+            matchScore:
+                "مطابقة",
+
+            select:
+                "اختيار",
+
+            rescueOperation:
+                "عملية الإنقاذ",
+
+            matched:
+                "تمت المطابقة",
+
+            collection:
+                "الجمع",
+
+            rescued:
+                "تم الإنقاذ",
+
+            startRescueButton:
+                "ابدأ الإنقاذ",
+
+            liveNetwork:
+                "شبكة الإنقاذ المباشرة",
+
+            mapTitle:
+                "شاهد شبكة الإنقاذ وهي تعمل.",
+
+            mapDescription:
+                "راقب المنظمات المشاركة ومواقع الفائض ومسارات الإنقاذ النشطة.",
+
+            networkOnline:
+                "الشبكة متصلة",
+
+            locateMe:
+                "حدد موقعي",
+
+            commandLabel:
+                "مركز قيادة الإنقاذ",
+
+            commandTitle:
+                "كل عملية إنقاذ يتم تتبعها حتى الاكتمال.",
+
+            commandDescription:
+                "تحول FoodRescue كل قرار إنقاذ إلى سير عمل تشغيلي قابل للتتبع.",
+
+            liveOperation:
+                "عملية مباشرة",
+
+            currentRescue:
+                "عملية الإنقاذ الحالية",
+
+            idle:
+                "خامل",
+
+            noActive:
+                "لا توجد عملية إنقاذ نشطة. حلل فائضًا لإنشاء عملية.",
+
+            liveImpact:
+                "الأثر المباشر",
+
+            performance:
+                "أداء الإنقاذ",
+
+            rescueHistory:
+                "سجل الإنقاذ",
+
+            recentOperations:
+                "العمليات الأخيرة",
+
+            historyEmpty:
+                "ستظهر عمليات الإنقاذ المكتملة هنا.",
+
+            aiLabel:
+                "ذكاء الإنقاذ",
+
+            aiTitle:
+                "طبقة قرار الذكاء الاصطناعي",
+
+            ready:
+                "جاهز",
+
+            aiAssessment:
+                "تقييم الذكاء الاصطناعي",
+
+            waitingAnalysis:
+                "في انتظار تحليل الفائض",
+
+            aiAction:
+                "أرسل فائضًا لتفعيل ذكاء الإنقاذ المدعوم بالذكاء الاصطناعي.",
+
+            signals:
+                "الإشارات المكتشفة",
+
+            noSignals:
+                "لم يتم اكتشاف إشارات بعد.",
+
+            forecast:
+                "توقع الفائض القادم",
+
+            collecting:
+                "يتم جمع البيانات التشغيلية",
+
+            forecastDescription:
+                "نحتاج إلى المزيد من سجل الإنقاذ لتفعيل التنبؤ.",
+
+            rescueImpact:
+                "أثر الإنقاذ",
+
+            saved:
+                "كغ تم إنقاذها",
+
+            water:
+                "ماء",
+
+            footer:
+                "نبني تقنية لعالم أقل هدرًا للطعام."
+        },
+
+
+        fr: {
+            code: "FR",
+
+            how: "Comment ça marche",
+            impact: "Impact",
+            network: "Réseau",
+            command: "Centre de contrôle",
+
+            heroBadge:
+                "Construire le réseau mondial intelligent de sauvetage alimentaire",
+
+            heroFirst:
+                "Sauvez la nourriture",
+
+            heroSecond:
+                "avant qu'elle ne devienne un déchet.",
+
+            heroDescription:
+                "FoodRescue connecte les surplus alimentaires aux bonnes personnes et organisations avant leur perte.",
+
+            rescueFood:
+                "Sauver la nourriture",
+
+            explore:
+                "Explorer le réseau",
+
+            rescuesStarted:
+                "sauvetages lancés",
+
+            kgSaved:
+                "kg sauvés",
+
+            organizations:
+                "organisations",
+
+            foodIntelligence:
+                "INTELLIGENCE DU SAUVETAGE ALIMENTAIRE",
+
+            liveMonitor:
+                "Surveillance du sauvetage",
+
+            live:
+                "EN DIRECT",
+
+            surplusDetected:
+                "SURPLUS DÉTECTÉ",
+
+            bakeryItems:
+                "40 produits de boulangerie",
+
+            spoilage:
+                "Fenêtre estimée avant détérioration : 1 h 42",
+
+            priority:
+                "PRIORITÉ",
+
+            smartMatching:
+                "Correspondance intelligente",
+
+            localFoodAssociation:
+                "Association alimentaire locale",
+
+            associationMeta:
+                "2,1 km · Besoin de pain",
+
+            communityKitchen:
+                "Cuisine communautaire",
+
+            kitchenMeta:
+                "3,8 km · Capacité 60",
+
+            rescueWindow:
+                "Fenêtre de sauvetage",
+
+            globalImpact:
+                "IMPACT MONDIAL",
+
+            impactTitle:
+                "Chaque repas sauvé compte.",
+
+            impactDescription:
+                "FoodRescue transforme les actions individuelles de sauvetage en impact environnemental et social mesurable.",
+
+            mealsRescued:
+                "Repas sauvés",
+
+            foodWastePrevented:
+                "Gaspillage alimentaire évité",
+
+            co2Avoided:
+                "CO₂ évité estimé",
+
+            activeOperations:
+                "Opérations de sauvetage actives",
+
+            rescueEngine:
+                "MOTEUR DE SAUVETAGE",
+
+            howTitle:
+                "Du surplus au sauvetage.",
+
+            howDescription:
+                "Trois étapes intelligentes transforment le gaspillage potentiel en impact mesurable.",
+
+            detect:
+                "Détecter",
+
+            detectDescription:
+                "Les entreprises signalent les surplus ou permettent à FoodRescue de prévoir les surplus récurrents.",
+
+            match:
+                "Associer",
+
+            matchDescription:
+                "Le moteur évalue l'urgence, la distance, la capacité et les besoins alimentaires.",
+
+            rescue:
+                "Sauver",
+
+            rescueDescription:
+                "Le destinataire sélectionné coordonne la collecte et la plateforme enregistre l'impact.",
+
+            oneNetwork:
+                "UN SEUL RÉSEAU",
+
+            networkTitle:
+                "Entreprises. Organisations. Communautés.",
+
+            networkDescription:
+                "Une infrastructure connectée où chaque participant contribue à réduire le gaspillage alimentaire.",
+
+            joinNetwork:
+                "Rejoindre le réseau",
+
+            startRescue:
+                "DÉMARRER UN SAUVETAGE",
+
+            surplusTitle:
+                "Parlez-nous du surplus.",
+
+            surplusDescription:
+                "Fournissez quelques détails et FoodRescue déterminera l'urgence du sauvetage.",
+
+            foodType:
+                "Type de nourriture",
+
+            selectFood:
+                "Sélectionner le type",
+
+            bakery:
+                "Boulangerie",
+
+            prepared:
+                "Repas préparés",
+
+            fruits:
+                "Fruits",
+
+            vegetables:
+                "Légumes",
+
+            dairy:
+                "Produits laitiers",
+
+            other:
+                "Autre",
+
+            quantity:
+                "Quantité",
+
+            unit:
+                "Unité",
+
+            items:
+                "Articles",
+
+            kilograms:
+                "Kilogrammes",
+
+            meals:
+                "Repas",
+
+            boxes:
+                "Boîtes",
+
+            availableFrom:
+                "Disponible à partir de",
+
+            expiry:
+                "Expiration estimée",
+
+            location:
+                "Lieu",
+
+            locationPlaceholder:
+                "Ville ou quartier",
+
+            additional:
+                "Informations complémentaires",
+
+            notesPlaceholder:
+                "Décrivez la nourriture, l'emballage et les conditions de stockage...",
+
+            analyze:
+                "Analyser le surplus",
+
+            intelligence:
+                "Intelligence du sauvetage",
+
+            submitPrompt:
+                "Soumettez les informations du surplus pour générer une première évaluation de priorité.",
+
+            rescuePriority:
+                "PRIORITÉ DE SAUVETAGE",
+
+            waiting:
+                "EN ATTENTE",
+
+            food:
+                "Nourriture",
+
+            timeRemaining:
+                "Temps restant",
+
+            recommendedAction:
+                "ACTION RECOMMANDÉE",
+
+            intelligentMatching:
+                "CORRESPONDANCE INTELLIGENTE",
+
+            bestMatches:
+                "Meilleures correspondances",
+
+            noMatches:
+                "Aucune organisation de sauvetage appropriée trouvée.",
+
+            matchScore:
+                "Correspondance",
+
+            select:
+                "SÉLECTIONNER",
+
+            rescueOperation:
+                "OPÉRATION DE SAUVETAGE",
+
+            matched:
+                "ASSOCIÉ",
+
+            collection:
+                "COLLECTE",
+
+            rescued:
+                "SAUVÉ",
+
+            startRescueButton:
+                "Démarrer le sauvetage",
+
+            liveNetwork:
+                "RÉSEAU DE SAUVETAGE EN DIRECT",
+
+            mapTitle:
+                "Voir le réseau de sauvetage en action.",
+
+            mapDescription:
+                "Surveillez les organisations participantes, les surplus et les itinéraires actifs.",
+
+            networkOnline:
+                "RÉSEAU EN LIGNE",
+
+            locateMe:
+                "Me localiser",
+
+            commandLabel:
+                "CENTRE DE CONTRÔLE DU SAUVETAGE",
+
+            commandTitle:
+                "Chaque sauvetage est suivi jusqu'à son achèvement.",
+
+            commandDescription:
+                "FoodRescue transforme chaque décision de sauvetage en flux opérationnel traçable.",
+
+            liveOperation:
+                "OPÉRATION EN DIRECT",
+
+            currentRescue:
+                "Sauvetage actuel",
+
+            idle:
+                "INACTIF",
+
+            noActive:
+                "Aucune opération active. Analysez un surplus pour en créer une.",
+
+            liveImpact:
+                "IMPACT EN DIRECT",
+
+            performance:
+                "Performance du sauvetage",
+
+            rescueHistory:
+                "HISTORIQUE DES SAUVETAGES",
+
+            recentOperations:
+                "Opérations récentes",
+
+            historyEmpty:
+                "Les opérations terminées apparaîtront ici.",
+
+            aiLabel:
+                "INTELLIGENCE DU SAUVETAGE",
+
+            aiTitle:
+                "Couche de décision IA",
+
+            ready:
+                "PRÊT",
+
+            aiAssessment:
+                "ÉVALUATION IA",
+
+            waitingAnalysis:
+                "En attente de l'analyse du surplus",
+
+            aiAction:
+                "Soumettez un surplus pour activer l'intelligence de sauvetage assistée par IA.",
+
+            signals:
+                "SIGNAUX DÉTECTÉS",
+
+            noSignals:
+                "Aucun signal détecté pour le moment.",
+
+            forecast:
+                "PRÉVISION DU PROCHAIN SURPLUS",
+
+            collecting:
+                "Collecte des données opérationnelles",
+
+            forecastDescription:
+                "Davantage d'historique est nécessaire pour les prévisions.",
+
+            rescueImpact:
+                "IMPACT DU SAUVETAGE",
+
+            saved:
+                "kg sauvés",
+
+            water:
+                "eau",
+
+            footer:
+                "Construire une technologie pour un monde avec moins de gaspillage alimentaire."
+        },
+
+
+        zh: {
+            code: "ZH",
+
+            how: "工作原理",
+            impact: "影响",
+            network: "网络",
+            command: "指挥中心",
+
+            heroBadge:
+                "构建全球智能食物救援网络",
+
+            heroFirst:
+                "拯救食物",
+
+            heroSecond:
+                "在它变成废弃物之前。",
+
+            heroDescription:
+                "FoodRescue 将剩余食物与合适的人和组织连接起来，避免有价值的食物被浪费。",
+
+            rescueFood:
+                "拯救食物",
+
+            explore:
+                "探索网络",
+
+            rescuesStarted:
+                "已启动救援",
+
+            kgSaved:
+                "公斤已拯救",
+
+            organizations:
+                "个组织",
+
+            foodIntelligence:
+                "食品救援智能系统",
+
+            liveMonitor:
+                "实时救援监控",
+
+            live:
+                "实时",
+
+            surplusDetected:
+                "检测到剩余食物",
+
+            bakeryItems:
+                "40 份烘焙食品",
+
+            spoilage:
+                "预计变质窗口：1小时42分钟",
+
+            priority:
+                "优先级",
+
+            smartMatching:
+                "智能匹配",
+
+            localFoodAssociation:
+                "当地食品协会",
+
+            associationMeta:
+                "2.1 公里 · 需要面包",
+
+            communityKitchen:
+                "社区厨房",
+
+            kitchenMeta:
+                "3.8 公里 · 容量 60",
+
+            rescueWindow:
+                "救援窗口",
+
+            globalImpact:
+                "全球影响",
+
+            impactTitle:
+                "每一份被拯救的食物都很重要。",
+
+            impactDescription:
+                "FoodRescue 将每一次食品救援转化为可衡量的环境和社会影响。",
+
+            mealsRescued:
+                "已拯救餐食",
+
+            foodWastePrevented:
+                "避免的食品浪费",
+
+            co2Avoided:
+                "预计减少的 CO₂",
+
+            activeOperations:
+                "正在进行的救援",
+
+            rescueEngine:
+                "救援引擎",
+
+            howTitle:
+                "从剩余食物到救援。",
+
+            howDescription:
+                "三个智能步骤将潜在浪费转化为可衡量的影响。",
+
+            detect:
+                "检测",
+
+            detectDescription:
+                "企业可以报告剩余食物，或允许 FoodRescue 预测周期性剩余。",
+
+            match:
+                "匹配",
+
+            matchDescription:
+                "救援引擎评估紧急程度、距离、容量和食品需求。",
+
+            rescue:
+                "救援",
+
+            rescueDescription:
+                "选定的接收方协调收集，平台记录最终影响。",
+
+            oneNetwork:
+                "一个网络",
+
+            networkTitle:
+                "企业。组织。社区。",
+
+            networkDescription:
+                "一个互联基础设施，让每位参与者都能帮助减少食品浪费。",
+
+            joinNetwork:
+                "加入网络",
+
+            startRescue:
+                "开始救援",
+
+            surplusTitle:
+                "告诉我们剩余食物的信息。",
+
+            surplusDescription:
+                "提供一些信息，FoodRescue 将判断救援的紧迫程度。",
+
+            foodType:
+                "食品类型",
+
+            selectFood:
+                "选择食品类型",
+
+            bakery:
+                "烘焙食品",
+
+            prepared:
+                "准备好的餐食",
+
+            fruits:
+                "水果",
+
+            vegetables:
+                "蔬菜",
+
+            dairy:
+                "乳制品",
+
+            other:
+                "其他",
+
+            quantity:
+                "数量",
+
+            unit:
+                "单位",
+
+            items:
+                "件",
+
+            kilograms:
+                "公斤",
+
+            meals:
+                "餐",
+
+            boxes:
+                "箱",
+
+            availableFrom:
+                "可用时间",
+
+            expiry:
+                "预计过期",
+
+            location:
+                "位置",
+
+            locationPlaceholder:
+                "城市或社区",
+
+            additional:
+                "附加信息",
+
+            notesPlaceholder:
+                "描述食品、包装和储存条件...",
+
+            analyze:
+                "分析剩余食物",
+
+            intelligence:
+                "救援智能",
+
+            submitPrompt:
+                "提交剩余食物信息，以生成初步救援优先级评估。",
+
+            rescuePriority:
+                "救援优先级",
+
+            waiting:
+                "等待中",
+
+            food:
+                "食品",
+
+            timeRemaining:
+                "剩余时间",
+
+            recommendedAction:
+                "建议操作",
+
+            intelligentMatching:
+                "智能匹配",
+
+            bestMatches:
+                "最佳救援匹配",
+
+            noMatches:
+                "未找到合适的救援组织。",
+
+            matchScore:
+                "匹配",
+
+            select:
+                "选择",
+
+            rescueOperation:
+                "救援行动",
+
+            matched:
+                "已匹配",
+
+            collection:
+                "收集",
+
+            rescued:
+                "已救援",
+
+            startRescueButton:
+                "开始救援",
+
+            liveNetwork:
+                "实时救援网络",
+
+            mapTitle:
+                "查看救援网络的实时运行。",
+
+            mapDescription:
+                "监控参与组织、剩余食物位置和正在进行的救援路线。",
+
+            networkOnline:
+                "网络在线",
+
+            locateMe:
+                "定位我",
+
+            commandLabel:
+                "救援指挥中心",
+
+            commandTitle:
+                "每一次救援都跟踪到完成。",
+
+            commandDescription:
+                "FoodRescue 将每个救援决策转化为可追踪的运营流程。",
+
+            liveOperation:
+                "实时行动",
+
+            currentRescue:
+                "当前救援",
+
+            idle:
+                "空闲",
+
+            noActive:
+                "没有正在进行的救援。分析剩余食物以创建行动。",
+
+            liveImpact:
+                "实时影响",
+
+            performance:
+                "救援表现",
+
+            rescueHistory:
+                "救援历史",
+
+            recentOperations:
+                "最近行动",
+
+            historyEmpty:
+                "已完成的救援行动将显示在这里。",
+
+            aiLabel:
+                "救援智能",
+
+            aiTitle:
+                "AI 决策层",
+
+            ready:
+                "就绪",
+
+            aiAssessment:
+                "AI 评估",
+
+            waitingAnalysis:
+                "等待剩余食物分析",
+
+            aiAction:
+                "提交剩余食物以激活 AI 救援智能。",
+
+            signals:
+                "检测到的信号",
+
+            noSignals:
+                "尚未检测到信号。",
+
+            forecast:
+                "下一次剩余食物预测",
+
+            collecting:
+                "正在收集运营数据",
+
+            forecastDescription:
+                "需要更多救援历史数据才能进行预测。",
+
+            rescueImpact:
+                "救援影响",
+
+            saved:
+                "公斤已拯救",
+
+            water:
+                "水",
+
+            footer:
+                "用技术打造一个更少食物浪费的世界。"
+        },
+
+
+        de: {
+            code: "DE",
+
+            how: "So funktioniert es",
+            impact: "Wirkung",
+            network: "Netzwerk",
+            command: "Kontrollzentrum",
+
+            heroBadge:
+                "Wir bauen ein intelligentes globales Lebensmittelrettungsnetzwerk",
+
+            heroFirst:
+                "Lebensmittel retten",
+
+            heroSecond:
+                "bevor sie zu Abfall werden.",
+
+            heroDescription:
+                "FoodRescue verbindet überschüssige Lebensmittel mit den richtigen Menschen und Organisationen.",
+
+            rescueFood:
+                "Lebensmittel retten",
+
+            explore:
+                "Netzwerk erkunden",
+
+            rescuesStarted:
+                "Rettungen gestartet",
+
+            kgSaved:
+                "kg gerettet",
+
+            organizations:
+                "Organisationen",
+
+            foodIntelligence:
+                "LEBENSMITTELRETTUNGS-INTELLIGENZ",
+
+            liveMonitor:
+                "Live-Rettungsmonitor",
+
+            live:
+                "LIVE",
+
+            surplusDetected:
+                "ÜBERSCHUSS ERKANNT",
+
+            bakeryItems:
+                "40 Backwaren",
+
+            spoilage:
+                "Geschätztes Verderbfenster: 1 Std. 42 Min.",
+
+            priority:
+                "PRIORITÄT",
+
+            smartMatching:
+                "Intelligente Zuordnung",
+
+            localFoodAssociation:
+                "Lokale Lebensmittelvereinigung",
+
+            associationMeta:
+                "2,1 km entfernt · Benötigt Brot",
+
+            communityKitchen:
+                "Gemeinschaftsküche",
+
+            kitchenMeta:
+                "3,8 km · Kapazität 60",
+
+            rescueWindow:
+                "Rettungsfenster",
+
+            globalImpact:
+                "GLOBALE WIRKUNG",
+
+            impactTitle:
+                "Jede gerettete Mahlzeit zählt.",
+
+            impactDescription:
+                "FoodRescue verwandelt einzelne Rettungsaktionen in messbare ökologische und soziale Wirkung.",
+
+            mealsRescued:
+                "Gerettete Mahlzeiten",
+
+            foodWastePrevented:
+                "Vermeidete Lebensmittelverschwendung",
+
+            co2Avoided:
+                "Geschätztes vermiedenes CO₂",
+
+            activeOperations:
+                "Aktive Rettungsaktionen",
+
+            rescueEngine:
+                "RETTUNGS-ENGINE",
+
+            howTitle:
+                "Vom Überschuss zur Rettung.",
+
+            howDescription:
+                "Drei intelligente Schritte verwandeln potenzielle Verschwendung in messbare Wirkung.",
+
+            detect:
+                "Erkennen",
+
+            detectDescription:
+                "Unternehmen melden überschüssige Lebensmittel oder lassen FoodRescue wiederkehrende Überschüsse vorhersagen.",
+
+            match:
+                "Zuordnen",
+
+            matchDescription:
+                "Die Rettungs-Engine bewertet Dringlichkeit, Entfernung, Kapazität und Lebensmittelbedarf.",
+
+            rescue:
+                "Retten",
+
+            rescueDescription:
+                "Der ausgewählte Empfänger koordiniert die Abholung und die Plattform erfasst die Wirkung.",
+
+            oneNetwork:
+                "EIN NETZWERK",
+
+            networkTitle:
+                "Unternehmen. Organisationen. Gemeinschaften.",
+
+            networkDescription:
+                "Eine vernetzte Infrastruktur, in der alle Beteiligten zur Verringerung von Lebensmittelverschwendung beitragen können.",
+
+            joinNetwork:
+                "Dem Netzwerk beitreten",
+
+            startRescue:
+                "RETTUNG STARTEN",
+
+            surplusTitle:
+                "Erzählen Sie uns vom Überschuss.",
+
+            surplusDescription:
+                "Geben Sie einige Informationen an und FoodRescue bestimmt, wie dringend die Lebensmittel gerettet werden sollten.",
+
+            foodType:
+                "Lebensmittelart",
+
+            selectFood:
+                "Lebensmittelart auswählen",
+
+            bakery:
+                "Backwaren",
+
+            prepared:
+                "Zubereitete Mahlzeiten",
+
+            fruits:
+                "Obst",
+
+            vegetables:
+                "Gemüse",
+
+            dairy:
+                "Milchprodukte",
+
+            other:
+                "Andere",
+
+            quantity:
+                "Menge",
+
+            unit:
+                "Einheit",
+
+            items:
+                "Artikel",
+
+            kilograms:
+                "Kilogramm",
+
+            meals:
+                "Mahlzeiten",
+
+            boxes:
+                "Boxen",
+
+            availableFrom:
+                "Verfügbar ab",
+
+            expiry:
+                "Voraussichtlicher Ablauf",
+
+            location:
+                "Ort",
+
+            locationPlaceholder:
+                "Stadt oder Stadtteil",
+
+            additional:
+                "Zusätzliche Informationen",
+
+            notesPlaceholder:
+                "Beschreiben Sie die Lebensmittel, Verpackung und Lagerbedingungen...",
+
+            analyze:
+                "Überschuss analysieren",
+
+            intelligence:
+                "Rettungsintelligenz",
+
+            submitPrompt:
+                "Übermitteln Sie die Informationen zum Überschuss, um eine erste Rettungspriorität zu erstellen.",
+
+            rescuePriority:
+                "RETTUNGSPRIORITÄT",
+
+            waiting:
+                "WARTEN",
+
+            food:
+                "Lebensmittel",
+
+            timeRemaining:
+                "Verbleibende Zeit",
+
+            recommendedAction:
+                "EMPFOHLENE AKTION",
+
+            intelligentMatching:
+                "INTELLIGENTE ZUORDNUNG",
+
+            bestMatches:
+                "Beste Rettungszuordnungen",
+
+            noMatches:
+                "Keine geeigneten Rettungsorganisationen gefunden.",
+
+            matchScore:
+                "Zuordnung",
+
+            select:
+                "AUSWÄHLEN",
+
+            rescueOperation:
+                "RETTUNGSAKTION",
+
+            matched:
+                "ZUgeordnet",
+
+            collection:
+                "ABHOLUNG",
+
+            rescued:
+                "GERETTET",
+
+            startRescueButton:
+                "Rettung starten",
+
+            liveNetwork:
+                "LIVE-RETTUNGSNETZWERK",
+
+            mapTitle:
+                "Das Rettungsnetzwerk in Bewegung sehen.",
+
+            mapDescription:
+                "Teilnehmende Organisationen, Überschussstandorte und aktive Rettungsrouten überwachen.",
+
+            networkOnline:
+                "NETZWERK ONLINE",
+
+            locateMe:
+                "Meinen Standort finden",
+
+            commandLabel:
+                "RETTUNGS-KONTROLLZENTRUM",
+
+            commandTitle:
+                "Jede Rettung wird bis zum Abschluss verfolgt.",
+
+            commandDescription:
+                "FoodRescue verwandelt jede Rettungsentscheidung in einen nachvollziehbaren Betriebsablauf.",
+
+            liveOperation:
+                "LIVE-AKTION",
+
+            currentRescue:
+                "Aktuelle Rettung",
+
+            idle:
+                "INAKTIV",
+
+            noActive:
+                "Keine aktive Rettungsaktion. Analysieren Sie einen Überschuss, um eine zu erstellen.",
+
+            liveImpact:
+                "LIVE-WIRKUNG",
+
+            performance:
+                "Rettungsleistung",
+
+            rescueHistory:
+                "RETTUNGSHISTORIE",
+
+            recentOperations:
+                "Letzte Aktionen",
+
+            historyEmpty:
+                "Abgeschlossene Rettungsaktionen werden hier angezeigt.",
+
+            aiLabel:
+                "RETTUNGSINTELLIGENZ",
+
+            aiTitle:
+                "KI-Entscheidungsebene",
+
+            ready:
+                "BEREIT",
+
+            aiAssessment:
+                "KI-BEWERTUNG",
+
+            waitingAnalysis:
+                "Warten auf Überschussanalyse",
+
+            aiAction:
+                "Übermitteln Sie einen Überschuss, um KI-gestützte Rettungsintelligenz zu aktivieren.",
+
+            signals:
+                "ERKANNTE SIGNALE",
+
+            noSignals:
+                "Noch keine Signale erkannt.",
+
+            forecast:
+                "NÄCHSTE ÜBERSCHUSSPROGNOSE",
+
+            collecting:
+                "Betriebsdaten werden gesammelt",
+
+            forecastDescription:
+                "Für die Prognose werden weitere Rettungshistorien benötigt.",
+
+            rescueImpact:
+                "RETTUNGSWIRKUNG",
+
+            saved:
+                "kg gerettet",
+
+            water:
+                "Wasser",
+
+            footer:
+                "Technologie für eine Welt mit weniger Lebensmittelverschwendung."
+        }
+
+    };
+
+
+    let currentLanguage = "en";
+
+    try {
+
+        const saved =
+            localStorage.getItem(
+                "foodrescue_language"
             );
 
-        const button =
-            document.querySelector(
-                ".language-button"
+        if (
+            saved &&
+            translations[saved]
+        ) {
+            currentLanguage = saved;
+        }
+
+    }
+    catch {}
+
+
+    const menu =
+        document.createElement("div");
+
+    menu.className =
+        "foodrescue-language-menu";
+
+    menu.innerHTML = `
+        <button type="button" data-lang="en">
+            English
+        </button>
+
+        <button type="button" data-lang="ar">
+            العربية
+        </button>
+
+        <button type="button" data-lang="fr">
+            Français
+        </button>
+
+        <button type="button" data-lang="zh">
+            中文
+        </button>
+
+        <button type="button" data-lang="de">
+            Deutsch
+        </button>
+    `;
+
+
+    const style =
+        document.createElement("style");
+
+    style.textContent = `
+
+        .language-selector {
+            position: relative;
+        }
+
+        .foodrescue-language-menu {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            min-width: 180px;
+            padding: 7px;
+            border-radius: 14px;
+            background: rgba(7,16,13,0.98);
+            border: 1px solid rgba(255,255,255,0.12);
+            box-shadow: 0 18px 45px rgba(0,0,0,0.35);
+            backdrop-filter: blur(16px);
+            display: none;
+            z-index: 999999;
+        }
+
+        .foodrescue-language-menu.open {
+            display: grid;
+            gap: 4px;
+        }
+
+        .foodrescue-language-menu button {
+            width: 100%;
+            padding: 10px 12px;
+            border: 0;
+            border-radius: 9px;
+            background: transparent;
+            color: #e8f0eb;
+            text-align: left;
+            cursor: pointer;
+            font: inherit;
+        }
+
+        .foodrescue-language-menu button:hover {
+            background: rgba(74,222,128,0.12);
+            color: #4ade80;
+        }
+
+        html[dir="rtl"]
+        .foodrescue-language-menu {
+            right: auto;
+            left: 0;
+        }
+
+        html[dir="rtl"]
+        .foodrescue-language-menu button {
+            text-align: right;
+        }
+
+    `;
+
+    document.head.appendChild(style);
+
+    selector.appendChild(menu);
+
+
+    function setDirectText(
+        element,
+        value
+    ) {
+
+        if (!element) {
+            return;
+        }
+
+        const textNodes =
+            Array.from(
+                element.childNodes
+            ).filter(
+                node =>
+                    node.nodeType ===
+                    Node.TEXT_NODE
             );
 
-        if (!selector || !button) {
+        textNodes.forEach(
+            node => node.remove()
+        );
+
+        const text =
+            document.createTextNode(
+                ` ${value} `
+            );
+
+        if (element.firstElementChild) {
+
+            element.firstElementChild.after(
+                text
+            );
+
+        }
+        else {
+
+            element.appendChild(
+                text
+            );
+
+        }
+
+    }
+
+
+    function setText(
+        selectorText,
+        value
+    ) {
+
+        const element =
+            document.querySelector(
+                selectorText
+            );
+
+        if (element) {
+            setDirectText(
+                element,
+                value
+            );
+        }
+
+    }
+
+
+    function setAll(
+        selectorText,
+        value
+    ) {
+
+        document
+            .querySelectorAll(
+                selectorText
+            )
+            .forEach(
+                element =>
+                    setDirectText(
+                        element,
+                        value
+                    )
+            );
+
+    }
+
+
+    function setButton(
+        selectorText,
+        value
+    ) {
+
+        setText(
+            selectorText,
+            value
+        );
+
+    }
+
+
+    function translateDynamicText(
+        root,
+        t
+    ) {
+
+        if (!root) {
             return;
         }
 
 
-        const translations = {
-
-            en: {
-                code: "EN",
-
-                how: "How it works",
-                impact: "Impact",
-                network: "Network",
-                command: "Command Center",
-
-                badge:
-                    "Building the world's food rescue intelligence network",
-
-                heroFirst:
-                    "Save food",
-
-                heroSecond:
-                    "before it becomes waste.",
-
-                description:
-                    "FoodRescue connects surplus food with the right people and organizations before valuable food is lost.",
-
-                rescueFood:
-                    "Rescue Food",
-
-                explore:
-                    "Explore the Network",
-
-                globalImpact:
-                    "GLOBAL IMPACT",
-
-                impactTitle:
-                    "Every rescued meal counts.",
-
-                howLabel:
-                    "THE RESCUE ENGINE",
-
-                howTitle:
-                    "From surplus to rescue.",
-
-                networkLabel:
-                    "ONE NETWORK",
-
-                rescueLabel:
-                    "START A RESCUE",
-
-                rescueTitle:
-                    "Tell us about the surplus.",
-
-                analyze:
-                    "Analyze Surplus"
-
-            },
-
-            ar: {
-                code: "AR",
-
-                how: "كيف تعمل المنصة",
-                impact: "الأثر",
-                network: "الشبكة",
-                command: "مركز القيادة",
-
-                badge:
-                    "نبني شبكة عالمية ذكية لإنقاذ الغذاء",
-
-                heroFirst:
-                    "أنقذ الطعام",
-
-                heroSecond:
-                    "قبل أن يتحول إلى نفايات.",
-
-                description:
-                    "تربط FoodRescue فائض الطعام بالأشخاص والمنظمات المناسبة قبل ضياع الطعام.",
-
-                rescueFood:
-                    "إنقاذ الطعام",
-
-                explore:
-                    "استكشف الشبكة",
-
-                globalImpact:
-                    "الأثر العالمي",
-
-                impactTitle:
-                    "كل وجبة يتم إنقاذها مهمة.",
-
-                howLabel:
-                    "محرك الإنقاذ",
-
-                howTitle:
-                    "من الفائض إلى الإنقاذ.",
-
-                networkLabel:
-                    "شبكة واحدة",
-
-                rescueLabel:
-                    "ابدأ عملية إنقاذ",
-
-                rescueTitle:
-                    "أخبرنا عن فائض الطعام.",
-
-                analyze:
-                    "تحليل الفائض"
-
-            },
-
-            fr: {
-                code: "FR",
-
-                how: "Comment ça marche",
-                impact: "Impact",
-                network: "Réseau",
-                command: "Centre de contrôle",
-
-                badge:
-                    "Construire le réseau mondial intelligent de sauvetage alimentaire",
-
-                heroFirst:
-                    "Sauvez la nourriture",
-
-                heroSecond:
-                    "avant qu'elle ne devienne un déchet.",
-
-                description:
-                    "FoodRescue connecte les surplus alimentaires aux bonnes personnes et organisations avant leur perte.",
-
-                rescueFood:
-                    "Sauver la nourriture",
-
-                explore:
-                    "Explorer le réseau",
-
-                globalImpact:
-                    "IMPACT MONDIAL",
-
-                impactTitle:
-                    "Chaque repas sauvé compte.",
-
-                howLabel:
-                    "MOTEUR DE SAUVETAGE",
-
-                howTitle:
-                    "Du surplus au sauvetage.",
-
-                networkLabel:
-                    "UN SEUL RÉSEAU",
-
-                rescueLabel:
-                    "DÉMARRER UN SAUVETAGE",
-
-                rescueTitle:
-                    "Parlez-nous du surplus.",
-
-                analyze:
-                    "Analyser le surplus"
-
-            },
-
-            zh: {
-                code: "ZH",
-
-                how: "工作原理",
-                impact: "影响",
-                network: "网络",
-                command: "指挥中心",
-
-                badge:
-                    "构建全球智能食物救援网络",
-
-                heroFirst:
-                    "拯救食物",
-
-                heroSecond:
-                    "在它变成废弃物之前。",
-
-                description:
-                    "FoodRescue 将剩余食物与合适的人和组织连接起来，减少食物浪费。",
-
-                rescueFood:
-                    "拯救食物",
-
-                explore:
-                    "探索网络",
-
-                globalImpact:
-                    "全球影响",
-
-                impactTitle:
-                    "每一份被拯救的食物都很重要。",
-
-                howLabel:
-                    "救援引擎",
-
-                howTitle:
-                    "从剩余食物到救援。",
-
-                networkLabel:
-                    "一个网络",
-
-                rescueLabel:
-                    "开始救援",
-
-                rescueTitle:
-                    "告诉我们剩余食物的信息。",
-
-                analyze:
-                    "分析剩余食物"
-
-            },
-
-            de: {
-                code: "DE",
-
-                how: "So funktioniert es",
-                impact: "Wirkung",
-                network: "Netzwerk",
-                command: "Kontrollzentrum",
-
-                badge:
-                    "Wir bauen ein intelligentes globales Lebensmittelrettungsnetzwerk",
-
-                heroFirst:
-                    "Lebensmittel retten",
-
-                heroSecond:
-                    "bevor sie zu Abfall werden.",
-
-                description:
-                    "FoodRescue verbindet überschüssige Lebensmittel mit den richtigen Menschen und Organisationen.",
-
-                rescueFood:
-                    "Lebensmittel retten",
-
-                explore:
-                    "Netzwerk erkunden",
-
-                globalImpact:
-                    "GLOBALE WIRKUNG",
-
-                impactTitle:
-                    "Jede gerettete Mahlzeit zählt.",
-
-                howLabel:
-                    "RETTUNGS-ENGINE",
-
-                howTitle:
-                    "Vom Überschuss zur Rettung.",
-
-                networkLabel:
-                    "EIN NETZWERK",
-
-                rescueLabel:
-                    "RETTUNG STARTEN",
-
-                rescueTitle:
-                    "Erzählen Sie uns vom Überschuss.",
-
-                analyze:
-                    "Überschuss analysieren"
-
-            }
-
-        };
-
-
-        const menu =
-            document.createElement(
-                "div"
+        /* Matching */
+
+        root
+            .querySelectorAll(
+                ".match-result-score span"
+            )
+            .forEach(
+                el =>
+                    setDirectText(
+                        el,
+                        t.matchScore
+                    )
             );
 
-        menu.className =
-            "foodrescue-language-menu";
 
-        menu.innerHTML = `
-            <button type="button" data-lang="en">
-                English
-            </button>
-
-            <button type="button" data-lang="ar">
-                العربية
-            </button>
-
-            <button type="button" data-lang="fr">
-                Français
-            </button>
-
-            <button type="button" data-lang="zh">
-                中文
-            </button>
-
-            <button type="button" data-lang="de">
-                Deutsch
-            </button>
-        `;
-
-
-        const style =
-            document.createElement(
-                "style"
+        root
+            .querySelectorAll(
+                ".match-select-button"
+            )
+            .forEach(
+                el =>
+                    setDirectText(
+                        el,
+                        t.select
+                    )
             );
 
-        style.textContent = `
 
-            .language-selector {
-                position: relative;
-            }
+        root
+            .querySelectorAll(
+                ".match-result-info span"
+            )
+            .forEach(
+                (el, index) => {
 
-            .foodrescue-language-menu {
-                position: absolute;
-                top: calc(100% + 10px);
-                right: 0;
-                min-width: 175px;
-                padding: 7px;
-                border-radius: 14px;
-                background: rgba(7,16,13,0.98);
-                border: 1px solid rgba(255,255,255,0.12);
-                box-shadow: 0 18px 45px rgba(0,0,0,0.35);
-                backdrop-filter: blur(16px);
-                display: none;
-                z-index: 999999;
-            }
+                    if (
+                        index % 2 === 0
+                    ) {
 
-            .foodrescue-language-menu.open {
-                display: grid;
-                gap: 4px;
-            }
+                        const text =
+                            el.textContent.trim();
 
-            .foodrescue-language-menu button {
-                width: 100%;
-                border: 0;
-                border-radius: 9px;
-                padding: 10px 12px;
-                background: transparent;
-                color: #e8f0eb;
-                text-align: left;
-                cursor: pointer;
-                font: inherit;
-            }
+                        const translated =
+                            text
+                                .replace(
+                                    /km away/gi,
+                                    currentLanguage === "ar"
+                                        ? "كم"
+                                        : currentLanguage === "fr"
+                                            ? "km"
+                                            : currentLanguage === "zh"
+                                                ? "公里"
+                                                : currentLanguage === "de"
+                                                    ? "km entfernt"
+                                                    : "km away"
+                                )
+                                .replace(
+                                    /Capacity/gi,
+                                    currentLanguage === "ar"
+                                        ? "السعة"
+                                        : currentLanguage === "fr"
+                                            ? "Capacité"
+                                            : currentLanguage === "zh"
+                                                ? "容量"
+                                                : currentLanguage === "de"
+                                                    ? "Kapazität"
+                                                    : "Capacity"
+                                );
 
-            .foodrescue-language-menu button:hover {
-                background: rgba(74,222,128,0.12);
-                color: #4ade80;
-            }
+                        if (
+                            translated !== text
+                        ) {
+                            setDirectText(
+                                el,
+                                translated
+                            );
+                        }
 
-            html[dir="rtl"]
-            .foodrescue-language-menu {
-                right: auto;
-                left: 0;
-            }
+                    }
 
-            html[dir="rtl"]
-            .foodrescue-language-menu button {
-                text-align: right;
-            }
+                }
+            );
 
-        `;
 
-        document.head.appendChild(
-            style
+        /* Operation */
+
+        setAll(
+            ".operation-status .status-step:nth-of-type(1) strong",
+            t.matched
         );
 
-        selector.appendChild(
-            menu
+        setAll(
+            ".operation-status .status-step:nth-of-type(2) strong",
+            t.collection
+        );
+
+        setAll(
+            ".operation-status .status-step:nth-of-type(3) strong",
+            t.rescued
         );
 
 
-        function setSelectorText(
-            selectorText,
-            value
+        /* AI */
+
+        setText(
+            "#advancedIntelligencePanel .command-label",
+            t.aiLabel
+        );
+
+        setText(
+            "#advancedIntelligencePanel .advanced-header h3",
+            t.aiTitle
+        );
+
+        setText(
+            "#advancedIntelligencePanel .ai-confidence",
+            t.ready
+        );
+
+        setText(
+            "#advancedIntelligencePanel .advanced-card:nth-child(1) .advanced-card-label",
+            t.aiAssessment
+        );
+
+        setText(
+            "#advancedIntelligencePanel #aiSummary",
+            t.waitingAnalysis
+        );
+
+        setText(
+            "#advancedIntelligencePanel #aiAction",
+            t.aiAction
+        );
+
+        setText(
+            "#advancedIntelligencePanel .advanced-card:nth-child(2) .advanced-card-label",
+            t.signals
+        );
+
+        setText(
+            "#advancedIntelligencePanel .signal-empty",
+            t.noSignals
+        );
+
+        setText(
+            "#advancedIntelligencePanel .advanced-card:nth-child(3) .advanced-card-label",
+            t.forecast
+        );
+
+        setText(
+            "#advancedIntelligencePanel #predictionTrend",
+            t.collecting
+        );
+
+        setText(
+            "#advancedIntelligencePanel #predictionRecommendation",
+            t.forecastDescription
+        );
+
+        setText(
+            "#advancedIntelligencePanel .impact-engine-card .advanced-card-label",
+            t.rescueImpact
+        );
+
+        setAll(
+            "#operationImpact div:nth-child(1) span",
+            t.saved
+        );
+
+        setAll(
+            "#operationImpact div:nth-child(2) span",
+            currentLanguage === "ar"
+                ? "ثاني أكسيد الكربون المتجنب"
+                : currentLanguage === "fr"
+                    ? "CO₂ évité"
+                    : currentLanguage === "zh"
+                        ? "减少的 CO₂"
+                        : currentLanguage === "de"
+                            ? "vermiedenes CO₂"
+                            : "CO₂ avoided"
+        );
+
+        setAll(
+            "#operationImpact div:nth-child(3) span",
+            t.mealsRescued
+        );
+
+        setAll(
+            "#operationImpact div:nth-child(4) span",
+            t.water
+        );
+
+
+        /* Dynamic button */
+
+        if (
+            startRescueButton &&
+            state.currentOperation
         ) {
 
-            const element =
-                document.querySelector(
-                    selectorText
+            if (
+                state.currentOperation.status ===
+                "RESCUED"
+            ) {
+
+                setButton(
+                    "#startRescueButton",
+                    t.rescued
                 );
 
-            if (element) {
-                element.textContent =
-                    value;
+            }
+            else {
+
+                setButton(
+                    "#startRescueButton",
+                    t.startRescueButton
+                );
+
             }
 
         }
 
+    }
 
-        function applyLanguage(
-            language
+
+    function translatePage(
+        language
+    ) {
+
+        const t =
+            translations[language] ||
+            translations.en;
+
+        currentLanguage =
+            translations[language]
+                ? language
+                : "en";
+
+
+        document.documentElement.lang =
+            currentLanguage;
+
+        document.documentElement.dir =
+            currentLanguage === "ar"
+                ? "rtl"
+                : "ltr";
+
+
+        button.textContent =
+            `${t.code} ▾`;
+
+
+        /* NAVIGATION */
+
+        setText(
+            '.nav-links a[href="#how-it-works"]',
+            t.how
+        );
+
+        setText(
+            '.nav-links a[href="#impact"]',
+            t.impact
+        );
+
+        setText(
+            '.nav-links a[href="#network"]',
+            t.network
+        );
+
+        setText(
+            '.nav-links a[href="#command-center"]',
+            t.command
+        );
+
+
+        /* HERO */
+
+        const badge =
+            document.querySelector(
+                ".status-badge"
+            );
+
+        if (badge) {
+
+            badge.innerHTML = `
+                <span class="status-dot"></span>
+                ${t.heroBadge}
+            `;
+
+        }
+
+
+        const hero =
+            document.querySelector(
+                ".hero h1"
+            );
+
+        if (hero) {
+
+            hero.innerHTML = `
+                ${t.heroFirst}
+                <span>
+                    ${t.heroSecond}
+                </span>
+            `;
+
+        }
+
+
+        setText(
+            ".hero-description",
+            t.heroDescription
+        );
+
+        setButton(
+            "#rescueFoodButton",
+            t.rescueFood
+        );
+
+        setButton(
+            "#exploreButton",
+            t.explore
+        );
+
+
+        const heroTrust =
+            document.querySelectorAll(
+                ".hero-trust > div span"
+            );
+
+        if (
+            heroTrust.length >= 3
         ) {
 
-            const t =
-                translations[language] ||
-                translations.en;
+            heroTrust[0].textContent =
+                t.rescuesStarted;
+
+            heroTrust[1].textContent =
+                t.kgSaved;
+
+            heroTrust[2].textContent =
+                t.organizations;
+
+        }
 
 
-            document.documentElement.lang =
-                language;
+        /* HERO INTELLIGENCE CARD */
 
-            document.documentElement.dir =
-                language === "ar"
-                    ? "rtl"
-                    : "ltr";
+        setText(
+            ".intelligence-card .mini-label",
+            t.foodIntelligence
+        );
 
+        setText(
+            ".intelligence-card .card-header h3",
+            t.liveMonitor
+        );
 
-            button.textContent =
-                `${t.code} ▾`;
+        setText(
+            ".intelligence-card .live-indicator",
+            t.live
+        );
 
+        setText(
+            ".rescue-alert .alert-label",
+            t.surplusDetected
+        );
 
-            setSelectorText(
-                '.nav-links a[href="#how-it-works"]',
-                t.how
+        setText(
+            ".rescue-alert .alert-content strong",
+            t.bakeryItems
+        );
+
+        setText(
+            ".rescue-alert .alert-content > span:last-child",
+            t.spoilage
+        );
+
+        setText(
+            ".priority > span",
+            t.priority
+        );
+
+        setText(
+            ".matching-section .section-title",
+            t.smartMatching
+        );
+
+        const heroMatches =
+            document.querySelectorAll(
+                ".intelligence-card .match"
             );
 
-            setSelectorText(
-                '.nav-links a[href="#impact"]',
-                t.impact
+        if (
+            heroMatches.length >= 2
+        ) {
+
+            setText(
+                ".intelligence-card .match:nth-of-type(1) .match-info strong",
+                t.localFoodAssociation
             );
 
-            setSelectorText(
-                '.nav-links a[href="#network"]',
-                t.network
+            setText(
+                ".intelligence-card .match:nth-of-type(1) .match-info span",
+                t.associationMeta
             );
 
-            setSelectorText(
-                '.nav-links a[href="#command-center"]',
-                t.command
+            setText(
+                ".intelligence-card .match:nth-of-type(2) .match-info strong",
+                t.communityKitchen
             );
 
-
-            setSelectorText(
-                ".status-badge",
-                t.badge
+            setText(
+                ".intelligence-card .match:nth-of-type(2) .match-info span",
+                t.kitchenMeta
             );
 
+        }
 
-            const hero =
-                document.querySelector(
-                    ".hero h1"
+        setText(
+            ".rescue-progress .progress-header span",
+            t.rescueWindow
+        );
+
+
+        /* IMPACT */
+
+        setText(
+            ".impact-section .eyebrow",
+            t.globalImpact
+        );
+
+        setText(
+            ".impact-section .section-heading h2",
+            t.impactTitle
+        );
+
+        setText(
+            ".impact-section .section-heading p",
+            t.impactDescription
+        );
+
+
+        const impactLabels =
+            document.querySelectorAll(
+                ".impact-card > span:not(.impact-icon)"
+            );
+
+        if (
+            impactLabels.length >= 4
+        ) {
+
+            impactLabels[0].textContent =
+                t.mealsRescued;
+
+            impactLabels[1].textContent =
+                t.foodWastePrevented;
+
+            impactLabels[2].textContent =
+                t.co2Avoided;
+
+            impactLabels[3].textContent =
+                t.activeOperations;
+
+        }
+
+
+        /* HOW IT WORKS */
+
+        setText(
+            ".how-section .eyebrow",
+            t.rescueEngine
+        );
+
+        setText(
+            ".how-section .section-heading h2",
+            t.howTitle
+        );
+
+        setText(
+            ".how-section .section-heading p",
+            t.howDescription
+        );
+
+
+        const stepCards =
+            document.querySelectorAll(
+                ".step-card"
+            );
+
+        if (
+            stepCards.length >= 3
+        ) {
+
+            setText(
+                ".step-card:nth-child(1) h3",
+                t.detect
+            );
+
+            setText(
+                ".step-card:nth-child(1) p",
+                t.detectDescription
+            );
+
+            setText(
+                ".step-card:nth-child(2) h3",
+                t.match
+            );
+
+            setText(
+                ".step-card:nth-child(2) p",
+                t.matchDescription
+            );
+
+            setText(
+                ".step-card:nth-child(3) h3",
+                t.rescue
+            );
+
+            setText(
+                ".step-card:nth-child(3) p",
+                t.rescueDescription
+            );
+
+        }
+
+
+        /* NETWORK */
+
+        setText(
+            ".network-section .eyebrow",
+            t.oneNetwork
+        );
+
+        setText(
+            ".network-section h2",
+            t.networkTitle
+        );
+
+        setText(
+            ".network-section p",
+            t.networkDescription
+        );
+
+        setButton(
+            "#joinNetworkButton",
+            t.joinNetwork
+        );
+
+
+        /* RESCUE FORM */
+
+        setText(
+            ".submission-section .eyebrow",
+            t.startRescue
+        );
+
+        setText(
+            ".submission-section .section-heading h2",
+            t.surplusTitle
+        );
+
+        setText(
+            ".submission-section .section-heading p",
+            t.surplusDescription
+        );
+
+
+        setText(
+            'label[for="foodType"]',
+            t.foodType
+        );
+
+        setText(
+            'label[for="quantity"]',
+            t.quantity
+        );
+
+        setText(
+            'label[for="unit"]',
+            t.unit
+        );
+
+        setText(
+            'label[for="availableFrom"]',
+            t.availableFrom
+        );
+
+        setText(
+            'label[for="expiryTime"]',
+            t.expiry
+        );
+
+        setText(
+            'label[for="location"]',
+            t.location
+        );
+
+        setText(
+            'label[for="notes"]',
+            t.additional
+        );
+
+
+        const foodOptions =
+            document.querySelectorAll(
+                "#foodType option"
+            );
+
+        if (
+            foodOptions.length >= 7
+        ) {
+
+            foodOptions[0].textContent =
+                t.selectFood;
+
+            foodOptions[1].textContent =
+                t.bakery;
+
+            foodOptions[2].textContent =
+                t.prepared;
+
+            foodOptions[3].textContent =
+                t.fruits;
+
+            foodOptions[4].textContent =
+                t.vegetables;
+
+            foodOptions[5].textContent =
+                t.dairy;
+
+            foodOptions[6].textContent =
+                t.other;
+
+        }
+
+
+        const unitOptions =
+            document.querySelectorAll(
+                "#unit option"
+            );
+
+        if (
+            unitOptions.length >= 4
+        ) {
+
+            unitOptions[0].textContent =
+                t.items;
+
+            unitOptions[1].textContent =
+                t.kilograms;
+
+            unitOptions[2].textContent =
+                t.meals;
+
+            unitOptions[3].textContent =
+                t.boxes;
+
+        }
+
+
+        const locationInput =
+            document.getElementById(
+                "location"
+            );
+
+        if (locationInput) {
+
+            locationInput.placeholder =
+                t.locationPlaceholder;
+
+        }
+
+
+        const notes =
+            document.getElementById(
+                "notes"
+            );
+
+        if (notes) {
+
+            notes.placeholder =
+                t.notesPlaceholder;
+
+        }
+
+
+        setButton(
+            "#analyzeSurplusButton",
+            t.analyze
+        );
+
+
+        /* RESULT EMPTY */
+
+        setText(
+            "#analysisResult .result-empty h3",
+            t.intelligence
+        );
+
+        setText(
+            "#analysisResult .result-empty p",
+            t.submitPrompt
+        );
+
+
+        /* RESULT */
+
+        setText(
+            ".result-label",
+            t.rescuePriority
+        );
+
+        setText(
+            "#priorityLevel",
+            t.waiting
+        );
+
+        const factorLabels =
+            document.querySelectorAll(
+                ".result-factors > div span"
+            );
+
+        if (
+            factorLabels.length >= 4
+        ) {
+
+            factorLabels[0].textContent =
+                t.food;
+
+            factorLabels[1].textContent =
+                t.quantity;
+
+            factorLabels[2].textContent =
+                t.timeRemaining;
+
+            factorLabels[3].textContent =
+                t.location;
+
+        }
+
+
+        setText(
+            ".recommendation > span",
+            t.recommendedAction
+        );
+
+
+        setText(
+            ".smart-matching .matching-header > span",
+            t.intelligentMatching
+        );
+
+        setText(
+            ".smart-matching .matching-header strong",
+            t.bestMatches
+        );
+
+
+        /* OPERATION */
+
+        setText(
+            ".operation-header > span",
+            t.rescueOperation
+        );
+
+
+        setText(
+            "#rescueOperation .status-step:nth-of-type(1) strong",
+            t.matched
+        );
+
+        setText(
+            "#rescueOperation .status-step:nth-of-type(2) strong",
+            t.collection
+        );
+
+        setText(
+            "#rescueOperation .status-step:nth-of-type(3) strong",
+            t.rescued
+        );
+
+
+        if (
+            !state.currentOperation
+        ) {
+
+            setButton(
+                "#startRescueButton",
+                t.startRescueButton
+            );
+
+        }
+
+
+        /* MAP */
+
+        setText(
+            ".map-section .eyebrow",
+            t.liveNetwork
+        );
+
+        setText(
+            ".map-section .section-heading h2",
+            t.mapTitle
+        );
+
+        setText(
+            ".map-section .section-heading p",
+            t.mapDescription
+        );
+
+        setText(
+            ".map-status",
+            t.networkOnline
+        );
+
+        setButton(
+            "#locateUserButton",
+            t.locateMe
+        );
+
+
+        /* COMMAND CENTER */
+
+        setText(
+            ".command-center-section .eyebrow",
+            t.commandLabel
+        );
+
+        setText(
+            ".command-center-section .section-heading h2",
+            t.commandTitle
+        );
+
+        setText(
+            ".command-center-section .section-heading p",
+            t.commandDescription
+        );
+
+        setText(
+            ".current-operation-card .command-label",
+            t.liveOperation
+        );
+
+        setText(
+            ".current-operation-card h3",
+            t.currentRescue
+        );
+
+        if (
+            currentOperationStatus &&
+            !state.currentOperation
+        ) {
+
+            currentOperationStatus.textContent =
+                t.idle;
+
+        }
+
+
+        setText(
+            "#commandCurrentEmpty",
+            t.noActive
+        );
+
+
+        setText(
+            ".command-center-grid .command-card:nth-child(2) .command-label",
+            t.liveImpact
+        );
+
+        setText(
+            ".command-center-grid .command-card:nth-child(2) h3",
+            t.performance
+        );
+
+
+        const performanceLabels =
+            document.querySelectorAll(
+                ".performance-item span"
+            );
+
+        if (
+            performanceLabels.length >= 4
+        ) {
+
+            performanceLabels[0].textContent =
+                t.rescuesStarted;
+
+            performanceLabels[1].textContent =
+                t.mealsRescued;
+
+            performanceLabels[2].textContent =
+                currentLanguage === "ar"
+                    ? "الغذاء الذي تم إنقاذه"
+                    : currentLanguage === "fr"
+                        ? "Nourriture sauvée"
+                        : currentLanguage === "zh"
+                            ? "已拯救食品"
+                            : currentLanguage === "de"
+                                ? "Gerettete Lebensmittel"
+                                : "Estimated food saved";
+
+            performanceLabels[3].textContent =
+                t.co2Avoided;
+
+        }
+
+
+        setText(
+            ".history-card .command-label",
+            t.rescueHistory
+        );
+
+        setText(
+            ".history-card h3",
+            t.recentOperations
+        );
+
+        setText(
+            ".history-empty",
+            t.historyEmpty
+        );
+
+
+        /* FOOTER */
+
+        setText(
+            "footer p",
+            t.footer
+        );
+
+
+        /* DYNAMIC */
+
+        translateDynamicText(
+            document,
+            t
+        );
+
+
+        try {
+
+            localStorage.setItem(
+                "foodrescue_language",
+                currentLanguage
+            );
+
+        }
+        catch {}
+
+    }
+
+
+    button.addEventListener(
+        "click",
+        event => {
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            menu.classList.toggle(
+                "open"
+            );
+
+        }
+    );
+
+
+    menu.addEventListener(
+        "click",
+        event => {
+
+            const target =
+                event.target.closest(
+                    "[data-lang]"
                 );
 
-            if (hero) {
-
-                hero.innerHTML = `
-                    ${escapeHTML(
-                        t.heroFirst
-                    )}
-                    <span>
-                        ${escapeHTML(
-                            t.heroSecond
-                        )}
-                    </span>
-                `;
-
+            if (!target) {
+                return;
             }
 
-
-            setSelectorText(
-                ".hero-description",
-                t.description
+            translatePage(
+                target.dataset.lang
             );
-
-            setSelectorText(
-                "#rescueFoodButton",
-                t.rescueFood
-            );
-
-            setSelectorText(
-                "#exploreButton",
-                t.explore
-            );
-
-
-            setSelectorText(
-                ".impact-section .eyebrow",
-                t.globalImpact
-            );
-
-            setSelectorText(
-                ".impact-section .section-heading h2",
-                t.impactTitle
-            );
-
-
-            setSelectorText(
-                ".how-section .eyebrow",
-                t.howLabel
-            );
-
-            setSelectorText(
-                ".how-section .section-heading h2",
-                t.howTitle
-            );
-
-
-            setSelectorText(
-                ".network-section .eyebrow",
-                t.networkLabel
-            );
-
-
-            setSelectorText(
-                ".submission-section .eyebrow",
-                t.rescueLabel
-            );
-
-            setSelectorText(
-                ".submission-section .section-heading h2",
-                t.rescueTitle
-            );
-
-            setSelectorText(
-                "#analyzeSurplusButton",
-                `${t.analyze} →`
-            );
-
-
-            try {
-
-                localStorage.setItem(
-                    "foodrescue_language",
-                    language
-                );
-
-            }
-            catch {}
-
 
             menu.classList.remove(
                 "open"
             );
 
         }
+    );
 
 
-        button.addEventListener(
-            "click",
-            event => {
+    document.addEventListener(
+        "click",
+        event => {
 
-                event.preventDefault();
-                event.stopPropagation();
+            if (
+                !selector.contains(
+                    event.target
+                )
+            ) {
 
-                menu.classList.toggle(
+                menu.classList.remove(
                     "open"
                 );
 
             }
-        );
-
-
-        menu.addEventListener(
-            "click",
-            event => {
-
-                const target =
-                    event.target.closest(
-                        "[data-lang]"
-                    );
-
-                if (!target) {
-                    return;
-                }
-
-                applyLanguage(
-                    target.dataset.lang
-                );
-
-            }
-        );
-
-
-        document.addEventListener(
-            "click",
-            event => {
-
-                if (
-                    !selector.contains(
-                        event.target
-                    )
-                ) {
-
-                    menu.classList.remove(
-                        "open"
-                    );
-
-                }
-
-            }
-        );
-
-
-        let saved =
-            "en";
-
-        try {
-
-            saved =
-                localStorage.getItem(
-                    "foodrescue_language"
-                ) ||
-                "en";
 
         }
-        catch {}
+    );
 
 
-        applyLanguage(
-            translations[saved]
-                ? saved
-                : "en"
-        );
+    /*
+       Re-apply translations after dynamic
+       matching / AI / history content changes.
+    */
 
-    }
+    let observerTimer = null;
 
+    const observer =
+        new MutationObserver(() => {
 
-    /* =====================================================
-       INIT
-    ===================================================== */
-
-    createAdvancedPanels();
-
-    updateMetrics();
-
-    renderCurrentOperation();
-
-    renderHistory();
-
-    renderPrediction();
-
-    initLanguageSystem();
-
-
-    /* =====================================================
-       MAP INIT
-    ===================================================== */
-
-    try {
-
-        if (
-            window.FoodRescueMap &&
-            typeof FoodRescueMap.init ===
-            "function"
-        ) {
-
-            FoodRescueMap.init();
-
-        }
-
-    }
-    catch (error) {
-
-        console.warn(
-            "Map initialization warning:",
-            error
-        );
-
-    }
-
-
-    /* =====================================================
-       RESTORE ACTIVE OPERATION
-    ===================================================== */
-
-    if (
-        state.currentOperation
-    ) {
-
-        rescueStage =
-            state.currentOperation.status ===
-            "RESCUED"
-                ? 3
-                : 2;
-
-        if (
-            rescueStage === 2
-        ) {
-
-            startRescueButton.disabled =
-                false;
-
-            safeText(
-                startRescueButton,
-                "Mark as Rescued ✓"
+            clearTimeout(
+                observerTimer
             );
 
+            observerTimer =
+                setTimeout(
+                    () => {
+
+                        translatePage(
+                            currentLanguage
+                        );
+
+                    },
+                    30
+                );
+
+        });
+
+
+    observer.observe(
+        document.body,
+        {
+            childList: true,
+            subtree: true
         }
-        else {
+    );
 
-            startRescueButton.disabled =
-                true;
 
-        }
+    translatePage(
+        currentLanguage
+    );
 
-    }
+}
 
 
     console.log(
